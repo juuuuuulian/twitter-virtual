@@ -1,1 +1,1 @@
-web: flask run
+web: gunicorn twitter_virtual.server:app
