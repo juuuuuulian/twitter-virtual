@@ -1,1 +1,1 @@
-web: gunicorn twitter_virtual.server:app
+web: gunicorn twitter_virtual:app
