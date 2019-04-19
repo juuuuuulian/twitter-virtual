@@ -1,21 +1,18 @@
 """Temporary."""
 
 from flask import Flask
-from dotenv import load_dotenv
+from .views import oauth
 import os
+from dotenv import load_dotenv
 load_dotenv()
 
-app = Flask("twitter_virtual")
 
-consumer_key = os.environ.get('TWITTER_CONSUMER_KEY')
-consumer_secret = os.environ.get('TWITTER_CONSUMER_SECRET')
-access_token = os.environ.get('TWITTER_ACCESS_TOKEN')
-access_token_secret = os.environ.get('TWITTER_ACCESS_TOKEN_SECRET')
+def setup_app():
+    """Set up Flask application - register views, load secret key, etc."""
+    app = Flask("twitter_virtual")
+    app.secret_key = os.environ['FLASK_SECRET_KEY']
+    app.register_blueprint(oauth.bp)
+    return app
 
-@app.route('/')
-def hello_world():
-    return 'Hello, World!'
 
-@app.route('/key')
-def key():
-    return consumer_key
+app = setup_app()
