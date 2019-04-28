@@ -1,15 +1,18 @@
+## The following requirements were added by pip freeze:
 appnope==0.1.0
 backcall==0.1.0
 Click==7.0
 decorator==4.4.0
 Flask==1.0.2
 gunicorn==19.9.0
+httplib2==0.12.1
 ipython==7.4.0
 ipython-genutils==0.2.0
 itsdangerous==1.1.0
 jedi==0.13.3
 Jinja2==2.10
 MarkupSafe==1.1.1
+oauth2==1.9.0.post1
 parso==0.3.4
 pexpect==4.6.0
 pickleshare==0.7.5
