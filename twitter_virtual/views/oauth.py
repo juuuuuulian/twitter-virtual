@@ -1,5 +1,5 @@
 from flask import Blueprint, session, redirect, request, current_app
-from ..twitter import TwitterClient, RateLimitHit, SoftRateLimitHit, DuplicateList, TooManyFollowing, ZeroFollowing
+from ..twitter import TwitterClient, RateLimitHit, SoftRateLimitHit, TooManyFollowing, ZeroFollowing
 
 
 bp = Blueprint('oauth', __name__, url_prefix='/oauth')
@@ -15,7 +15,7 @@ def _copy_user_following_to_new_list(twitter_client, screen_name):
     # TODO: handle case where members = 0
     # TODO: handle case where members > 5000
     # TODO: handle case where list with name already exists (for now, just error out)
-    following_users = twitter_client.get_following_users(screen_name)
+    following_users = twitter_client.get_following_user_ids(screen_name)
     new_list = twitter_client.create_private_list(screen_name)
 
     chunk_size = 100

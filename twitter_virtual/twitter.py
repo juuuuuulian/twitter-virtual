@@ -18,6 +18,7 @@ CREATE_LIST_URL = "https://api.twitter.com/1.1/lists/create.json"
 LIST_RATE_LIMITS_URL = "https://api.twitter.com/1.1/application/rate_limit_status.json"
 ADD_LIST_MEMBERS_URL = "https://api.twitter.com/1.1/lists/members/create_all.json"
 DELETE_LIST_URL = "https://api.twitter.com/1.1/lists/destroy.json"
+LOOKUP_FRIENDSHIPS_URL = "https://api.twitter.com/1.1/friendships/lookup.json"
 
 
 class TwitterClient:
@@ -35,25 +36,21 @@ class TwitterClient:
         client = self.oauth_client
         callback_url = os.environ.get('TWITTER_CALLBACK_URL')
 
-        # ask twitter for a token to perform oauth
         request_body = urlencode({'oauth_callback': callback_url})
         headers, body = client.request(REQUEST_TOKEN_URL, method='POST', body=request_body)
 
-        if headers.status == 200:
-            resp_vals = parse_qs(body.decode())
-            token = resp_vals.get('oauth_token')[0]
-            token_secret = resp_vals.get('oauth_token_secret')[0]
-            callback_confirmed = resp_vals.get('oauth_callback_confirmed')[0]
+        if headers.status != 200:
+            raise TwitterError("Fetching request token failed", headers, body)
 
-            if callback_confirmed != "true":
-                log.error("Bad token request response, callback unconfirmed: {} - {}".format(headers.status, body.decode()))
-                return None
+        resp_vals = parse_qs(body.decode())
+        token = resp_vals.get('oauth_token')[0]
+        token_secret = resp_vals.get('oauth_token_secret')[0]
+        callback_confirmed = resp_vals.get('oauth_callback_confirmed')[0]
 
-            log.info("Fetched a request token successfully")
-            return token, token_secret
-        else:
-            log.error("Token request failed, response: {} - {}".format(str(headers.status), body.decode()))
-            return None
+        if callback_confirmed != "true":
+            raise TwitterError("Bad request token response - callback unconfirmed", headers, body)
+
+        return token, token_secret
 
     def get_authorize_url_for_token(self, oauth_token):
         """Get a Twitter OAuth authorization URL for step 2 of OAuth."""
@@ -69,31 +66,49 @@ class TwitterClient:
         self.oauth_client.token = token
         headers, body = self.oauth_client.request(ACCESS_TOKEN_URL, method='POST')
 
-        if headers.status == 200:
-            resp_vals = parse_qs(body.decode())
-            oauth_token = resp_vals.get('oauth_token')[0]
-            oauth_token_secret = resp_vals.get('oauth_token_secret')[0]
-            log.info("Exchanged a request token for an oauth token successfully")
-            authorized_token = oauth2.Token(oauth_token, oauth_token_secret)
-            authorized_token.set_verifier(oauth_verifier)
-            self.oauth_client.token = authorized_token
-            return oauth_token, oauth_token_secret
-        else:
-            log.error("Token exchange request failed, response: {} - {}".format(str(headers.status), body.decode()))
-        return None
+        if headers.status != 200:
+            raise TwitterError("Request token exchange failed", headers, body)
 
-    def get_following_users(self, screen_name):
-        """Get the full list of users who screen_name follows on Twitter."""
+        resp_vals = parse_qs(body.decode())
+        oauth_token = resp_vals.get('oauth_token')[0]
+        oauth_token_secret = resp_vals.get('oauth_token_secret')[0]
+        # set authorized token on our oauth client
+        authorized_token = oauth2.Token(oauth_token, oauth_token_secret)
+        authorized_token.set_verifier(oauth_verifier)
+        self.oauth_client.token = authorized_token
+
+        return oauth_token, oauth_token_secret
+
+    def get_following_user_ids(self, screen_name):
+        """Get the full list of (stringified) user IDs who screen_name follows."""
         params = {"screen_name": screen_name, "stringify_ids": "true"}
         headers, body = self.oauth_client.request(LIST_FRIENDS_URL + '?' + urlencode(params), method='GET')
-        if headers.status == 200:
-            response = json.loads(body.decode())
-            following_ids = response.get('ids', [])
-            return following_ids
-        else:
-            log.error(
-                "Error fetching following users for '{}': {} - {}".format(screen_name, headers.status, body.decode()))
-            return None
+
+        if headers.status != 200:
+            if headers.status == RateLimitHit.status:
+                raise RateLimitHit("Too many requests for following users in a 15-minute period!", headers, body)
+            raise TwitterError("Fetch following users failed", headers, body)
+
+        response = json.loads(body.decode())
+        following_ids = response.get('ids', [])
+        return following_ids
+
+    def current_user_is_following_user(self, screen_name):
+        """Check if the current user is following screen_name."""
+        params = {"screen_name": screen_name}
+        headers, body = self.oauth_client.request(LOOKUP_FRIENDSHIPS_URL + '?' + urlencode(params))
+
+        if headers.status != 200:
+            if headers.status == RateLimitHit.status:
+                raise RateLimitHit("Too many friendships lookup requests in a 15-minute window!", headers, body)
+            raise TwitterError("Friendships lookup failed", headers, body)
+
+        users = json.loads(body.decode())
+        target_user = users[0]
+
+        if target_user and ('following' in target_user["connections"]):
+            return True
+        return False
 
     def create_private_list(self, screen_name):
         """Create a private, empty Twitter list named 'Feed for <screen_name>'."""
@@ -103,43 +118,42 @@ class TwitterClient:
             "description": "Feed for {} as of {}".format(screen_name, datetime.date.today().strftime("%m/%-d/%y"))
         }
         headers, body = self.oauth_client.request(CREATE_LIST_URL + '?' + urlencode(list_settings), method='POST')
+
         if headers.status != 200:
             if headers.status == RateLimitHit.status:
                 raise RateLimitHit("Too many lists created in a 15-minute window!")
-            else:
-                log.error("Error creating list for '{}': {} - {}".format(screen_name, headers.status, body.decode()))
-                return None
+            raise TwitterError("Private list creation failed", headers, body)
 
         new_list = json.loads(body.decode())
         return new_list
 
     def delete_list(self, list_id):
         """Delete a Twitter list."""
-        headers, body = self.oauth_client.request(DELETE_LIST_URL + '?list_id=' + list_id)
+        headers, body = self.oauth_client.request(DELETE_LIST_URL + '?list_id=' + str(list_id), method='POST')
+
         if headers.status != 200:
             if headers.status == RateLimitHit.status:
                 raise RateLimitHit("Too many delete requests within a 15-minute window!", headers, body)
             raise TwitterError("List delete failed", headers, body)
+
         return True
 
     def get_rate_limit_status(self, resource_type, endpoint_uri):
-        """Get the remaining allowed API requests count for a Twitter resource type and one of its endpoints.
+        """Get the remaining number of allowed API requests for a Twitter resource type and one of its endpoints.
 
         https://developer.twitter.com/en/docs/developer-utilities/rate-limit-status/api-reference/get-application-rate_limit_status
         N.B. Twitter simply does not return the rate limit status for some rate-limited endpoints, like /lists/create,
         so, don't rely too heavily on what this returns. Look at API response headers instead.
         """
         headers, body = self.oauth_client.request(LIST_RATE_LIMITS_URL + '?resource=' + resource_type, method='GET')
+
         if headers.status != 200:
-            raise Exception("Failed to get rate limit status: {} - {}".format(headers.status, body.decode()))
+            if headers.status == RateLimitHit.status:
+                raise RateLimitHit("Too many requests for rate limit status in 15-minute window!", headers, body)
+            raise TwitterError("Failed to get rate limit status", headers, body)
 
         status_desc_res = json.loads(body.decode())
-        endpoint_status_desc = status_desc_res['resources'].get(resource_type, {}).get(endpoint_uri)
-
-        if endpoint_status_desc is None:  # does twitter return 4XX status in this case?
-            raise Exception(
-                "Failed to get rate limit status for Twitter endpoint '{}' of type '{}', full resp: {}".format(
-                    endpoint_uri, resource_type, body.decode()))
+        endpoint_status_desc = status_desc_res['resources'].get(resource_type, {}).get(endpoint_uri, {})
 
         return endpoint_status_desc['remaining']
 
@@ -150,12 +164,18 @@ class TwitterClient:
             "user_id": ",".join(user_ids)
         }
         headers, body = self.oauth_client.request(ADD_LIST_MEMBERS_URL, method='POST', body=urlencode(create_params))
+
         if headers.status != 200:
             if headers.status == RateLimitHit.status:
                 raise RateLimitHit("Too many members added to a list within a 15-minute window!")
-            raise Exception("Failed to add members to a list: {} - {}".format(headers.status, body.decode()))
+            raise TwitterError("Failed to add users to a list", headers, body)
 
-        return True
+        # check for soft rate limit hit
+        updated_list = json.loads(body.decode())
+        if int(updated_list['member_count']) == 0:
+            raise SoftRateLimitHit("Too many list actions performed for today!", headers, body)
+
+        return updated_list
 
 
 class TwitterError(Exception):
@@ -172,12 +192,9 @@ class RateLimitHit(TwitterError):
 
 
 class SoftRateLimitHit(TwitterError):
-    """Twitter soft (hidden) rate limit exceeded - response is 200 but no actions were performed by Twitter."""
-    pass
-
-
-class DuplicateList(TwitterError):
-    """Twitter list already exists error."""
+    """Twitter soft (hidden) rate limit exceeded - response is 200 but no actions were performed by Twitter.
+    This means that the user can't perform the action again for at least the next 24 hours.
+    """
     pass
 
 
