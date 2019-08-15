@@ -22,7 +22,7 @@ LOOKUP_FRIENDSHIPS_URL = "https://api.twitter.com/1.1/friendships/lookup.json"
 
 
 class TwitterClient:
-    """Class for interacting with the Twitter API as a Twitter user via OAuth."""
+    """Class for interacting with the Twitter API on behalf of a Twitter user via OAuth."""
     def __init__(self):
         """Load config and initialize an oauth2 client."""
         consumer_key = os.environ.get('TWITTER_CONSUMER_KEY')

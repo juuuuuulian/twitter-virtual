@@ -1,6 +1,7 @@
 """Unit tests for the TwitterClient class."""
 from twitter_virtual.tests.base_test_case import BaseTestCase
-from twitter_virtual.twitter import TwitterClient, OAuthRequestError, InvalidOAuthResponseError, RateLimitHit, TwitterError
+from twitter_virtual.twitter import TwitterClient, OAuthRequestError, InvalidOAuthResponseError, RateLimitHit, \
+    TwitterError, SoftRateLimitHit
 import mock
 from urllib.parse import urlencode
 import json
@@ -15,63 +16,71 @@ fake_list_id = '0000'
 fake_user_id = '0000'
 
 
+def _api_response_mock(status, body):
+    headers = mock.MagicMock(status=status)
+    return headers, body.encode()
+
+
 def _server_error_response_mock():
     """Mock a Twitter API response where there is a generic server error."""
-    headers = mock.MagicMock(status=500)
-    body = "Internal Server Error".encode()
-    return headers, body
+    return _api_response_mock(500, "Internal Server Error")
 
 
 def _rate_limit_api_response_mock():
     """Mock a Twitter API response where a rate limit was hit."""
-    headers = mock.MagicMock(status=RateLimitHit.status)
-    body = "Too Many Requests!"
-    return headers, body
+    return _api_response_mock(RateLimitHit.status, "Too Many Requests!")
+
+
+def _oauth_credential_string(token, secret, callback_confirmed):
+    return urlencode({"oauth_token": token, "oauth_token_secret": secret,
+                      "oauth_callback_confirmed": callback_confirmed})
 
 
 def _callback_unconfirmed_api_response_mock():
     """Mock a Twitter OAuth API response for the token request step (step 1) where the callback is unconfirmed."""
-    headers = mock.MagicMock(status=200)
-    body = f'oauth_token={fake_token}&oauth_token_secret={fake_token_secret}&oauth_callback_confirmed=false'.encode()
-    return headers, body
+    return _api_response_mock(200, _oauth_credential_string(fake_token, fake_token_secret, "false"))
 
 
 def _healthy_request_token_api_response_mock():
     """Mock a healthy Twitter OAuth API request token response."""
-    headers = mock.MagicMock(status=200)
-    body = f'oauth_token={fake_token}&oauth_token_secret={fake_token_secret}&oauth_callback_confirmed=true'.encode()
-    return headers, body
+    return _api_response_mock(200, _oauth_credential_string(fake_token, fake_token_secret, "true"))
 
 
 def _invalid_oauth_response_mock():
     """Mock a bad Twitter OAuth API response - token value missing."""
-    headers = mock.MagicMock(status=200)
-    body = f'oauth_token=&oauth_token_secret={fake_token_secret}'.encode()
-    return headers, body
-
-
-def _list_create_response_mock(list_name):
-    """Mock a Twitter list create API response."""
-    headers = mock.MagicMock(status=200)
-    body = json.dumps({"name": list_name}).encode()
-    return headers, body
+    return _api_response_mock(200, _oauth_credential_string("", fake_token_secret, "true"))
 
 
 def _following_check_response_mock(screen_name=None, relationship_status=None):
     """Mock a successful Twitter friendship status lookup API response."""
-    headers = mock.MagicMock(status=200)
     results = []
     if screen_name:
         results.append({"name": screen_name, "connections": [relationship_status]})
-    body = json.dumps(results).encode()
-    return headers, body
+    return _api_response_mock(200, json.dumps(results))
 
 
 def _get_following_user_ids_response_mock(user_ids):
     """Mock a successful Twitter list-friend-IDs request."""
-    headers = mock.MagicMock(status=200)
-    body = json.dumps({"ids": user_ids}).encode()
-    return headers, body
+    return _api_response_mock(200, json.dumps({"ids": user_ids}))
+
+
+def _twitter_list_json(name, id, member_count):
+    return json.dumps({"name": name, "id": id, "member_count": member_count})
+
+
+def _list_create_response_mock(list_name):
+    """Mock a successful Twitter list create API response."""
+    return _api_response_mock(200, _twitter_list_json(list_name, fake_list_id, 0))
+
+
+def _add_list_users_soft_rate_limit_response_mock():
+    """Mock a Twitter add list members API response where we've hit a soft rate limit - no members added."""
+    return _list_create_response_mock(fake_screen_name)
+
+
+def _add_list_users_response_mock():
+    """Mock a successful Twitter add list members API response."""
+    return _api_response_mock(200, _twitter_list_json(fake_screen_name, fake_list_id, 1))
 
 
 def patch_oauth_request(response):
@@ -247,11 +256,16 @@ class TestAddUsersToList(BaseTestCase):
         with self.assertRaises(RateLimitHit):
             client.add_users_to_list(fake_list_id, [fake_user_id])
 
-    # @patch_oauth_request(response=)
+    @patch_oauth_request(response=_add_list_users_soft_rate_limit_response_mock())
     def test_soft_rate_limit_failure(self):
-        pass
+        """Check that we're throwing an exception if we hit a soft (shadow) rate limit."""
+        client = TwitterClient()
+        with self.assertRaises(SoftRateLimitHit):
+            client.add_users_to_list(fake_list_id, [fake_user_id])
 
-    # @patch_oauth_request(response=)
+    @patch_oauth_request(response=_add_list_users_response_mock())
     def test_success(self):
-        pass
+        """Check that we can parse the updated list and return it."""
+        client = TwitterClient()
+        self.assertTrue(client.add_users_to_list(fake_list_id, [fake_user_id]), 'Got updated list')
 
