@@ -40,17 +40,23 @@ class TwitterClient:
         headers, body = client.request(REQUEST_TOKEN_URL, method='POST', body=request_body)
 
         if headers.status != 200:
-            raise TwitterError("Fetching request token failed", headers, body)
+            raise OAuthRequestError("Fetching request token failed", headers, body)
 
-        resp_vals = parse_qs(body.decode())
-        token = resp_vals.get('oauth_token')[0]
-        token_secret = resp_vals.get('oauth_token_secret')[0]
-        callback_confirmed = resp_vals.get('oauth_callback_confirmed')[0]
+        token = self.parse_oauth_response(headers, body)
 
-        if callback_confirmed != "true":
-            raise TwitterError("Bad request token response - callback unconfirmed", headers, body)
+        if token.callback_confirmed != "true":
+            raise InvalidOAuthResponseError("Bad request token response - callback unconfirmed", headers, body)
 
-        return token, token_secret
+        return token
+
+    def parse_oauth_response(self, headers, body):
+        """Parse a Twitter OAuth request token response or an authorize token response."""
+        try:
+            token = oauth2.Token.from_string(body.decode())
+        except ValueError:
+            raise InvalidOAuthResponseError("Bad OAuth response - missing required values", headers, body)
+
+        return token
 
     def get_authorize_url_for_token(self, oauth_token):
         """Get a Twitter OAuth authorization URL for step 2 of OAuth."""
@@ -67,20 +73,17 @@ class TwitterClient:
         headers, body = self.oauth_client.request(ACCESS_TOKEN_URL, method='POST')
 
         if headers.status != 200:
-            raise TwitterError("Request token exchange failed", headers, body)
+            raise OAuthRequestError("Request token exchange failed", headers, body)
 
-        resp_vals = parse_qs(body.decode())
-        oauth_token = resp_vals.get('oauth_token')[0]
-        oauth_token_secret = resp_vals.get('oauth_token_secret')[0]
+        token = self.parse_oauth_response(headers, body)
+
         # set authorized token on our oauth client
-        authorized_token = oauth2.Token(oauth_token, oauth_token_secret)
-        authorized_token.set_verifier(oauth_verifier)
-        self.oauth_client.token = authorized_token
+        self.oauth_client.token = token
 
-        return oauth_token, oauth_token_secret
+        return token
 
     def get_following_user_ids(self, screen_name):
-        """Get the full list of (stringified) user IDs who screen_name follows."""
+        """Get the full list of stringified IDs of users who screen_name follows."""
         params = {"screen_name": screen_name, "stringify_ids": "true"}
         headers, body = self.oauth_client.request(LIST_FRIENDS_URL + '?' + urlencode(params), method='GET')
 
@@ -104,14 +107,12 @@ class TwitterClient:
             raise TwitterError("Friendships lookup failed", headers, body)
 
         users = json.loads(body.decode())
-        target_user = users[0]
-
-        if target_user and ('following' in target_user["connections"]):
+        if len(users) != 0 and ('following' in users[0]["connections"]):
             return True
         return False
 
     def create_private_list(self, screen_name):
-        """Create a private, empty Twitter list named 'Feed for <screen_name>'."""
+        """Create a private, empty Twitter list named '<screen_name>'."""
         list_settings = {
             "mode": "private",
             "name": screen_name,
@@ -186,6 +187,16 @@ class TwitterError(Exception):
         self.body = body
 
 
+class OAuthRequestError(TwitterError):
+    """Generic Twitter OAuth error."""
+    pass
+
+
+class InvalidOAuthResponseError(TwitterError):
+    """Twitter either rejected our OAuth credentials, or the response was invalid."""
+    pass
+
+
 class RateLimitHit(TwitterError):
     """Twitter rate limit exceeded response error."""
     status = 429  # http status
@@ -199,11 +210,11 @@ class SoftRateLimitHit(TwitterError):
 
 
 class TooManyFollowing(TwitterError):
-    """Twitter list would have too many members error."""
+    """Twitter list would have too many members."""
     pass
 
 
 class ZeroFollowing(TwitterError):
-    """Twitter list would have zero members error."""
+    """Twitter list would have zero members."""
     pass
 

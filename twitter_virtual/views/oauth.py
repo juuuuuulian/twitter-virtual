@@ -32,18 +32,18 @@ def _copy_user_following_to_new_list(twitter_client, screen_name):
 @bp.route('/begin', methods=('GET', 'POST'))
 def begin():
     twitter_client = _get_twitter_client()
-    request_token, request_token_secret = twitter_client.get_request_token()
-    session['token'] = request_token
-    session['token_secret'] = request_token_secret
-    return redirect(twitter_client.get_authorize_url_for_token(request_token))
+    token = twitter_client.get_request_token()
+    session['token'] = token.key
+    session['token_secret'] = token.secret
+    return redirect(twitter_client.get_authorize_url_for_token(token.key))
 
 
 @bp.route('/callback', methods=('GET', 'POST'))
 def callback():
     twitter_client = _get_twitter_client()
     oauth_verifier = request.args.get('oauth_verifier')
-    twitter_client.authorize_oauth_token(session['token'], session['token_secret'],
-                                                                           oauth_verifier)
+    twitter_client.authorize_oauth_token(session['token'], session['token_secret'], oauth_verifier)
+
     # TODO: get the screen name from session or somewhere else
     # create the new list
     new_list = _copy_user_following_to_new_list(twitter_client, 'finallevel')
@@ -51,3 +51,8 @@ def callback():
     # redirect user to new list?
     # handle error cases?
     return "New list: " + str(new_list)
+
+
+@bp.route('/alive', methods=['GET'])
+def hello_world():
+    return "Hello, world!"
