@@ -3,10 +3,10 @@ from twitter_virtual.tests.base_test_case import BaseTestCase
 from twitter_virtual.twitter import TwitterClient, OAuthRequestError, InvalidOAuthResponseError, RateLimitHit, \
     TwitterError, SoftRateLimitHit
 from urllib.parse import urlencode
-from .twitter_mocks import patch_oauth_request, server_error_response_mock, rate_limit_api_response_mock, \
-    callback_unconfirmed_api_response_mock, healthy_request_token_api_response_mock, invalid_oauth_response_mock, \
-    following_check_response_mock, get_following_user_ids_response_mock, list_create_response_mock, \
-    add_list_users_response_mock, add_list_users_soft_rate_limit_response_mock
+from twitter_virtual.tests.twitter_mocks import patch_oauth_request, server_error_response_mock, \
+    rate_limit_api_response_mock, callback_unconfirmed_api_response_mock, healthy_request_token_api_response_mock, \
+    invalid_oauth_response_mock, following_check_response_mock, get_following_user_ids_response_mock, \
+    list_create_response_mock, add_list_users_response_mock, add_list_users_soft_rate_limit_response_mock
 
 fake_token = 'FAKETOKEN'
 fake_token_secret = 'FAKESECRET'

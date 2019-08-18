@@ -1,5 +1,6 @@
-from flask import Blueprint, session, redirect, request, current_app
-from ..twitter import TwitterClient, RateLimitHit, SoftRateLimitHit, TooManyFollowing, ZeroFollowing
+from flask import Blueprint, session, redirect, request, current_app, render_template, make_response
+from ..twitter import TwitterClient, RateLimitHit, SoftRateLimitHit, TooManyFollowing, ZeroFollowing, TwitterError, \
+    OAuthRequestError, InvalidOAuthResponseError
 
 
 bp = Blueprint('oauth', __name__, url_prefix='/oauth')
@@ -32,7 +33,15 @@ def _copy_user_following_to_new_list(twitter_client, screen_name):
 @bp.route('/begin', methods=('GET', 'POST'))
 def begin():
     twitter_client = _get_twitter_client()
-    token = twitter_client.get_request_token()
+    try:
+        token = twitter_client.get_request_token()
+    except OAuthRequestError:
+        # non-200 response from twitter
+        return make_response(render_template("error.html", error_message="OAuth Request Error"), 500)
+    except InvalidOAuthResponseError:
+        # response from twitter was invalid
+        return make_response(render_template("error.html", error_message="Invalid OAuth Response"), 500)
+
     session['token'] = token.key
     session['token_secret'] = token.secret
     return redirect(twitter_client.get_authorize_url_for_token(token.key))
