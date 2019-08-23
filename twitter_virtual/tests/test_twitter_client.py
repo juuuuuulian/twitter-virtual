@@ -159,7 +159,7 @@ class TestGetFollowingUsers(BaseTestCase):
     def test_success(self):
         """Check that we can parse the list of following user IDs and return it."""
         client = TwitterClient()
-        following_ids = client.get_following_user_ids(fake_screen_name)
+        following_ids = client.get_following_user_ids(fake_screen_name)["ids"]
         self.assertEqual(len(following_ids), 3, 'Got following user IDs')
 
 

@@ -65,11 +65,17 @@ class TwitterClient:
             twitter_auth_url = twitter_auth_url + '?'
         return twitter_auth_url + urlencode({'oauth_token': oauth_token})
 
+    def set_client_token(self, oauth_token, oauth_token_secret, verifier=None):
+        """Create an oauth2.Token and set it on our oauth_client."""
+        token = oauth2.Token(oauth_token, oauth_token_secret)
+        if verifier:
+            token.set_verifier(verifier)
+        self.oauth_client.token = token
+        return token
+
     def authorize_oauth_token(self, oauth_token, oauth_token_secret, oauth_verifier):
         """"Get an OAuth token from Twitter using an authorized request token - final step of three-legged OAuth."""
-        token = oauth2.Token(oauth_token, oauth_token_secret)
-        token.set_verifier(oauth_verifier)
-        self.oauth_client.token = token
+        self.set_client_token(oauth_token, oauth_token_secret, oauth_verifier)
         headers, body = self.oauth_client.request(ACCESS_TOKEN_URL, method='POST')
 
         if headers.status != 200:
@@ -82,9 +88,9 @@ class TwitterClient:
 
         return token
 
-    def get_following_user_ids(self, screen_name):
+    def get_following_user_ids(self, screen_name, count=5000):
         """Get the full list of stringified IDs of users who screen_name follows."""
-        params = {"screen_name": screen_name, "stringify_ids": "true"}
+        params = {"screen_name": screen_name, "stringify_ids": "true", "count": count}
         headers, body = self.oauth_client.request(LIST_FRIENDS_URL + '?' + urlencode(params), method='GET')
 
         if headers.status != 200:
@@ -92,9 +98,7 @@ class TwitterClient:
                 raise RateLimitHit("Too many requests for following users in a 15-minute period!", headers, body)
             raise TwitterError("Fetch following users failed", headers, body)
 
-        response = json.loads(body.decode())
-        following_ids = response.get('ids', [])
-        return following_ids
+        return json.loads(body.decode())
 
     def current_user_is_following_user(self, screen_name):
         """Check if the current user is following screen_name."""
@@ -183,8 +187,12 @@ class TwitterError(Exception):
     """Generic Twitter API response error."""
     def __init__(self, message, headers=None, body=None):
         super().__init__(message)
+        self.message = message
         self.headers = headers
         self.body = body
+
+    def __str__(self):
+        return f'{self.message}. Response details (headers - body): {str(self.headers)} - {str(self.body)}'
 
 
 class OAuthRequestError(TwitterError):
@@ -218,3 +226,7 @@ class ZeroFollowing(TwitterError):
     """Twitter list would have zero members."""
     pass
 
+
+class UserNotFollowing(TwitterError):
+    """Current user isn't following the target user."""
+    pass

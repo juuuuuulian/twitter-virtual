@@ -1,3 +1,4 @@
+"""View functions for Twitter authentication."""
 from flask import Blueprint, session, redirect, request, current_app, render_template, make_response
 from ..twitter import TwitterClient, RateLimitHit, SoftRateLimitHit, TooManyFollowing, ZeroFollowing, TwitterError, \
     OAuthRequestError, InvalidOAuthResponseError
@@ -11,23 +12,8 @@ def _get_twitter_client():
     return TwitterClient()
 
 
-def _copy_user_following_to_new_list(twitter_client, screen_name):
-    """Find 'following' accounts for screen_name and add them to a new private list for the current user."""
-    # TODO: handle case where members = 0
-    # TODO: handle case where members > 5000
-    # TODO: handle case where list with name already exists (for now, just error out)
-    following_users = twitter_client.get_following_user_ids(screen_name)
-    new_list = twitter_client.create_private_list(screen_name)
-
-    chunk_size = 100
-    bottom, top = 0, chunk_size
-    while bottom <= len(following_users) - 1:
-        members_chunk = following_users[bottom:top]
-        success = twitter_client.add_users_to_list(new_list["id_str"], members_chunk)
-        bottom += chunk_size
-        top += chunk_size
-
-    return new_list
+def render_error(error_message):
+    return make_response(render_template("error.html", error_message=error_message), 500)
 
 
 @bp.route('/begin', methods=('GET', 'POST'))
@@ -37,10 +23,10 @@ def begin():
         token = twitter_client.get_request_token()
     except OAuthRequestError:
         # non-200 response from twitter
-        return make_response(render_template("error.html", error_message="OAuth Request Error"), 500)
+        return render_error("OAuth Request Error")
     except InvalidOAuthResponseError:
         # response from twitter was invalid
-        return make_response(render_template("error.html", error_message="Invalid OAuth Response"), 500)
+        return render_error("Invalid OAuth Response")
 
     session['token'] = token.key
     session['token_secret'] = token.secret
@@ -51,17 +37,22 @@ def begin():
 def callback():
     twitter_client = _get_twitter_client()
     oauth_verifier = request.args.get('oauth_verifier')
-    twitter_client.authorize_oauth_token(session['token'], session['token_secret'], oauth_verifier)
+    token = session.get('token')
+    token_secret = session.get('token_secret')
 
-    # TODO: get the screen name from session or somewhere else
-    # create the new list
-    new_list = _copy_user_following_to_new_list(twitter_client, 'finallevel')
+    if token is None or token_secret is None:
+        return render_error("Missing OAuth Token")
 
-    # redirect user to new list?
-    # handle error cases?
-    return "New list: " + str(new_list)
+    if oauth_verifier is None:
+        return render_error("Missing OAuth Verifier")
 
+    try:
+        token = twitter_client.authorize_oauth_token(token, token_secret, oauth_verifier)
+        session["token"] = token.key
+        session["token_secret"] = token.secret
+    except OAuthRequestError:
+        return render_error("OAuth Request Error")
+    except InvalidOAuthResponseError:
+        return render_error("Invalid OAuth Response")
 
-@bp.route('/alive', methods=['GET'])
-def hello_world():
-    return "Hello, world!"
+    return redirect("/twitter/copy_following")
