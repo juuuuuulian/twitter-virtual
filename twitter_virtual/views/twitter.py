@@ -1,6 +1,7 @@
 """View functions for Twitter API interaction."""
 from flask import Blueprint, session, redirect, request, current_app, render_template, make_response
-from ..twitter import TwitterClient, RateLimitHit, SoftRateLimitHit, TooManyFollowing, ZeroFollowing, TwitterError
+from ..twitter import TwitterClient, RateLimitHit, SoftRateLimitHit, TooManyFollowing, ZeroFollowing, TwitterError, \
+    UserNotFollowingTarget
 
 
 twitter_bp = Blueprint('twitter', __name__, url_prefix="/twitter")
@@ -23,7 +24,7 @@ def _check_user_is_following_target(client, screen_name):
     """Check that the current user is following screen_name on Twitter, and raise an error if not."""
     try:
         if client.current_user_is_following_user(screen_name) is False:
-            raise FatalFollowingCopyError("Please enter a screen name that you are following", )
+            raise FatalFollowingCopyError("Please enter a screen name that you are following", UserNotFollowingTarget())
     except RateLimitHit as e:
         raise FatalFollowingCopyError("Please try again in 30 minutes", e)
     except TwitterError as e:
@@ -73,11 +74,12 @@ def _add_user_ids_to_list(twitter_client, user_ids, list_id):
             updated_list = twitter_client.add_users_to_list(list_id, members_chunk)
         except RateLimitHit as e:
             raise FatalFollowingCopyError("Please try again in 30 minutes", e, list_id)
-        except TwitterError as e:
-            raise FatalFollowingCopyError("Please try again later", e, list_id)
         except SoftRateLimitHit as e:
             raise FatalFollowingCopyError("Please try again tomorrow - our application has hit a Twitter rate limit",
                                           e, list_id)
+        except TwitterError as e:
+            raise FatalFollowingCopyError("Please try again later", e, list_id)
+
         bottom += chunk_size
         top += chunk_size
 
@@ -109,7 +111,7 @@ def _handle_cleanup(client, copy_following_exception):
         try:
             client.delete_list(new_list_id)
         except TwitterError as e:
-            current_app.logger.exception(f'Failed to clean up a list {new_list_id}: {e.headers} - {e.body}')
+            current_app.logger.exception(f'Failed to clean up a list ({new_list_id})! {str(orig_exception)}')
             return False
 
     current_app.logger.info("Cleaned up a list")
@@ -148,7 +150,8 @@ def copy_following():
 
     client = TwitterClient()
     client.set_client_token(token, token_secret)
-    return f'{token} | {token_secret}'
+    #import pdb; pdb.set_trace()
+    #return f'{token} | {token_secret}'
 
     try:
         _copy_user_following_to_new_list(client, target_screen_name)

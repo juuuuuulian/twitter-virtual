@@ -1,5 +1,5 @@
-"""Various mocked API responses from Twitter."""
-from twitter_virtual.twitter import RateLimitHit
+"""Various Twitter API mock methods and decorators for applying to tests."""
+from twitter_virtual.twitter import TwitterClient, RateLimitHit
 import mock
 from urllib.parse import urlencode
 import json
@@ -53,13 +53,17 @@ def get_following_user_ids_response_mock(user_ids):
     return _api_response_mock(200, json.dumps({"ids": user_ids}))
 
 
-def _twitter_list_json(name, id, member_count):
-    return json.dumps({"name": name, "id": id, "member_count": member_count})
+def twitter_list(name, list_id, member_count):
+    return {"name": name, "id": list_id, "id_str": str(list_id), "member_count": member_count}
+
+
+def twitter_list_json(name, list_id, member_count):
+    return json.dumps(twitter_list(name, list_id, member_count))
 
 
 def list_create_response_mock(list_name, list_id):
     """Mock a successful Twitter list create API response."""
-    return _api_response_mock(200, _twitter_list_json(list_name, list_id, 0))
+    return _api_response_mock(200, twitter_list_json(list_name, list_id, 0))
 
 
 def add_list_users_soft_rate_limit_response_mock(list_name, list_id):
@@ -69,7 +73,7 @@ def add_list_users_soft_rate_limit_response_mock(list_name, list_id):
 
 def add_list_users_response_mock(list_name, list_id):
     """Mock a successful Twitter add list members API response."""
-    return _api_response_mock(200, _twitter_list_json(list_name, list_id, 1))
+    return _api_response_mock(200, twitter_list_json(list_name, list_id, 1))
 
 
 def patch_oauth_request(response):
@@ -82,3 +86,53 @@ def patch_oauth_request(response):
             req_mock.assert_called()
         return wrapper
     return create_decorator
+
+
+def patch_twitter_client_method(method, params):
+    def create_decorator(func):
+        def wrapper(self):
+            with mock.patch.object(TwitterClient, method, **params):
+                func(self)
+        return wrapper
+    return create_decorator
+
+
+def patch_twitter_client_method_new(method, value):
+    """Accept a TwitterClient method name, and either an Exception or a valid return value, and return a decorator
+    which patches that TwitterClient method with the exception to raise (as side_effect) or the value to return
+    (as return_value)."""
+    def create_decorator(func):
+        def wrapper(self):
+            if isinstance(value, Exception):
+                params = {"side_effect": value}
+            else:
+                params = {"return_value": value}
+            with mock.patch.object(TwitterClient, method, **params):
+                func(self)
+        return wrapper
+    return create_decorator
+
+
+def patch_twitter_check_user_is_following(value):
+    """Return a function decorator which patches the TwitterClient.current_user_is_following_user method."""
+    return patch_twitter_client_method_new("current_user_is_following_user", value)
+
+
+def patch_twitter_get_following_users(value):
+    """Return a function decorator which patches the TwitterClient.get_following_user_ids method."""
+    return patch_twitter_client_method_new("get_following_user_ids", value)
+
+
+def patch_twitter_list_create(value):
+    """Return a function decorator which patches the TwitterClient.create_private_list method."""
+    return patch_twitter_client_method_new("create_private_list", value)
+
+
+def patch_twitter_list_delete(value):
+    """Return a function decorator which patches the TwitterClient.delete_list method."""
+    return patch_twitter_client_method_new("delete_list", value)
+
+
+def patch_twitter_add_list_users(value):
+    """Return a function decorator which patches the TwitterClient.add_users_to_list method."""
+    return patch_twitter_client_method_new("add_users_to_list", value)

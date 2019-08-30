@@ -185,14 +185,19 @@ class TwitterClient:
 
 class TwitterError(Exception):
     """Generic Twitter API response error."""
-    def __init__(self, message, headers=None, body=None):
+    def __init__(self, message=None, headers=None, body=None):
+        if message is None:
+            message = str(type(self))
         super().__init__(message)
         self.message = message
         self.headers = headers
         self.body = body
 
     def __str__(self):
-        return f'{self.message}. Response details (headers - body): {str(self.headers)} - {str(self.body)}'
+        full_desc = self.message
+        if self.headers or self.body:
+            full_desc = full_desc + f'. Response details (headers - body): {str(self.headers)} - {str(self.body)}'
+        return full_desc
 
 
 class OAuthRequestError(TwitterError):
@@ -227,6 +232,7 @@ class ZeroFollowing(TwitterError):
     pass
 
 
-class UserNotFollowing(TwitterError):
+class UserNotFollowingTarget(TwitterError):
     """Current user isn't following the target user."""
     pass
+
