@@ -48,9 +48,15 @@ def following_check_response_mock(screen_name=None, relationship_status=None):
     return _api_response_mock(200, json.dumps(results))
 
 
+def following_users(user_ids, more_available=False):
+    """Return a sample parsed response from the list friends Twitter API method."""
+    next_cursor = 1 if more_available else 0
+    return {"ids": user_ids, "next_cursor": next_cursor}
+
+
 def get_following_user_ids_response_mock(user_ids):
     """Mock a successful Twitter list-friend-IDs request."""
-    return _api_response_mock(200, json.dumps({"ids": user_ids}))
+    return _api_response_mock(200, json.dumps(following_users(user_ids)))
 
 
 def twitter_list(name, list_id, member_count):
