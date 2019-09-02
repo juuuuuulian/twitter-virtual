@@ -2,6 +2,10 @@
 from flask import Blueprint, session, redirect, request, current_app, render_template, make_response
 from ..twitter import TwitterClient, RateLimitHit, SoftRateLimitHit, TooManyFollowing, ZeroFollowing, TwitterError, \
     UserNotFollowingTarget
+import datetime
+import os
+from dotenv import load_dotenv
+load_dotenv()
 
 
 twitter_bp = Blueprint('twitter', __name__, url_prefix="/twitter")
@@ -122,6 +126,41 @@ def render_error(error_message):
     return make_response(render_template("error.html", error_message=error_message), 500)
 
 
+
+def _app_used_today():
+    """Check the session and the backend database for a record of app use from the last 24 hours."""
+    now = datetime.datetime.utcnow().timestamp()
+    day_length_in_seconds = 60 * 60 * 24
+    # remote_ip = request.remote_addr
+
+    # database
+    # TODO
+
+    # session
+    last_app_use = session.get("last_app_use")
+    if last_app_use and (now - last_app_use < day_length_in_seconds):
+        return True
+
+    return False
+
+
+def _should_limit_app_use():
+    if os.environ.get("LIMIT_APP_USE"):
+        return True
+    return False
+
+
+def _record_app_use():
+    """Record last app use in the session and in the backend database."""
+    # session
+    now = datetime.datetime.utcnow().timestamp()
+    session["last_app_use"] = now
+
+    # database
+    # TODO
+    # remote_ip = request.remote_addr
+
+
 @twitter_bp.route("/begin", methods=['POST'])
 def begin():
     """Accept a Twitter target screen name, stash it in the session, then redirect to the oauth view."""
@@ -148,16 +187,19 @@ def copy_following():
     if target_screen_name is None:
         return render_error("Missing target screen name")
 
+    if _should_limit_app_use() and _app_used_today():
+        return render_error("App used once today already")
+
     client = TwitterClient()
     client.set_client_token(token, token_secret)
-    #import pdb; pdb.set_trace()
-    #return f'{token} | {token_secret}'
 
     try:
         _copy_user_following_to_new_list(client, target_screen_name)
     except FatalFollowingCopyError as e:
         _handle_cleanup(client, e)
         return render_error(e.user_error_message)
+
+    _record_app_use()
 
     return redirect("/twitter/success")
 

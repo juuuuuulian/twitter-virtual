@@ -4,6 +4,8 @@ from twitter_virtual.tests.twitter_mocks import twitter_list, \
     patch_twitter_add_list_users, patch_twitter_check_user_is_following, patch_twitter_get_following_users, \
     patch_twitter_list_create, patch_twitter_list_delete, following_users
 from twitter_virtual.twitter import TwitterError, RateLimitHit, SoftRateLimitHit
+import datetime
+import mock
 
 fake_token = 'FAKETOKEN'
 fake_token_secret = 'FAKESECRET'
@@ -72,6 +74,16 @@ class TestCopyFollowing(BaseTestCase):
         """Test case where target screen name is missing from session."""
         self._do_request(set_token=True, set_target_screen_name=False, expected_status=500,
                          expected_error_msg="Missing target screen name")
+
+    @mock.patch("twitter_virtual.views.twitter._should_limit_app_use")
+    def test_app_used_today(self, limit_app_use_mock):
+        """Test case where the user has already successfully used our application once in the last 24 hours."""
+        limit_app_use_mock.return_value = True
+        with self.client.session_transaction() as sess:
+            sess["last_app_use"] = datetime.datetime.utcnow().timestamp() - 3  # a few seconds ago
+        self._do_request(set_token=True, set_target_screen_name=True, expected_status=500,
+                         expected_error_msg="App used once today already")
+        limit_app_use_mock.assert_called()
 
     @patch_twitter_check_user_is_following(False)
     def test_user_not_following_target(self):
