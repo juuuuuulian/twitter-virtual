@@ -9,7 +9,7 @@ bp = Blueprint('oauth', __name__, url_prefix='/oauth')
 
 def _get_twitter_client():
     """Get a TwitterClient."""
-    return TwitterClient()
+    return TwitterClient.from_flask_app(current_app)
 
 
 def render_error(error_message):

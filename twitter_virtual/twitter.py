@@ -23,13 +23,15 @@ LOOKUP_FRIENDSHIPS_URL = "https://api.twitter.com/1.1/friendships/lookup.json"
 
 class TwitterClient:
     """Class for interacting with the Twitter API on behalf of a Twitter user via OAuth."""
-    def __init__(self):
-        """Load config and initialize an oauth2 client."""
-        consumer_key = os.environ.get('TWITTER_CONSUMER_KEY')
-        consumer_secret = os.environ.get('TWITTER_CONSUMER_SECRET')
-
+    def __init__(self, consumer_key, consumer_secret):
+        """Initialize an oauth2 client."""
         consumer = oauth2.Consumer(key=consumer_key, secret=consumer_secret)
         self.oauth_client = oauth2.Client(consumer)
+
+    @classmethod
+    def from_flask_app(cls, flask_app):
+        return cls(consumer_key=flask_app.config["TWITTER_CONSUMER_KEY"],
+                   consumer_secret=flask_app.config["TWITTER_CONSUMER_SECRET"])
 
     def get_request_token(self):
         """Get a Twitter OAuth request token for step 1 of OAuth flow."""
@@ -89,7 +91,7 @@ class TwitterClient:
         return token
 
     def get_following_user_ids(self, screen_name, count=5000):
-        """Get the full list of stringified IDs of users who screen_name follows."""
+        """Get the stringified IDs of the full list of users who screen_name follows."""
         params = {"screen_name": screen_name, "stringify_ids": "true", "count": count}
         headers, body = self.oauth_client.request(LIST_FRIENDS_URL + '?' + urlencode(params), method='GET')
 

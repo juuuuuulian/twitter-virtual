@@ -1,19 +1,38 @@
-"""Temporary."""
+"""Flask application setup."""
 
 from flask import Flask
-from .views import oauth, twitter
+from .database import db
 import os
 from dotenv import load_dotenv
 load_dotenv()
+from .models import AppUse
+from .views import oauth, twitter
 
 
 def setup_app():
-    """Set up Flask application - register views, load secret key, etc."""
+    """Set up Flask application - register views, load secret key, env config, etc."""
     app = Flask("twitter_virtual")
-    app.secret_key = os.environ['FLASK_SECRET_KEY']
+    app.secret_key = os.environ["FLASK_SECRET_KEY"]
+    app.config["LIMIT_APP_USE"] = bool(int(os.environ.get("LIMIT_APP_USE", 0)))
+    app.config["SQLALCHEMY_DATABASE_URI"] = os.environ["DATABASE_URL"]
+    app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
+    app.config["TWITTER_CONSUMER_KEY"] = os.environ["TWITTER_CONSUMER_KEY"]
+    app.config["TWITTER_CONSUMER_SECRET"] = os.environ["TWITTER_CONSUMER_SECRET"]
     app.register_blueprint(oauth.bp)
     app.register_blueprint(twitter.twitter_bp)
     return app
 
 
+def setup_db(flask_app, testing=False):
+    """Set up Flask-SQLAlchemy."""
+    if testing:
+        flask_app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///:memory:"
+        with flask_app.app_context():
+            db.init_app(flask_app)
+            db.create_all()
+    else:
+        db.init_app(flask_app)
+
+
 app = setup_app()
+setup_db(app)

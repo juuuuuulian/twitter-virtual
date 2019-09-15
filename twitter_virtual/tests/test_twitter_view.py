@@ -4,8 +4,10 @@ from twitter_virtual.tests.twitter_mocks import twitter_list, \
     patch_twitter_add_list_users, patch_twitter_check_user_is_following, patch_twitter_get_following_users, \
     patch_twitter_list_create, patch_twitter_list_delete, following_users
 from twitter_virtual.twitter import TwitterError, RateLimitHit, SoftRateLimitHit
+from twitter_virtual.models import AppUse
 import datetime
 import mock
+
 
 fake_token = 'FAKETOKEN'
 fake_token_secret = 'FAKESECRET'
@@ -28,8 +30,12 @@ class TestBegin(BaseTestCase):
         self.client.post("/twitter/begin", {}, status=500)
 
 
-class TestCopyFollowing(BaseTestCase):
-    """Integration tests for /twitter/copy_following."""
+class TestCopyFeed(BaseTestCase):
+    """Integration tests for /twitter/copy_feed."""
+    def setUp(self):
+        super().setUp()
+        self.app.config["LIMIT_APP_USE"] = False
+
     def _set_token(self, token, token_secret):
         with self.client.session_transaction() as sess:
             sess["token"] = token
@@ -57,7 +63,7 @@ class TestCopyFollowing(BaseTestCase):
         else:
             self._set_target_screen_name(None)
 
-        response = self.client.get("/twitter/copy_following", status=expected_status)
+        response = self.client.get("/twitter/copy_feed", status=expected_status)
 
         # check for an error message in the response body
         if expected_error_msg:
@@ -75,15 +81,28 @@ class TestCopyFollowing(BaseTestCase):
         self._do_request(set_token=True, set_target_screen_name=False, expected_status=500,
                          expected_error_msg="Missing target screen name")
 
-    @mock.patch("twitter_virtual.views.twitter._should_limit_app_use")
-    def test_app_used_today(self, limit_app_use_mock):
+    def test_app_used_today_session_flag(self):
         """Test case where the user has already successfully used our application once in the last 24 hours."""
-        limit_app_use_mock.return_value = True
+        self.app.config["LIMIT_APP_USE"] = True
         with self.client.session_transaction() as sess:
             sess["last_app_use"] = datetime.datetime.utcnow().timestamp() - 3  # a few seconds ago
         self._do_request(set_token=True, set_target_screen_name=True, expected_status=500,
                          expected_error_msg="App used once today already")
-        limit_app_use_mock.assert_called()
+        self.app.config["LIMIT_APP_USE"] = False
+
+    def test_app_used_today_database_flag(self):
+        """Test case where the user has already successfully used our application once in the last 24 hours."""
+        self.app.config["LIMIT_APP_USE"] = True
+        with self.app.app_context():
+            last_app_use = datetime.datetime.utcnow()
+            self.db.session.add(AppUse(date=last_app_use, remote="127.0.0.1"))  # insert an app_use record
+            self.db.session.commit()
+        self._do_request(set_token=True, set_target_screen_name=True, expected_status=500,
+                         expected_error_msg="App used once today already")
+        self.app.config["LIMIT_APP_USE"] = False
+        with self.app.app_context():
+            AppUse.query.delete()
+            self.db.session.commit()
 
     @patch_twitter_check_user_is_following(False)
     def test_user_not_following_target(self):
@@ -144,6 +163,11 @@ class TestCopyFollowing(BaseTestCase):
     @patch_twitter_check_user_is_following(True)
     def test_success(self):
         """Test successful following copy."""
+        with self.app.app_context():
+            self.assertEqual(AppUse.query.count(), 0, "No app uses in database")
         response = self._do_request(expected_status=302)
         self.assertTrue(("/twitter/success" in response.headers["Location"]), "Redirected to /twitter/success")
-
+        with self.app.app_context():
+            self.assertEqual(AppUse.query.count(), 1, "App use recorded")
+            AppUse.query.delete()
+            self.db.session.commit()
