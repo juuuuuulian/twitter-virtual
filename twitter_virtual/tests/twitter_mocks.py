@@ -60,7 +60,7 @@ def get_following_user_ids_response_mock(user_ids):
 
 
 def twitter_list(name, list_id, member_count):
-    return {"name": name, "id": list_id, "id_str": str(list_id), "member_count": member_count}
+    return {"name": name, "id": list_id, "id_str": str(list_id), "member_count": member_count, "uri": "/test/list/uri"}
 
 
 def twitter_list_json(name, list_id, member_count):

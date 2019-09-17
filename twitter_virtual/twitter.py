@@ -19,6 +19,7 @@ LIST_RATE_LIMITS_URL = "https://api.twitter.com/1.1/application/rate_limit_statu
 ADD_LIST_MEMBERS_URL = "https://api.twitter.com/1.1/lists/members/create_all.json"
 DELETE_LIST_URL = "https://api.twitter.com/1.1/lists/destroy.json"
 LOOKUP_FRIENDSHIPS_URL = "https://api.twitter.com/1.1/friendships/lookup.json"
+BASE_WEB_URL = "https://twitter.com"
 
 
 class TwitterClient:
@@ -66,6 +67,10 @@ class TwitterClient:
         if twitter_auth_url[-1] != '?':
             twitter_auth_url = twitter_auth_url + '?'
         return twitter_auth_url + urlencode({'oauth_token': oauth_token})
+
+    def get_full_list_url(self, twitter_list):
+        """Get a full Twitter URL for twitter_list."""
+        return BASE_WEB_URL + twitter_list["uri"]
 
     def set_client_token(self, oauth_token, oauth_token_secret, verifier=None):
         """Create an oauth2.Token and set it on our oauth_client."""

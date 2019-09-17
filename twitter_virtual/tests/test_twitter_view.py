@@ -165,8 +165,9 @@ class TestCopyFeed(BaseTestCase):
         """Test successful following copy."""
         with self.app.app_context():
             self.assertEqual(AppUse.query.count(), 0, "No app uses in database")
-        response = self._do_request(expected_status=302)
-        self.assertTrue(("/twitter/success" in response.headers["Location"]), "Redirected to /twitter/success")
+        response = self._do_request(expected_status=200)
+        self._check_response_body(response, "Success")
+        # self.assertTrue(("/twitter/success" in response.headers["Location"]), "Redirected to /twitter/success")
         with self.app.app_context():
             self.assertEqual(AppUse.query.count(), 1, "App use recorded")
             AppUse.query.delete()

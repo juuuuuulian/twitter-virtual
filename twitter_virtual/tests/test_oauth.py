@@ -50,7 +50,7 @@ class TestOAuthCallback(BaseTestCase):
             sess['token'] = fake_token
             sess['token_secret'] = fake_token_secret
         response = self.client.get("/oauth/callback", {"oauth_verifier": fake_verifier}, status=302)
-        self.assertTrue(("/twitter/copy_following" in response.headers["Location"]), "Redirected to twitter view")
+        self.assertTrue(("/twitter/copy_feed" in response.headers["Location"]), "Redirected to twitter view")
         self.assertEqual(response.session.get("token"), fake_token, "Access token in session")
         self.assertEqual(response.session.get("token_secret"), fake_token_secret, "Access token secret in session")
 

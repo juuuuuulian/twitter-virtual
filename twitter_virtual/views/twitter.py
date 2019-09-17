@@ -5,7 +5,7 @@ from ..twitter import TwitterClient, RateLimitHit, SoftRateLimitHit, TooManyFoll
 import datetime
 from ..database import db
 from ..models import AppUse
-from sqlalchemy import text
+# from ..utils import get_twitter_client, should_limit_app_use, record_app_use, app_used_today
 
 
 twitter_bp = Blueprint('twitter', __name__, url_prefix="/twitter")
@@ -65,31 +65,32 @@ def _get_following_user_ids(client, screen_name):
 def _create_new_private_list(twitter_client, screen_name):
     """Create a new private list for the user named '<screen_name>'."""
     try:
-        new_list = twitter_client.create_private_list(screen_name)
-        return new_list["id_str"]
+        twitter_list = twitter_client.create_private_list(screen_name)
+        return twitter_list
     except RateLimitHit as e:
         raise FeedCopyError("Please try again in 30 minutes", e)
     except TwitterError as e:
         raise FeedCopyError("Please try again later", e)
 
 
-def _add_user_ids_to_list(twitter_client, user_ids, list_id):
+def _add_user_ids_to_list(twitter_client, user_ids, twitter_list):
     """Add users in user_ids as members to a list denoted by list_id."""
     # go through the list a chunk at a time, adding each to the new private list
+    twitter_list_id = twitter_list["id_str"]
     chunk_size = 100
     bottom, top = 0, chunk_size
     updated_list = None
     while bottom <= len(user_ids) - 1:
         members_chunk = user_ids[bottom:top]
         try:
-            updated_list = twitter_client.add_users_to_list(list_id, members_chunk)
+            updated_list = twitter_client.add_users_to_list(twitter_list_id, members_chunk)
         except RateLimitHit as e:
-            raise FeedCopyError("Please try again in 30 minutes", e, list_id)
+            raise FeedCopyError("Please try again in 30 minutes", e, twitter_list_id)
         except SoftRateLimitHit as e:
             raise FeedCopyError("Please try again tomorrow - our application has hit a Twitter rate limit",
-                                e, list_id)
+                                e, twitter_list_id)
         except TwitterError as e:
-            raise FeedCopyError("Please try again later", e, list_id)
+            raise FeedCopyError("Please try again later", e, twitter_list_id)
 
         bottom += chunk_size
         top += chunk_size
@@ -99,16 +100,16 @@ def _add_user_ids_to_list(twitter_client, user_ids, list_id):
     final_member_count = updated_list["member_count"]
     if final_member_count <= (len(user_ids) - chunk_size):
         raise FeedCopyError("Please try again tomorrow - our application has hit a Twitter rate limit",
-                            SoftRateLimitHit(), list_id)
+                            SoftRateLimitHit(), twitter_list_id)
 
 
 def _copy_user_following_to_new_list(twitter_client, screen_name):
     """Find following user IDs for screen_name and add them to a new private list for the current user."""
     _check_user_is_following_target(twitter_client, screen_name)
     following_user_ids = _get_following_user_ids(twitter_client, screen_name)
-    new_list_id = _create_new_private_list(twitter_client, screen_name)
-    _add_user_ids_to_list(twitter_client, following_user_ids, new_list_id)
-    return new_list_id
+    twitter_list = _create_new_private_list(twitter_client, screen_name)
+    _add_user_ids_to_list(twitter_client, following_user_ids, twitter_list)
+    return twitter_list
 
 
 def _handle_cleanup(client, feed_copy_exception):
@@ -204,19 +205,20 @@ def copy_feed():
     client.set_client_token(token, token_secret)
 
     try:
-        _copy_user_following_to_new_list(client, target_screen_name)
+        twitter_list = _copy_user_following_to_new_list(client, target_screen_name)
     except FeedCopyError as e:
         _handle_cleanup(client, e)
         return render_error(e.user_error_message)
 
     _record_app_use()
 
-    return redirect("/twitter/success")
+    return render_template("success.html", new_list_url=client.get_full_list_url(twitter_list))
+    # return redirect("/twitter/success")
 
 
 @twitter_bp.route("/success")
 def success():
     """Show the user a success page."""
-    return render_error("Success!")
+    return render_template("success.html", new_list_url="https://twitter.com/chinese_steel/lists/my-test-list")
 
 

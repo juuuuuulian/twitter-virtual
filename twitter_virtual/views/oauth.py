@@ -2,7 +2,7 @@
 from flask import Blueprint, session, redirect, request, current_app, render_template, make_response
 from ..twitter import TwitterClient, RateLimitHit, SoftRateLimitHit, TooManyFollowing, ZeroFollowing, TwitterError, \
     OAuthRequestError, InvalidOAuthResponseError
-
+# from ..utils import get_twitter_client
 
 bp = Blueprint('oauth', __name__, url_prefix='/oauth')
 
@@ -55,4 +55,4 @@ def callback():
     except InvalidOAuthResponseError:
         return render_error("Invalid OAuth Response")
 
-    return redirect("/twitter/copy_following")
+    return redirect("/twitter/copy_feed")

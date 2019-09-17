@@ -6,7 +6,7 @@ import os
 from dotenv import load_dotenv
 load_dotenv()
 from .models import AppUse
-from .views import oauth, twitter
+from .views import oauth, twitter, site
 
 
 def setup_app():
@@ -20,6 +20,7 @@ def setup_app():
     app.config["TWITTER_CONSUMER_SECRET"] = os.environ["TWITTER_CONSUMER_SECRET"]
     app.register_blueprint(oauth.bp)
     app.register_blueprint(twitter.twitter_bp)
+    app.register_blueprint(site.site_bp)
     return app
 
 
