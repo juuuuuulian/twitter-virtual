@@ -1,25 +1,11 @@
 """View functions for Twitter API interaction."""
 from flask import Blueprint, session, redirect, request, current_app, render_template, make_response
-from ..twitter import TwitterClient, RateLimitHit, SoftRateLimitHit, TooManyFollowing, ZeroFollowing, TwitterError, \
+from ..twitter import RateLimitHit, SoftRateLimitHit, TooManyFollowing, ZeroFollowing, TwitterError, \
     UserNotFollowingTarget
-import datetime
-from ..database import db
-from ..models import AppUse
-# from ..utils import get_twitter_client, should_limit_app_use, record_app_use, app_used_today
+from ..utils import get_twitter_client, should_limit_app_use, record_app_use, app_used_today
 
 
 twitter_bp = Blueprint('twitter', __name__, url_prefix="/twitter")
-
-def _get_remote_addr():
-    if request.remote_addr:
-        return request.remote_addr
-    else:
-        # Flask-WebTest is making the request
-        return "127.0.0.1"
-
-
-def _get_twitter_client():
-    return TwitterClient.from_flask_app(current_app)
 
 
 class FeedCopyError(Exception):
@@ -31,10 +17,10 @@ class FeedCopyError(Exception):
         self.new_list_id = new_list_id
 
 
-def _check_user_is_following_target(client, screen_name):
+def check_user_is_following_target(twitter_client, screen_name):
     """Check that the current user is following screen_name on Twitter, and raise an error if not."""
     try:
-        if client.current_user_is_following_user(screen_name) is False:
+        if twitter_client.current_user_is_following_user(screen_name) is False:
             raise FeedCopyError("Please enter a screen name that you are following", UserNotFollowingTarget())
     except RateLimitHit as e:
         raise FeedCopyError("Please try again in 30 minutes", e)
@@ -42,10 +28,10 @@ def _check_user_is_following_target(client, screen_name):
         raise FeedCopyError("Please try again later", e)
 
 
-def _get_following_user_ids(client, screen_name):
+def get_following_user_ids(twitter_client, screen_name):
     """Fetch all user IDs that screen_name is following, and raise an error if there are more than 5000."""
     try:
-        following_users = client.get_following_user_ids(screen_name, count=5000)
+        following_users = twitter_client.get_following_user_ids(screen_name, count=5000)
         user_ids = following_users.get("ids", [])
 
         # following more than 5000 users
@@ -62,7 +48,7 @@ def _get_following_user_ids(client, screen_name):
         raise FeedCopyError("Please try again later", e)
 
 
-def _create_new_private_list(twitter_client, screen_name):
+def create_new_private_list(twitter_client, screen_name):
     """Create a new private list for the user named '<screen_name>'."""
     try:
         twitter_list = twitter_client.create_private_list(screen_name)
@@ -73,7 +59,7 @@ def _create_new_private_list(twitter_client, screen_name):
         raise FeedCopyError("Please try again later", e)
 
 
-def _add_user_ids_to_list(twitter_client, user_ids, twitter_list):
+def add_user_ids_to_list(twitter_client, user_ids, twitter_list):
     """Add users in user_ids as members to a list denoted by list_id."""
     # go through the list a chunk at a time, adding each to the new private list
     twitter_list_id = twitter_list["id_str"]
@@ -103,16 +89,16 @@ def _add_user_ids_to_list(twitter_client, user_ids, twitter_list):
                             SoftRateLimitHit(), twitter_list_id)
 
 
-def _copy_user_following_to_new_list(twitter_client, screen_name):
+def copy_user_following_to_new_list(twitter_client, screen_name):
     """Find following user IDs for screen_name and add them to a new private list for the current user."""
-    _check_user_is_following_target(twitter_client, screen_name)
-    following_user_ids = _get_following_user_ids(twitter_client, screen_name)
-    twitter_list = _create_new_private_list(twitter_client, screen_name)
-    _add_user_ids_to_list(twitter_client, following_user_ids, twitter_list)
+    check_user_is_following_target(twitter_client, screen_name)
+    following_user_ids = get_following_user_ids(twitter_client, screen_name)
+    twitter_list = create_new_private_list(twitter_client, screen_name)
+    add_user_ids_to_list(twitter_client, following_user_ids, twitter_list)
     return twitter_list
 
 
-def _handle_cleanup(client, feed_copy_exception):
+def handle_cleanup(twitter_client, feed_copy_exception):
     """Log the exception and delete the newly created list (if one exists)."""
     orig_exception = feed_copy_exception.orig_exception
     current_app.logger.exception(f'Fatal following copy error! {str(orig_exception)}')
@@ -121,55 +107,17 @@ def _handle_cleanup(client, feed_copy_exception):
     # clean up list
     if new_list_id:
         try:
-            client.delete_list(new_list_id)
+            twitter_client.delete_list(new_list_id)
         except TwitterError as e:
             current_app.logger.exception(f'Failed to clean up a list ({new_list_id})! {str(orig_exception)}')
             return False
 
-    current_app.logger.info("Cleaned up a list")
+    current_app.logger.info("Cleaned up a twitter list after an exception occurred")
     return True
 
 
 def render_error(error_message):
-    return make_response(render_template("error.html", error_message=error_message), 500)
-
-
-def _app_used_today():
-    """Check the session and the backend database for a record of app use from the last 24 hours."""
-    now = datetime.datetime.utcnow()
-    day_length_in_seconds = 60 * 60 * 24
-    remote_ip = _get_remote_addr()
-
-    # check the database for app_use records with this ip in the last 24 hrs
-    yesterday = datetime.datetime.fromtimestamp(now.timestamp() - day_length_in_seconds)
-    app_uses = AppUse.query.filter(AppUse.remote == str(remote_ip),
-                                   AppUse.date >= yesterday.isoformat()).count()
-    if app_uses:
-        return True
-
-    # check the session
-    last_app_use = session.get("last_app_use")
-    if last_app_use and (now.timestamp() - last_app_use < day_length_in_seconds):
-        return True
-
-    return False
-
-
-def _should_limit_app_use():
-    if current_app.config["LIMIT_APP_USE"]:
-        return True
-    return False
-
-
-def _record_app_use():
-    """Record last app use in the session and the backend database."""
-    # session
-    now = datetime.datetime.utcnow().timestamp()
-    session["last_app_use"] = now
-
-    # database
-    db.session.add(AppUse(remote=str(_get_remote_addr())))
-    db.session.commit()
+    return make_response(render_template("index.html", error_message=error_message), 500)
 
 
 @twitter_bp.route("/begin", methods=['POST'])
@@ -198,21 +146,26 @@ def copy_feed():
     if target_screen_name is None:
         return render_error("Missing target screen name")
 
-    if _should_limit_app_use() and _app_used_today():
+    if should_limit_app_use() and app_used_today():
         return render_error("App used once today already")
 
-    client = _get_twitter_client()
-    client.set_client_token(token, token_secret)
+    twitter_client = get_twitter_client()
+    twitter_client.set_client_token(token, token_secret)
 
+    #record_app_use()
+    #return 'Success!'
     try:
-        twitter_list = _copy_user_following_to_new_list(client, target_screen_name)
+        twitter_list = copy_user_following_to_new_list(twitter_client, target_screen_name)
     except FeedCopyError as e:
-        _handle_cleanup(client, e)
+        handle_cleanup(twitter_client, e)
         return render_error(e.user_error_message)
+    except Exception as e:
+        # unknown exception
+        return render_error("Oops! Unknown server error!")  # TODO: improve this
 
-    _record_app_use()
+    record_app_use()
 
-    return render_template("success.html", new_list_url=client.get_full_list_url(twitter_list))
+    return render_template("success.html", new_list_url=twitter_client.get_full_list_url(twitter_list))
     # return redirect("/twitter/success")
 
 

@@ -5,10 +5,56 @@
     <title>Twitter Virtualizer</title>
 </head>
 <body>
+    {% if last_app_use %}
+    <div>Last app use (UTC): {{ last_app_use|e }}</div>
+    <div>Next available app use (local): <span id="local_time"></span></div>
+    <div>Now (local): <span id="now"></span></div>
+    <div>Secs til next app use: <span id="time_until"></span></div>
+    <div>Timer: <span id="timer"></span></div>
+    {% endif %}
+    {% if error_message %}
+    <div>Oops! It looks like there was an error: {{ error_message }}</div>
+    {% endif %}
+    <div>
     <h1>Enter a screen name</h1>
     <form method="POST" action="/twitter/begin">
         <input type="text" name="target_screen_name" />
         <input type="submit" value="Submit" />
     </form>
+    </div>
 </body>
+{% if last_app_use %}
+<script type="text/javascript">
+    (function() {
+        var last_app_use = new Date({{ last_app_use|tojson }});
+        var ms_in_day = 60 * 60 * 24 * 1000;
+        var next_available_use = new Date(last_app_use.getTime() + ms_in_day);
+        var now = new Date();
+
+        if (now.getTime() > next_available_use.getTime())
+            return false;
+
+        document.getElementById('local_time').innerText = next_available_use.toString();
+        document.getElementById('now').innerText = now.toString();
+        document.getElementById('time_until').innerText = (next_available_use.getTime() - now.getTime()) / 1000;
+
+        function startCountdown(secs_from_now) {
+            var timer = setInterval(function() {
+                var hrs = Math.floor(secs_from_now / 3600);
+                var mins = Math.floor((secs_from_now % 3600) / 60);
+                var secs = Math.floor((secs_from_now % 3600) % 60);
+
+                document.getElementById('timer').innerText = hrs.toString() + "h" + mins.toString() + "m" + secs + "s";
+
+                if (secs_from_now != 0) {
+                    secs_from_now = secs_from_now - 1;
+                }
+            }, 1000);
+        }
+
+        startCountdown(((next_available_use.getTime() - now.getTime()) / 1000));
+
+    })();
+</script>
+{% endif %}
 </html>

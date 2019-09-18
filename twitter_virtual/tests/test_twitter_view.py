@@ -6,7 +6,6 @@ from twitter_virtual.tests.twitter_mocks import twitter_list, \
 from twitter_virtual.twitter import TwitterError, RateLimitHit, SoftRateLimitHit
 from twitter_virtual.models import AppUse
 import datetime
-import mock
 
 
 fake_token = 'FAKETOKEN'
@@ -162,7 +161,7 @@ class TestCopyFeed(BaseTestCase):
     @patch_twitter_get_following_users(following_users(list(range(1, 221))))
     @patch_twitter_check_user_is_following(True)
     def test_success(self):
-        """Test successful following copy."""
+        """Test successful feed copy."""
         with self.app.app_context():
             self.assertEqual(AppUse.query.count(), 0, "No app uses in database")
         response = self._do_request(expected_status=200)

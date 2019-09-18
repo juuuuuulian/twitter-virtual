@@ -1,24 +1,18 @@
 """View functions for Twitter authentication."""
-from flask import Blueprint, session, redirect, request, current_app, render_template, make_response
-from ..twitter import TwitterClient, RateLimitHit, SoftRateLimitHit, TooManyFollowing, ZeroFollowing, TwitterError, \
-    OAuthRequestError, InvalidOAuthResponseError
-# from ..utils import get_twitter_client
+from flask import Blueprint, session, redirect, request, render_template, make_response
+from ..twitter import OAuthRequestError, InvalidOAuthResponseError
+from ..utils import get_twitter_client
 
 bp = Blueprint('oauth', __name__, url_prefix='/oauth')
 
 
-def _get_twitter_client():
-    """Get a TwitterClient."""
-    return TwitterClient.from_flask_app(current_app)
-
-
 def render_error(error_message):
-    return make_response(render_template("error.html", error_message=error_message), 500)
+    return make_response(render_template("index.html", error_message=error_message), 500)
 
 
 @bp.route('/begin', methods=('GET', 'POST'))
 def begin():
-    twitter_client = _get_twitter_client()
+    twitter_client = get_twitter_client()
     try:
         token = twitter_client.get_request_token()
     except OAuthRequestError:
@@ -35,7 +29,7 @@ def begin():
 
 @bp.route('/callback', methods=('GET', 'POST'))
 def callback():
-    twitter_client = _get_twitter_client()
+    twitter_client = get_twitter_client()
     oauth_verifier = request.args.get('oauth_verifier')
     token = session.get('token')
     token_secret = session.get('token_secret')
