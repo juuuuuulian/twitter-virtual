@@ -4,3 +4,4 @@ venv_new
 .idea
 __pycache__/
 *.py[cod]
+node_modules
