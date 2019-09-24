@@ -1,50 +1,90 @@
-function checkLastAppUse() {
+function getLastAppUseValue() {
     var last_app_use_ele = document.getElementById('last_app_use');
     if (last_app_use_ele == null)
-        return;
+        return null;
     var last_app_use = new Date(last_app_use_ele.getAttribute('data-value'));
+    return last_app_use;
+}
+
+function getSecondsTilNextAppUse() {
+    var last_app_use = getLastAppUseValue();
+    if (last_app_use == null)
+        return 0;
     var ms_in_day = 60 * 60 * 24 * 1000;
     var next_available_use = new Date(last_app_use.getTime() + ms_in_day);
     var now = new Date();
 
     if (now.getTime() > next_available_use.getTime())
-        return false;
+        return 0;
 
-    document.getElementById('local_time').innerText = next_available_use.toString();
-    document.getElementById('now').innerText = now.toString();
-    document.getElementById('time_until').innerText = (next_available_use.getTime() - now.getTime()) / 1000;
+    return Math.floor((next_available_use.getTime() - now.getTime()) / 1000);
+}
 
-    function startCountdown(secs_from_now) {
-        var timer = setInterval(function() {
-            var hrs = Math.floor(secs_from_now / 3600);
-            var mins = Math.floor((secs_from_now % 3600) / 60);
-            var secs = Math.floor((secs_from_now % 3600) % 60);
+function initApp() {
+    let secondsLeft = getSecondsTilNextAppUse();
 
-            document.getElementById('timer').innerText = hrs.toString() + "h" + mins.toString() + "m" + secs + "s";
+    function AppUseTimer(props) {
+        const [secondsLeft, setSecondsLeft] = React.useState(props.seconds)
 
-            if (secs_from_now != 0) {
-                secs_from_now = secs_from_now - 1;
+        function formatTimer(secs) {
+            var hrs = Math.floor(secs / 3600);
+            var mins = Math.floor((secs % 3600) / 60);
+            var secs = Math.floor((secs % 3600) % 60);
+
+            return hrs.toString() + "h" + mins.toString() + "m" + secs + "s";
+        }
+
+        React.useEffect(() => {
+            console.log('starting timer');
+            function startAppUseTimer(secs_from_now) {
+                var timer = setInterval(function() {
+                    console.log('tick: ' + secs_from_now.toString());
+                    secs_from_now = secs_from_now - 1;
+                    setSecondsLeft(secs_from_now);
+
+                    if (secs_from_now == 0) {
+                        clearInterval(timer);
+                        console.log('calling onTimerFinished');
+                        props.onTimerFinished();    
+                    }
+                }, 1000);
             }
-        }, 1000);
+            startAppUseTimer(secondsLeft);
+        }, []);
+
+        if (secondsLeft == 0) {
+            return null;
+        } else {
+            return <div>
+                React Timer: {formatTimer(secondsLeft)}
+            </div>
+        }
     }
 
-    startCountdown(((next_available_use.getTime() - now.getTime()) / 1000));
-
-
-    function App() {
-        const [message, setMessage] = React.useState('React app!');
-    
+    function AppForm() {
         return <div>
-            {message}
-            <button onClick={() => setMessage('New Message')}>Click Here</button>
+            <h1>Enter a screen name</h1>
+            <form method="POST" action="/twitter/begin">
+                <input type="text" name="target_screen_name" />
+                <input type="submit" value="Submit" />
+            </form>
+        </div>
+    }
+
+    function App(props) {
+        const [timerFinished, setTimerFinished] = React.useState((props.seconds == 0 ? true : false));
+
+        return <div>
+            { props.seconds != 0 && <AppUseTimer seconds={props.seconds} onTimerFinished={() => setTimerFinished(true)} /> }
+            { (props.seconds == 0 || timerFinished) && <AppForm /> }
         </div>
     }
     
     ReactDOM.render(
-        <App />,
+        <App seconds={secondsLeft} />,
         document.getElementById('react-container')
     );    
 
 }
 
-window.onload = checkLastAppUse;
+window.onload = initApp;

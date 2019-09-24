@@ -8,24 +8,12 @@
     <script type="text/javascript" charset="UTF-8" src="/static/index.js"></script>
 </head>
 <body>
-    <div id="react-container"></div>
     {% if last_app_use %}
     <span id="last_app_use" style="display: none" data-value="{{ last_app_use|e }}"></span>
-    <div>Last app use (UTC): {{ last_app_use|e }}</div>
-    <div>Next available app use (local): <span id="local_time"></span></div>
-    <div>Now (local): <span id="now"></span></div>
-    <div>Secs til next app use: <span id="time_until"></span></div>
-    <div>Timer: <span id="timer"></span></div>
     {% endif %}
     {% if error_message %}
-    <div>Oops! It looks like there was an error: {{ error_message }}</div>
+    <div>Oops! It looks like there was an error: {{ error_message|e }}</div>
     {% endif %}
-    <div>
-    <h1>Enter a screen name</h1>
-    <form method="POST" action="/twitter/begin">
-        <input type="text" name="target_screen_name" />
-        <input type="submit" value="Submit" />
-    </form>
-    </div>
+    <div id="react-container"></div>
 </body>
 </html>
