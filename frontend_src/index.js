@@ -1,132 +1,12 @@
-const sampleUsers = [
-    {
-        name: "OJ Simpson",
-        username: "TheRealOJ32",
-        following: 24
-    },
-    {
-        name: "Mahmoud Ahmadinejad",
-        username: "Ahmadinejad1956",
-        following: 39
-    },
-    {
-        name: "Cornel West",
-        username: "CornelWest",
-        following: 179
-    },
-    {
-        name: "Norm Macdonald",
-        username: "normmacdonald",
-        following: 732
-    },
-    {
-        name: "Charlie Warzel",
-        username: "cwarzel",
-        following: 1505
-    },
-    {
-        name: "Jose Canseco",
-        username: "JoseCanseco",
-        following: 64
-    },
-    {
-        name: "Paul Krugman",
-        username: "paulkrugman",
-        following: 47
-    },
-    {
-        name: "Alexandria Ocasio-Cortez",
-        username: "AOC",
-        following: 1675
-    },
-    {
-        name: "DouthatNYT",
-        username: "DouthatNYT",
-        following: 291
-    },
-    {
-        name: "Robert Reich",
-        username: "RBReich",
-        following: 276
-    },
-    {
-        name: "Nate Silver",
-        username: "NateSilver538",
-        following: 1190
-    },
-    {
-        name: "ICE T",
-        username: "FINALLEVEL",
-        following: 1468
-    },
-    {
-        name: "Donald Trump",
-        username: "realDonaldTrump",
-        following: 47
-    },
-    {
-        name: "Kanye West",
-        username: "kanyewest",
-        following: 265
-    },
-    {
-        name: "Wu-Tang Financial",
-        username: "Wu_Tang_Finance",
-        following: 2053
-    },
-    {
-        name: "Jack",
-        username: "jack",
-        following: 4033
-    },
-    {
-        name: "Bret Easton Ellis",
-        username: "BretEastonEllis",
-        following: 483
-    },
-    {
-        name: "George Monbiot",
-        username: "GeorgeMonbiot",
-        following: 1265
-    },
-    {
-        name: "Mike Gravel",
-        username: "MikeGravel",
-        following: 888
-    },
-    {
-        name: "Tim Heidecker",
-        username: "timheidecker",
-        following: 377
-    },
-    {
-        name: "Bernie Sanders",
-        username: "BernieSanders",
-        following: 1392
-    },
-    {
-        name: "Michael Moore",
-        username: "MMFlint",
-        following: 522
-    },
-    {
-        name: "Rob Delaney",
-        username: "robdelaney",
-        following: 3136
-    },
-    {
-        name: "Oprah Winfrey",
-        username: "Oprah",
-        following: 307
-    }
-]
+import React, { Component } from 'react';
+import ReactDOM from 'react-dom';
+import { Button, Container, Row, Col } from 'react-bootstrap';
 
 function getLastAppUseValue() {
-    var last_app_use_ele = document.getElementById('last_app_use');
-    if (last_app_use_ele == null)
+    let last_app_use = window.APP_VARS.last_app_use;
+    if (last_app_use == null)
         return null;
-    var last_app_use = new Date(last_app_use_ele.getAttribute('data-value'));
-    return last_app_use;
+    return new Date(last_app_use);
 }
 
 function getSecondsTilNextAppUse() {
@@ -143,9 +23,14 @@ function getSecondsTilNextAppUse() {
     return Math.floor((next_available_use.getTime() - now.getTime()) / 1000);
 }
 
+function getSampleAccounts() {
+    return window.APP_VARS.sample_accounts;
+}
+
 function initApp() {
     let secondsLeft = getSecondsTilNextAppUse();
 
+    // countdown til next app availability - replaces the form if the user has used the app today
     function AppUseTimer(props) {
         const [secondsLeft, setSecondsLeft] = React.useState(props.seconds);
 
@@ -181,18 +66,18 @@ function initApp() {
         }
     }
 
-    function SampleUserButton(props) {
+    function SampleAccount(props) {
         return <div>
             {props.name} (@{props.username} - Following {props.following})
             <button onClick={() => props.clickHandler(props.username)}>Click</button>
         </div>
     }
 
-    function SampleUsersCarousel(props) {
+    function SampleAccountsCarousel(props) {
         return <div>
             <ul>
                 {props.users.map((user) => 
-                    <li><SampleUserButton name={user.name} username={user.username} following={user.following} clickHandler={props.optionClickHandler} /></li>
+                    <li><SampleAccount name={user.name} username={user.username} following={user.following} clickHandler={props.optionClickHandler} /></li>
                 )}
             </ul>
         </div>
@@ -201,7 +86,7 @@ function initApp() {
     function AppForm(props) {
         return <div>
             <form method="POST" action="/twitter/begin">
-                <input type="text" name="target_screen_name" value={props.targetScreenName} />
+                <input type="text" name="target_screen_name" />
                 <input type="submit" value="Submit" />
             </form>
         </div>
@@ -210,17 +95,65 @@ function initApp() {
     function App(props) {
         const [timerFinished, setTimerFinished] = React.useState((props.seconds == 0 ? true : false));
         const [targetScreenName, setTargetScreenName] = React.useState("");
-
-        return <div>
-            { props.seconds != 0 && <AppUseTimer seconds={props.seconds} onTimerFinished={() => setTimerFinished(true)} /> }
-            { (props.seconds == 0 || timerFinished) && 
-                <div>
-                    <AppForm targetScreenName={targetScreenName} />
-                    <SampleUsersCarousel users={sampleUsers} optionClickHandler={(screenName) => setTargetScreenName(screenName)} />
-                </div>
-            }
-            <Button label="Hello World!" variant="brand" onClick={() => alert('Hello, World!')} />
-        </div>
+        const sampleAccounts = getSampleAccounts();
+    
+        return <Container>
+            <Row>
+                <Col>
+                    <div>
+                        "Twitter is a highly individual experience that works like a collective hallucination, not a community. It’s probably totally fine that a good chunk of the nation’s elites spend so much time on it. What could go wrong?"
+                    </div>
+                    <div>
+                        -- <a href="https://www.theatlantic.com/technology/archive/2019/04/twitter-is-not-america/587770/" target="_blank">Alexis C. Madrigal, The Atlantic</a>
+                    </div>
+                </Col>
+            </Row>
+            <Row>
+                <Col>
+                    <div>
+                        The Twitter timeline looks much the same to everybody. But have you seen another person's Twitter timeline before?
+                    </div>
+                </Col>
+            </Row>
+            <Row>
+                <Col>
+                    <div>
+                        What would the President see if they opened Twitter on their phone right now? Or Bernie Sanders? Or Kanye West? Or your friend?
+                    </div>
+                </Col>
+            </Row>
+            <Row>
+                <Col>
+                    <div>
+                        This free, experimental tool can show you. All that you'll need is a Twitter account, and the username of another person who you happen to follow. Or, you can choose a sample account from the list below.
+                    </div>
+                </Col>
+            </Row>
+            <Row>
+                <Col>
+                    <div>
+                        <div>
+                            - We do not store Twitter user credentials, nor any other Twitter data related to your account.
+                        </div>
+                        <div>
+                            - We will never post anything to your account. <a href="https://twitter.com/settings/applications" target="_blank">De-authorizing our application is easy</a>, and we recommend doing so afterwards.
+                        </div>
+                    </div>
+                </Col>
+            </Row>
+            <Row>
+                <Col>
+                    { props.seconds != 0 && <AppUseTimer seconds={props.seconds} onTimerFinished={() => setTimerFinished(true)} /> }
+                    { (props.seconds == 0 || timerFinished) && 
+                        <div>
+                            <AppForm targetScreenName={targetScreenName} />
+                            <SampleAccountsCarousel users={sampleAccounts} optionClickHandler={(screenName) => setTargetScreenName(screenName)} />
+                            <Button>My Button</Button>
+                        </div>
+                    }
+                </Col>
+            </Row>
+        </Container>
     } 
     
     ReactDOM.render(

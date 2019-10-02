@@ -19,6 +19,7 @@ LIST_RATE_LIMITS_URL = "https://api.twitter.com/1.1/application/rate_limit_statu
 ADD_LIST_MEMBERS_URL = "https://api.twitter.com/1.1/lists/members/create_all.json"
 DELETE_LIST_URL = "https://api.twitter.com/1.1/lists/destroy.json"
 LOOKUP_FRIENDSHIPS_URL = "https://api.twitter.com/1.1/friendships/lookup.json"
+SHOW_USER_URL = "https://api.twitter.com/1.1/users/show.json"
 BASE_WEB_URL = "https://twitter.com"
 
 
@@ -121,6 +122,23 @@ class TwitterClient:
         if len(users) != 0 and ('following' in users[0]["connections"]):
             return True
         return False
+
+    def get_user_profile_img_url(self, screen_name):
+        """Get the Twitter profile image URL for <screen_name> (original size)."""
+        params = {"screen_name": screen_name}
+        headers, body = self.oauth_client.request(SHOW_USER_URL + '?' + urlencode(params))
+
+        if headers.status != 200:
+            if headers.status == RateLimitHit.status:
+                raise RateLimitHit("Too many user info lookup requests in a 15-minute window!", headers, body)
+            raise TwitterError("User info lookup failed", headers, body)
+
+        user_info = json.loads(body.decode())
+        profile_img_url = user_info.get("profile_image_url")
+
+        if profile_img_url:
+            return profile_img_url.replace("_normal.", ".")
+        return None
 
     def create_private_list(self, screen_name):
         """Create a private, empty Twitter list named '<screen_name>'."""
