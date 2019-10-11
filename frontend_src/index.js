@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import ReactDOM from 'react-dom';
 import { Button, Container, Row, Col, Card, InputGroup, Form, Modal } from 'react-bootstrap';
+import Recaptcha from 'react-recaptcha';
 
 function getLastAppUseValue() {
     let last_app_use = window.APP_VARS.last_app_use;
@@ -57,7 +58,7 @@ function AppUseTimer(props) {
         return () => {
             clearInterval(appUseTimer);
         }
-    }, []); // [] = skip effect on re-render
+    }, []); // [] = skip new effect create on component update
 
     if (secondsLeft == 0) {
         return null;
@@ -128,14 +129,19 @@ function SubmitModal(props) {
                     <Col>Here's some modal content!</Col>
                 </Row>
                 <Row>
-                    <Col>Here's a reCAPTCHA!</Col>
+                    <Col>
+                        <Recaptcha 
+                            sitekey="6LcUOL0UAAAAABQxy5sqdpKRLeVAmF9nMhglXQ6E"  // TODO: move this to a prop
+                            verifyCallback={props.onCaptchaVerified}
+                        />
+                    </Col>
                 </Row>
             </Modal.Body>
             <Modal.Footer>
                 <Button variant="secondary" onClick={props.onHide}>
                     Cancel
                 </Button>
-                <Button disabled={true} variant="success" onClick={props.onCompleted}>
+                <Button disabled={ props.finishEnabled ? false : true } variant="success" onClick={props.onCompleted}>
                     I Understand, Proceed
                 </Button>
             </Modal.Footer>
@@ -149,7 +155,17 @@ function AppForm(props) {
             <InputGroup.Prepend>
                 <InputGroup.Text>@</InputGroup.Text>
             </InputGroup.Prepend>
-            <Form.Control type="text" name="target_screen_name" placeholder="AccountName" value={props.targetScreenName} onChange={(event) => props.setTargetScreenName(event.target.value)} />
+            <Form.Control 
+                type="text" 
+                name="target_screen_name" 
+                placeholder="AccountName" 
+                value={props.targetScreenName} 
+                onChange={(event) => props.setTargetScreenName(event.target.value)} 
+            />
+            <Form.Control
+                type="hidden"
+                name="captcha_response_token"
+                value={props.captchaResponseToken} />
             <Button variant="success" type="Submit">GO</Button> 
         </InputGroup>
     </Form>
@@ -208,32 +224,52 @@ function App(props) {
     const [targetScreenName, setTargetScreenName] = React.useState("");
     const [showSubmitModal, setShowSubmitModal] = React.useState(false);
     const [submitModalCompleted, setSubmitModalCompleted] = React.useState(false);
+    const [captchaResponseToken, setCaptchaResponseToken] = React.useState("");
     let formEle = React.createRef();
 
     let handleFormSubmit = (event) => {
+        // modal+captcha completed, submit the form
         if (submitModalCompleted)
             return true;
+        // prevent form submit, open the modal
         event.preventDefault();
         setShowSubmitModal(true);
     };
 
     let handleSubmitModalHide = () => {
+        // hide the modal
         setShowSubmitModal(false);
+        // reset modal completion status
         setSubmitModalCompleted(false);
+        // clear recaptcha token
+        setCaptchaResponseToken("");
     };
 
     let handleSubmitModalCompleted = () => {
+        // mark modal as completed and submit the form
         setSubmitModalCompleted(true);
         formEle.current.submit();
     };
 
+    let handleSubmitModalCaptchaVerified = (responseToken) => {
+        // stash recaptcha token in the form
+        setCaptchaResponseToken(responseToken);
+    };
+
     let handleSampleAccountOptionClick = (screenName) => {
+        // fill in the form and open the submit modal
         setTargetScreenName(screenName);
         setShowSubmitModal(true);
     };
 
     return <>
-        <SubmitModal show={showSubmitModal} onHide={handleSubmitModalHide} onCompleted={handleSubmitModalCompleted} />
+        <SubmitModal 
+            show={showSubmitModal} 
+            onHide={handleSubmitModalHide} 
+            onCompleted={handleSubmitModalCompleted}
+            onCaptchaVerified={handleSubmitModalCaptchaVerified}
+            finishEnabled={ captchaResponseToken != "" }
+        />
         <Container>
             <CopySection />
             <Row>
@@ -241,8 +277,17 @@ function App(props) {
                     { props.seconds != 0 && <AppUseTimer seconds={props.seconds} onTimerFinished={() => setTimerFinished(true)} /> }
                     { (props.seconds == 0 || timerFinished) && 
                         <div>
-                            <AppForm formRef={formEle} targetScreenName={targetScreenName} setTargetScreenName={(value) => setTargetScreenName(value)} onSubmit={handleFormSubmit} />
-                            <SampleAccountsPicker accounts={props.sampleAccounts} optionClickHandler={handleSampleAccountOptionClick} />
+                            <AppForm 
+                                formRef={formEle} 
+                                targetScreenName={targetScreenName} 
+                                setTargetScreenName={(value) => setTargetScreenName(value)} 
+                                onSubmit={handleFormSubmit}
+                                captchaResponseToken={captchaResponseToken}
+                            />
+                            <SampleAccountsPicker 
+                                accounts={props.sampleAccounts} 
+                                optionClickHandler={handleSampleAccountOptionClick} 
+                            />
                         </div>
                     }
                 </Col>
