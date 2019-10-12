@@ -19,6 +19,8 @@ def setup_app():
     #app.config["SQLALCHEMY_ECHO"] = True
     app.config["TWITTER_CONSUMER_KEY"] = os.environ["TWITTER_CONSUMER_KEY"]
     app.config["TWITTER_CONSUMER_SECRET"] = os.environ["TWITTER_CONSUMER_SECRET"]
+    app.config["RECAPTCHA_SECRET"] = os.environ["RECAPTCHA_SECRET"]
+    app.config["RECAPTCHA_SITE_KEY"] = os.environ["RECAPTCHA_SITE_KEY"]
     app.config["TEMPLATES_AUTO_RELOAD"] = True
     app.register_blueprint(oauth.bp)
     app.register_blueprint(twitter.twitter_bp)

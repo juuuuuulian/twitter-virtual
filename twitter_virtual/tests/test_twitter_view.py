@@ -5,6 +5,8 @@ from twitter_virtual.tests.twitter_mocks import twitter_list, \
     patch_twitter_list_create, patch_twitter_list_delete, following_users
 from twitter_virtual.twitter import TwitterError, RateLimitHit, SoftRateLimitHit
 from twitter_virtual.models import AppUse
+from twitter_virtual.recaptcha import RecaptchaTimeoutOrDuplicate
+from twitter_virtual.tests.recaptcha_mocks import patch_recaptcha_verify_token_method
 import datetime
 
 
@@ -16,17 +18,44 @@ fake_verifier = 'FAKEVERIFIER'
 fake_screen_name = 'FAKESCREENNAME'
 fake_list_id = '0000'
 fake_user_id = '0000'
+fake_captcha_token = "FAKERECAPTCHATOKEN"
 
 
 class TestBegin(BaseTestCase):
     """Tests for /twitter/begin."""
+    def _check_response_body(self, response, expected_text):
+        self.assertTrue(expected_text in response.text, f'Got "{expected_text}" in response body')
+
+    def _do_request(self, target_screen_name=None, captcha_response_token="", expected_status=200, expected_error_msg=None):
+        """Make a POST request to /twitter/begin with target_screen_name and captcha_response_token values, and
+        assert-check the HTTP response code against expected_status and the body for expected_error_msg."""
+        response = self.client.post("/twitter/begin",
+                                    {"target_screen_name": target_screen_name,
+                                    "captcha_response_token": captcha_response_token},
+                                    status=expected_status)
+        if expected_error_msg:
+            self._check_response_body(response, expected_error_msg)
+        return response
+
+    @patch_recaptcha_verify_token_method(True)
     def test_success(self):
-        response = self.client.post("/twitter/begin", {"target_screen_name": fake_screen_name}, status=302)
+        """Test case where we have valid target screen name and captcha response token values - expect redirect."""
+        response = self._do_request(fake_screen_name, fake_captcha_token, 302)
         self.assertTrue(("/oauth/begin" in response.headers["Location"]), "Redirected to /oauth/begin")
 
+    @patch_recaptcha_verify_token_method(True)
     def test_screen_name_missing(self):
-        self.client.post("/twitter/begin", {"target_screen_name": ""}, status=500)
-        self.client.post("/twitter/begin", {}, status=500)
+        """Test case where target screen name value is missing - expect an error message in the response body."""
+        self._do_request("", fake_captcha_token, 500, "Missing target screen name")
+
+    def test_screen_name_invalid(self):
+        """Test case where the target screen name is invalid."""
+        pass  # TODO
+
+    @patch_recaptcha_verify_token_method(RecaptchaTimeoutOrDuplicate("Test recaptcha exception"))
+    def test_expired_captcha_token(self):
+        """Test case where the captcha_response_token is expired - expect an error message in the response body."""
+        self._do_request(fake_screen_name, fake_captcha_token, 500, "Test recaptcha exception")
 
 
 class TestCopyFeed(BaseTestCase):

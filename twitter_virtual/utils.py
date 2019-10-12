@@ -4,12 +4,18 @@ from .database import db
 from .models import AppUse
 from flask import current_app, request, session
 from .twitter import TwitterClient
+from .recaptcha import RecaptchaClient
 from pytz import UTC
 
 
 def get_twitter_client():
     """Get a TwitterClient configured for current_app."""
     return TwitterClient.from_flask_app(current_app)
+
+
+def get_recaptcha_client():
+    """Get a Recaptcha client configured for current_app."""
+    return RecaptchaClient.from_flask_app(current_app)
 
 
 def get_remote_addr():

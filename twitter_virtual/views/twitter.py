@@ -2,7 +2,8 @@
 from flask import Blueprint, session, redirect, request, current_app, render_template, make_response
 from ..twitter import RateLimitHit, SoftRateLimitHit, TooManyFollowing, ZeroFollowing, TwitterError, \
     UserNotFollowingTarget
-from ..utils import get_twitter_client, should_limit_app_use, record_app_use, app_used_today
+from ..utils import get_twitter_client, get_recaptcha_client, should_limit_app_use, record_app_use, app_used_today
+from ..recaptcha import RecaptchaError, RecaptchaTimeoutOrDuplicate
 
 
 twitter_bp = Blueprint('twitter', __name__, url_prefix="/twitter")
@@ -123,11 +124,22 @@ def render_error(error_message):
 @twitter_bp.route("/begin", methods=['POST'])
 def begin():
     """Accept a Twitter target screen name, stash it in the session, then redirect to the oauth view."""
+    captcha_response_token = request.form.get("captcha_response_token", "")
     target_screen_name = request.form.get("target_screen_name", "").strip()
+
+    # validate screenname
     if (target_screen_name is None) or len(target_screen_name) == 0:
         return render_error("Missing target screen name")
 
-    # todo: validate and sanitize target_screen_name
+    # validate captcha token
+    if len(captcha_response_token) == 0:
+        return render_error("Please fill out the captcha before proceeding")
+    recaptcha_client = get_recaptcha_client()
+    try:
+        recaptcha_client.verify_token(captcha_response_token)
+    except RecaptchaError as e:
+        current_app.logger.warning(f"Recaptcha verification failed: {e.response}")
+        return render_error(e.user_error_msg)
 
     session['target_screen_name'] = target_screen_name
     return redirect("/oauth/begin")
@@ -152,6 +164,7 @@ def copy_feed():
     twitter_client = get_twitter_client()
     twitter_client.set_client_token(token, token_secret)
 
+    #return f"Token: {token} | Secret: {token_secret}"
     #record_app_use()
     #return 'Success!'
     try:
@@ -172,6 +185,6 @@ def copy_feed():
 @twitter_bp.route("/success")
 def success():
     """Show the user a success page."""
-    return render_template("success.html", new_list_url="https://twitter.com/chinese_steel/lists/my-test-list")
+    return render_template("success.html", new_list_url="https://twitter.com/test/lists/my-test-list")
 
 
