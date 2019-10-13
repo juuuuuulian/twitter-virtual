@@ -9,9 +9,12 @@ bp = Blueprint('oauth', __name__, url_prefix='/oauth')
 def render_error(error_message):
     return make_response(render_template("index.html", error_message=error_message), 500)
 
+# TODO: better error messages, better error handling in general
 
 @bp.route('/begin', methods=('GET', 'POST'))
 def begin():
+    """Get a Twitter OAuth Request Token, then redirect the user to the Twitter OAuth authorization page for our
+    Request Token."""
     twitter_client = get_twitter_client()
     try:
         token = twitter_client.get_request_token()
@@ -29,6 +32,8 @@ def begin():
 
 @bp.route('/callback', methods=('GET', 'POST'))
 def callback():
+    """Handle redirects from the Twitter OAuth authorization page: accept OAuth request token values, exchange them for
+    a valid OAuth user token, and finally redirect the user to the feed copy endpoint."""
     twitter_client = get_twitter_client()
     oauth_verifier = request.args.get('oauth_verifier')
     token = session.get('token')

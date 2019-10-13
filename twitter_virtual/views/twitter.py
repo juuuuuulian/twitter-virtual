@@ -8,6 +8,8 @@ from ..recaptcha import RecaptchaError, RecaptchaTimeoutOrDuplicate
 
 twitter_bp = Blueprint('twitter', __name__, url_prefix="/twitter")
 
+# TODO: better error messages, better error handling in general
+
 
 class FeedCopyError(Exception):
     """Fatal exception for the following copy process - hit a Twitter API error, a rate limit, etc."""
