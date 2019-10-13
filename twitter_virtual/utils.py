@@ -6,6 +6,17 @@ from flask import current_app, request, session
 from .twitter import TwitterClient
 from .recaptcha import RecaptchaClient
 from pytz import UTC
+import re
+
+twitter_username_re = re.compile("^[a-zA-Z0-9_]{1,15}$")
+
+
+def twitter_username_is_valid(username):
+    """Check basic validity of a Twitter username.
+    See: https://help.twitter.com/en/managing-your-account/twitter-username-rules"""
+    if twitter_username_re.match(username) is None:
+        return False
+    return True
 
 
 def get_twitter_client():

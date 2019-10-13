@@ -2,7 +2,8 @@
 from flask import Blueprint, session, redirect, request, current_app, render_template, make_response
 from ..twitter import RateLimitHit, SoftRateLimitHit, TooManyFollowing, ZeroFollowing, TwitterError, \
     UserNotFollowingTarget
-from ..utils import get_twitter_client, get_recaptcha_client, should_limit_app_use, record_app_use, app_used_today
+from ..utils import get_twitter_client, get_recaptcha_client, should_limit_app_use, record_app_use, app_used_today, \
+    twitter_username_is_valid
 from ..recaptcha import RecaptchaError, RecaptchaTimeoutOrDuplicate
 
 
@@ -131,7 +132,9 @@ def begin():
 
     # validate screenname
     if (target_screen_name is None) or len(target_screen_name) == 0:
-        return render_error("Missing target screen name")
+        return render_error("Please enter a screen name")
+    if twitter_username_is_valid(target_screen_name) is False:
+        return render_error("Please enter a valid screen name (letters, numbers, and underscores only)")
 
     # validate captcha token
     if len(captcha_response_token) == 0:

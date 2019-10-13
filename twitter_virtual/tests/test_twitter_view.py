@@ -16,6 +16,7 @@ fake_authorized_token = 'FAKEAUTHORIZEDTOKEN'
 fake_authorized_token_secret = 'FAKEAUTHORIZEDTOKENSECRET'
 fake_verifier = 'FAKEVERIFIER'
 fake_screen_name = 'FAKESCREENNAME'
+fake_invalid_screen_names = ['FAKE NAME', '@FAKE NAME', 'FA$aKeNa|me', 'FAKENAMEFAKENAME']
 fake_list_id = '0000'
 fake_user_id = '0000'
 fake_captcha_token = "FAKERECAPTCHATOKEN"
@@ -46,11 +47,14 @@ class TestBegin(BaseTestCase):
     @patch_recaptcha_verify_token_method(True)
     def test_screen_name_missing(self):
         """Test case where target screen name value is missing - expect an error message in the response body."""
-        self._do_request("", fake_captcha_token, 500, "Missing target screen name")
+        self._do_request("", fake_captcha_token, 500, "Please enter a screen name")
 
+    @patch_recaptcha_verify_token_method(True)
     def test_screen_name_invalid(self):
         """Test case where the target screen name is invalid."""
-        pass  # TODO
+        for invalid_screen_name in fake_invalid_screen_names:
+            self._do_request(invalid_screen_name, fake_captcha_token, 500,
+                             "Please enter a valid screen name (letters, numbers, and underscores only)")
 
     @patch_recaptcha_verify_token_method(RecaptchaTimeoutOrDuplicate("Test recaptcha exception"))
     def test_expired_captcha_token(self):
