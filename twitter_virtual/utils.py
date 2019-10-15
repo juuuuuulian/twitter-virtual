@@ -2,13 +2,39 @@
 import datetime
 from .database import db
 from .models import AppUse
-from flask import current_app, request, session
+from flask import current_app, request, session, render_template, make_response
 from .twitter import TwitterClient
 from .recaptcha import RecaptchaClient
 from pytz import UTC
 import re
 
 twitter_username_re = re.compile("^[a-zA-Z0-9_]{1,15}$")
+
+def render_app_index(status=200, extra_app_vars=None):
+    """Render the app index template with an app_vars dict to be made accessible to the javascript frontend."""
+    app_vars = get_frontend_app_vars()
+    if extra_app_vars:
+        app_vars.update(extra_app_vars)
+    return make_response(render_template("index.html", app_vars=app_vars), status)
+
+
+def render_app_error(error_message):
+    """Render the app index template with an error message in app_vars."""
+    return render_app_index(status=500, extra_app_vars={"error_message": error_message})
+
+
+def get_frontend_app_vars():
+    """Get a dict of variables for use on the frontend: last app use, sample twitter accounts, recaptcha key, etc."""
+    last_app_use = get_last_app_use_date()
+    last_app_use = last_app_use.isoformat() if last_app_use else None
+    sample_accounts = get_sample_twitter_accounts()
+    recaptcha_site_key = current_app.config["RECAPTCHA_SITE_KEY"]
+
+    return {
+        "sample_accounts": sample_accounts,
+        "last_app_use": last_app_use,
+        "recaptcha_site_key": recaptcha_site_key
+    }
 
 
 def twitter_username_is_valid(username):

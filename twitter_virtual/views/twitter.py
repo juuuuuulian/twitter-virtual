@@ -3,14 +3,12 @@ from flask import Blueprint, session, redirect, request, current_app, render_tem
 from ..twitter import RateLimitHit, SoftRateLimitHit, TooManyFollowing, ZeroFollowing, TwitterError, \
     UserNotFollowingTarget
 from ..utils import get_twitter_client, get_recaptcha_client, should_limit_app_use, record_app_use, app_used_today, \
-    twitter_username_is_valid
+    twitter_username_is_valid, render_app_error
 from ..recaptcha import RecaptchaError, RecaptchaTimeoutOrDuplicate
-
 
 twitter_bp = Blueprint('twitter', __name__, url_prefix="/twitter")
 
 # TODO: better error messages, better error handling in general
-
 
 class FeedCopyError(Exception):
     """Fatal exception for the following copy process - hit a Twitter API error, a rate limit, etc."""
@@ -120,10 +118,6 @@ def handle_cleanup(twitter_client, feed_copy_exception):
     return True
 
 
-def render_error(error_message):
-    return make_response(render_template("index.html", error_message=error_message), 500)
-
-
 @twitter_bp.route("/begin", methods=['POST'])
 def begin():
     """Accept a Twitter target screen name, stash it in the session, then redirect to the oauth view."""
@@ -132,19 +126,19 @@ def begin():
 
     # validate screenname
     if (target_screen_name is None) or len(target_screen_name) == 0:
-        return render_error("Please enter a screen name")
+        return render_app_error("Please enter a screen name")
     if twitter_username_is_valid(target_screen_name) is False:
-        return render_error("Please enter a valid screen name (letters, numbers, and underscores only)")
+        return render_app_error("Please enter a valid screen name (letters, numbers, and underscores only)")
 
     # validate captcha token
     if len(captcha_response_token) == 0:
-        return render_error("Please fill out the captcha before proceeding")
+        return render_app_error("Please fill out the captcha before proceeding")
     recaptcha_client = get_recaptcha_client()
     try:
         recaptcha_client.verify_token(captcha_response_token)
     except RecaptchaError as e:
         current_app.logger.warning(f"Recaptcha verification failed: {e.response}")
-        return render_error(e.user_error_msg)
+        return render_app_error(e.user_error_msg)
 
     session['target_screen_name'] = target_screen_name
     return redirect("/oauth/begin")
@@ -158,13 +152,13 @@ def copy_feed():
     target_screen_name = session.get('target_screen_name')
 
     if token is None or token_secret is None:
-        return render_error("Missing OAuth Token")
+        return render_app_error("Missing OAuth Token")
 
     if target_screen_name is None:
-        return render_error("Missing target screen name")
+        return render_app_error("Missing target screen name")
 
     if should_limit_app_use() and app_used_today():
-        return render_error("App used once today already")
+        return render_app_error("App used once today already")
 
     twitter_client = get_twitter_client()
     twitter_client.set_client_token(token, token_secret)
@@ -176,10 +170,10 @@ def copy_feed():
         twitter_list = copy_user_following_to_new_list(twitter_client, target_screen_name)
     except FeedCopyError as e:
         handle_cleanup(twitter_client, e)
-        return render_error(e.user_error_message)
+        return render_app_error(e.user_error_message)
     except Exception as e:
         # unknown exception
-        return render_error("Oops! Unknown server error!")  # TODO: improve this
+        return render_app_error("Oops! Unknown server error!")  # TODO: improve this
 
     record_app_use()
 
