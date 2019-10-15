@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import ReactDOM from 'react-dom';
-import { Button, Container, Row, Col, Card, InputGroup, Form, Modal } from 'react-bootstrap';
+import { Button, Container, Row, Col, Card, InputGroup, Form, Modal, Alert } from 'react-bootstrap';
 import Recaptcha from 'react-recaptcha';
 
 function getLastAppUseValue() {
@@ -26,6 +26,15 @@ function getSecondsTilNextAppUse() {
 
 function getSampleAccounts() {
     return window.APP_VARS.sample_accounts;
+}
+
+function getErrorMessage() {
+    return "Sample Error Message!"
+    return window.APP_VARS.error_message;
+}
+
+function getRecaptchaSiteKey() {
+    return window.APP_VARS.recaptcha_site_key;
 }
 
 // countdown til next app availability - replaces the form if the user has used the app today
@@ -131,7 +140,7 @@ function SubmitModal(props) {
                 <Row>
                     <Col>
                         <Recaptcha 
-                            sitekey="6LcUOL0UAAAAABQxy5sqdpKRLeVAmF9nMhglXQ6E"  // TODO: move this to a prop
+                            sitekey={props.captchaSiteKey}
                             verifyCallback={props.onCaptchaVerified}
                         />
                     </Col>
@@ -150,7 +159,34 @@ function SubmitModal(props) {
 }
 
 function AppForm(props) {
-    return <Form method="POST" action="/twitter/begin" onSubmit={(event) => props.onSubmit(event)} ref={props.formRef}>
+    const [submitTried, setSubmitTried] = React.useState(false);
+
+    const screenNameRegexp = new RegExp("^[a-zA-Z0-9_]{1,15}$");
+    function screenNameIsValid(screenName) {
+        return screenNameRegexp.test(screenName);
+    }
+
+    const submitHandler = (event) => {
+        if (screenNameIsValid(props.targetScreenName)) {
+            props.onSubmit(event);
+            setSubmitTried(false);
+        } else {
+            event.preventDefault();
+            setSubmitTried(true);
+        }
+    };
+
+    const inputChangeHandler = (event) => {
+        let val = event.target.value;
+        if (! val) setSubmitTried(false);
+        props.setTargetScreenName(val);
+    };
+
+    return <Form 
+        method="POST" 
+        action="/twitter/begin" 
+        onSubmit={submitHandler} 
+        ref={props.formRef}>
         <InputGroup>
             <InputGroup.Prepend>
                 <InputGroup.Text>@</InputGroup.Text>
@@ -160,14 +196,19 @@ function AppForm(props) {
                 name="target_screen_name" 
                 placeholder="AccountName" 
                 value={props.targetScreenName} 
-                onChange={(event) => props.setTargetScreenName(event.target.value)} 
+                onChange={inputChangeHandler}
+                isValid={screenNameIsValid(props.targetScreenName) && props.targetScreenName}
+                isInvalid={! screenNameIsValid(props.targetScreenName) && (props.targetScreenName || submitTried)}
             />
-            <Form.Control
-                type="hidden"
-                name="captcha_response_token"
-                value={props.captchaResponseToken} />
-            <Button variant="success" type="Submit">GO</Button> 
+            <InputGroup.Append>
+                <Button variant="success" type="submit">GO</Button>
+            </InputGroup.Append>
         </InputGroup>
+        <Form.Control
+            type="hidden"
+            name="captcha_response_token"
+            value={props.captchaResponseToken} 
+        />
     </Form>
 }
 
@@ -219,10 +260,18 @@ function CopySection() {
     </>
 }
 
+function AppErrorMessage(props) {
+    return <Alert variant="danger" dismissible onClose={() => props.onClose()} show={props.show}>
+        <Alert.Heading>Uh oh! We hit a snag!</Alert.Heading>
+        <p>{props.errorMessage}</p>
+    </Alert>
+}
+
 function App(props) {
     const [timerFinished, setTimerFinished] = React.useState((props.seconds == 0 ? true : false));
     const [targetScreenName, setTargetScreenName] = React.useState("");
     const [showSubmitModal, setShowSubmitModal] = React.useState(false);
+    const [showErrorMessage, setShowErrorMessage] = React.useState(props.errorMessage ? true : false);
     const [submitModalCompleted, setSubmitModalCompleted] = React.useState(false);
     const [captchaResponseToken, setCaptchaResponseToken] = React.useState("");
     let formEle = React.createRef();
@@ -262,6 +311,10 @@ function App(props) {
         setShowSubmitModal(true);
     };
 
+    let handleErrorMessageHide = () => {
+        setShowErrorMessage(false);
+    };
+
     return <>
         <SubmitModal 
             show={showSubmitModal} 
@@ -269,18 +322,28 @@ function App(props) {
             onCompleted={handleSubmitModalCompleted}
             onCaptchaVerified={handleSubmitModalCaptchaVerified}
             finishEnabled={ captchaResponseToken != "" }
+            captchaSiteKey={props.captchaSiteKey}
         />
         <Container>
             <CopySection />
+            <Row>
+                <Col>
+                    <AppErrorMessage 
+                        errorMessage={props.errorMessage} 
+                        onClose={handleErrorMessageHide}
+                        show={showErrorMessage}
+                    />
+                </Col>
+            </Row>
             <Row>
                 <Col>
                     { props.seconds != 0 && <AppUseTimer seconds={props.seconds} onTimerFinished={() => setTimerFinished(true)} /> }
                     { (props.seconds == 0 || timerFinished) && 
                         <div>
                             <AppForm 
-                                formRef={formEle} 
-                                targetScreenName={targetScreenName} 
-                                setTargetScreenName={(value) => setTargetScreenName(value)} 
+                                formRef={formEle}
+                                targetScreenName={targetScreenName}
+                                setTargetScreenName={(value) => setTargetScreenName(value)}
                                 onSubmit={handleFormSubmit}
                                 captchaResponseToken={captchaResponseToken}
                             />
@@ -298,9 +361,14 @@ function App(props) {
 
 function initApp() {
     ReactDOM.render(
-        <App seconds={getSecondsTilNextAppUse()} sampleAccounts={getSampleAccounts()} />,
+        <App 
+            seconds={getSecondsTilNextAppUse()} 
+            sampleAccounts={getSampleAccounts()} 
+            errorMessage={getErrorMessage()}
+            captchaSiteKey={getRecaptchaSiteKey()}
+        />,
         document.getElementById('react-container')
-    );    
+    );
 }
 
 window.addEventListener('DOMContentLoaded', (event) => {
