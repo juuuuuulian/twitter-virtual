@@ -271,7 +271,7 @@ function App(props) {
     const [timerFinished, setTimerFinished] = React.useState((props.seconds == 0 ? true : false));
     const [targetScreenName, setTargetScreenName] = React.useState("");
     const [showSubmitModal, setShowSubmitModal] = React.useState(false);
-    const [showErrorMessage, setShowErrorMessage] = React.useState(props.errorMessage ? true : false);
+    const [showAppErrorMessage, setShowAppErrorMessage] = React.useState(props.errorMessage ? true : false);
     const [submitModalCompleted, setSubmitModalCompleted] = React.useState(false);
     const [captchaResponseToken, setCaptchaResponseToken] = React.useState("");
     let formEle = React.createRef();
@@ -308,11 +308,17 @@ function App(props) {
     let handleSampleAccountOptionClick = (screenName) => {
         // fill in the form and open the submit modal
         setTargetScreenName(screenName);
+        if (showAppErrorMessage) setShowAppErrorMessage(false);
         setShowSubmitModal(true);
     };
 
     let handleErrorMessageHide = () => {
-        setShowErrorMessage(false);
+        setShowAppErrorMessage(false);
+    };
+
+    let handleFormSetTargetScreenName = (screenName) => {
+        setTargetScreenName(screenName);
+        if (showAppErrorMessage) setShowAppErrorMessage(false);
     };
 
     return <>
@@ -331,7 +337,7 @@ function App(props) {
                     <AppErrorMessage 
                         errorMessage={props.errorMessage} 
                         onClose={handleErrorMessageHide}
-                        show={showErrorMessage}
+                        show={showAppErrorMessage}
                     />
                 </Col>
             </Row>
@@ -343,7 +349,7 @@ function App(props) {
                             <AppForm 
                                 formRef={formEle}
                                 targetScreenName={targetScreenName}
-                                setTargetScreenName={(value) => setTargetScreenName(value)}
+                                setTargetScreenName={handleFormSetTargetScreenName}
                                 onSubmit={handleFormSubmit}
                                 captchaResponseToken={captchaResponseToken}
                             />
