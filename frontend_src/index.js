@@ -10,7 +10,7 @@ function getLastAppUseValue() {
     return new Date(last_app_use);
 }
 
-function getSecondsTilNextAppUse() {
+function getSecondsTilNextAppAvail() {
     var last_app_use = getLastAppUseValue();
     if (last_app_use == null)
         return 0;
@@ -29,7 +29,6 @@ function getSampleAccounts() {
 }
 
 function getErrorMessage() {
-    return "Sample Error Message!"
     return window.APP_VARS.error_message;
 }
 
@@ -39,7 +38,7 @@ function getRecaptchaSiteKey() {
 
 // countdown til next app availability - replaces the form if the user has used the app today
 function AppUseTimer(props) {
-    const [secondsLeft, setSecondsLeft] = React.useState(props.seconds);
+    const [secondsLeft, setSecondsLeft] = React.useState(props.secondsAhead);
 
     function formatTimer(secs) {
         var hrs = Math.floor(secs / 3600);
@@ -73,40 +72,61 @@ function AppUseTimer(props) {
         return null;
     } else {
         return <div>
-            React Timer: {formatTimer(secondsLeft)}
+            <Alert variant="warning">
+                <Alert.Heading>It looks as though you've already used our app today.</Alert.Heading>
+                <p>
+                    To comply with Twitter's terms of service, we have to limit how often our app is used. (Sorry.)<br />
+                    You can use our app again in <b>{formatTimer(secondsLeft)}</b>.
+                </p>
+            </Alert>
         </div>
     }
 }
 
 function SampleAccountCard(props) {
-    return <Card style={{ 
-        minWidth: "225px", 
-        maxWidth: "225px", 
-        maxHeight: "375px", 
-        marginRight: "10px" 
+    return (
+        <Card 
+            style={{ 
+                minWidth: "225px", 
+                maxWidth: "225px", 
+                maxHeight: "375px", 
+                marginRight: "10px" 
         }}>
-        <Card.Img variant="top" src={props.profileImgUrl} style={{ 
-            width: "100%", 
-            objectFit: "cover", 
-            height: "175px" 
-            }} />
-        <Card.Body style={{ 
-            display: "flex", 
-            flexFlow: "column", 
-            alignItems: "flex-start", 
-            justifyContent: "space-between" 
-            }}>
-            <div>
-                <Card.Title>{props.name}</Card.Title>
-            </div>
-            <div>
-                <Card.Text>Following {props.following} people</Card.Text>
-            </div>
-        </Card.Body>
-        <Card.Footer>
-            <Button style={{ width: "100%" }} variant="primary" onClick={() => props.clickHandler(props.username)}>Try Account</Button>
-        </Card.Footer>
-    </Card>
+            <Card.Img 
+                variant="top" 
+                src={props.profileImgUrl} 
+                style={{ 
+                    width: "100%", 
+                    objectFit: "cover", 
+                    height: "175px" 
+                }} 
+            />
+            <Card.Body 
+                style={{ 
+                    display: "flex", 
+                    flexFlow: "column", 
+                    alignItems: "flex-start", 
+                    justifyContent: "space-between" 
+                }}
+            >
+                <div>
+                    <Card.Title>{props.name}</Card.Title>
+                </div>
+                <div>
+                    <Card.Text>Following {props.following} people</Card.Text>
+                </div>
+            </Card.Body>
+            <Card.Footer>
+                <Button 
+                    style={{ width: "100%" }} 
+                    variant="primary" 
+                    onClick={() => props.clickHandler(props.username)}
+                >
+                    Try Account
+                </Button>
+            </Card.Footer>
+        </Card>
+    );
 }
 
 function SampleAccountsPicker(props) {
@@ -122,7 +142,13 @@ function SampleAccountsPicker(props) {
         backgroundColor: "lightgrey"
     }}>
         {props.accounts.map((account) => 
-            <SampleAccountCard name={account.name} username={account.username} following={account.following} profileImgUrl={account.profile_img_url} clickHandler={props.optionClickHandler} />
+            <SampleAccountCard 
+                name={account.name} 
+                username={account.username} 
+                following={account.following} 
+                profileImgUrl={account.profile_img_url} 
+                clickHandler={props.optionClickHandler} 
+            />
         )}
     </div>
 }
@@ -132,10 +158,15 @@ function SubmitModal(props) {
         <Modal show={props.show} onHide={props.onHide}>
             <Modal.Body>
                 <Row>
-                    <Col>Here's a Modal!</Col>
+                    <Col>Here's some steps that we'll take using your account!</Col>
                 </Row>
                 <Row>
-                    <Col>Here's some modal content!</Col>
+                    <Col>Here's a disclaimer which meets your concerns about authorizing our app!</Col>
+                </Row>
+                <Row>
+                    <Col>
+                        You're gonna virtualize <a target="_blank" href={("http://twitter.com/" + props.targetScreenName)}>{props.targetScreenName}</a>
+                    </Col>
                 </Row>
                 <Row>
                     <Col>
@@ -151,7 +182,7 @@ function SubmitModal(props) {
                     Cancel
                 </Button>
                 <Button disabled={ props.finishEnabled ? false : true } variant="success" onClick={props.onCompleted}>
-                    I Understand, Proceed
+                    I Understand, Continue
                 </Button>
             </Modal.Footer>
         </Modal>
@@ -203,6 +234,9 @@ function AppForm(props) {
             <InputGroup.Append>
                 <Button variant="success" type="submit">GO</Button>
             </InputGroup.Append>
+            <Form.Control.Feedback type="invalid">
+                Please enter a valid Twitter screen name (letters, numbers, and underscores, fifteen characters or less).
+            </Form.Control.Feedback>
         </InputGroup>
         <Form.Control
             type="hidden"
@@ -268,7 +302,7 @@ function AppErrorMessage(props) {
 }
 
 function App(props) {
-    const [timerFinished, setTimerFinished] = React.useState((props.seconds == 0 ? true : false));
+    const [timerFinished, setTimerFinished] = React.useState((props.secondsTilNextAppAvail == 0 ? true : false));
     const [targetScreenName, setTargetScreenName] = React.useState("");
     const [showSubmitModal, setShowSubmitModal] = React.useState(false);
     const [showAppErrorMessage, setShowAppErrorMessage] = React.useState(props.errorMessage ? true : false);
@@ -329,6 +363,7 @@ function App(props) {
             onCaptchaVerified={handleSubmitModalCaptchaVerified}
             finishEnabled={ captchaResponseToken != "" }
             captchaSiteKey={props.captchaSiteKey}
+            targetScreenName={targetScreenName}
         />
         <Container>
             <CopySection />
@@ -343,8 +378,8 @@ function App(props) {
             </Row>
             <Row>
                 <Col>
-                    { props.seconds != 0 && <AppUseTimer seconds={props.seconds} onTimerFinished={() => setTimerFinished(true)} /> }
-                    { (props.seconds == 0 || timerFinished) && 
+                    { props.secondsTilNextAppAvail != 0 && <AppUseTimer secondsAhead={props.secondsTilNextAppAvail} onTimerFinished={() => setTimerFinished(true)} /> }
+                    { (props.secondsTilNextAppAvail == 0 || timerFinished) && 
                         <div>
                             <AppForm 
                                 formRef={formEle}
@@ -368,7 +403,7 @@ function App(props) {
 function initApp() {
     ReactDOM.render(
         <App 
-            seconds={getSecondsTilNextAppUse()} 
+            secondsTilNextAppAvail={getSecondsTilNextAppAvail()} 
             sampleAccounts={getSampleAccounts()} 
             errorMessage={getErrorMessage()}
             captchaSiteKey={getRecaptchaSiteKey()}

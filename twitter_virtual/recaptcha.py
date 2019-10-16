@@ -5,7 +5,7 @@ import json
 VERIFY_URL = "https://www.google.com/recaptcha/api/siteverify"
 
 
-class RecaptchaClient():
+class RecaptchaClient:
     """Class for interacting with the ReCaptcha verification API."""
     def __init__(self, secret):
         self.secret = secret
