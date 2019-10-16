@@ -1,7 +1,7 @@
 """View functions for Twitter API interaction."""
 from flask import Blueprint, session, redirect, request, current_app, render_template, make_response
 from ..twitter import RateLimitHit, SoftRateLimitHit, TooManyFollowing, ZeroFollowing, TwitterError, \
-    UserNotFollowingTarget
+    UserNotFollowingTarget, OAuthRequestError
 from ..utils import get_twitter_client, get_recaptcha_client, should_limit_app_use, record_app_use, app_used_today, \
     twitter_username_is_valid, render_app_error
 from ..recaptcha import RecaptchaError, RecaptchaTimeoutOrDuplicate
@@ -100,8 +100,19 @@ def copy_user_following_to_new_list(twitter_client, screen_name):
     return twitter_list
 
 
+def invalidate_oauth_token(twitter_client):
+    """Invalidate our Twitter OAuth API credentials."""
+    try:
+        twitter_client.invalidate_token()
+    except OAuthRequestError as e:
+        current_app.logger.exception(f'Failed to invalidate oauth token! {str(e)}')
+        return False
+
+    return True
+
+
 def handle_cleanup(twitter_client, feed_copy_exception):
-    """Log the exception and delete the newly created list (if one exists)."""
+    """Log the exception, delete the newly created list (if one exists), then invalidate our Twitter API access."""
     orig_exception = feed_copy_exception.orig_exception
     current_app.logger.exception(f'Fatal following copy error! {str(orig_exception)}')
     new_list_id = feed_copy_exception.new_list_id
@@ -115,6 +126,10 @@ def handle_cleanup(twitter_client, feed_copy_exception):
             return False
 
     current_app.logger.info("Cleaned up a twitter list after an exception occurred")
+
+    # invalidate twitter access
+    invalidate_oauth_token(twitter_client)
+
     return True
 
 
@@ -164,8 +179,7 @@ def copy_feed():
     twitter_client.set_client_token(token, token_secret)
 
     #return f"Token: {token} | Secret: {token_secret}"
-    #record_app_use()
-    #return 'Success!'
+
     try:
         twitter_list = copy_user_following_to_new_list(twitter_client, target_screen_name)
     except FeedCopyError as e:
@@ -176,6 +190,7 @@ def copy_feed():
         return render_app_error("Oops! Unknown server error!")  # TODO: improve this
 
     record_app_use()
+    invalidate_oauth_token(twitter_client)
 
     return render_template("success.html", new_list_url=twitter_client.get_full_list_url(twitter_list))
     # return redirect("/twitter/success")

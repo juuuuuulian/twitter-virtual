@@ -137,3 +137,8 @@ def patch_twitter_list_delete(value):
 def patch_twitter_add_list_users(value):
     """Return a function decorator which patches the TwitterClient.add_users_to_list method."""
     return patch_twitter_client_method("add_users_to_list", value)
+
+
+def patch_twitter_invalidate_token(value):
+    """Return a function decorator which patches the TwitterClient.invalidate_token method."""
+    return patch_twitter_client_method("invalidate_token", value)

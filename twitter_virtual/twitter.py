@@ -21,6 +21,7 @@ DELETE_LIST_URL = "https://api.twitter.com/1.1/lists/destroy.json"
 LOOKUP_FRIENDSHIPS_URL = "https://api.twitter.com/1.1/friendships/lookup.json"
 SHOW_USER_URL = "https://api.twitter.com/1.1/users/show.json"
 BASE_WEB_URL = "https://twitter.com"
+INVALIDATE_TOKEN_URL = "https://api.twitter.com/1.1/oauth/invalidate_token"
 
 
 class TwitterClient:
@@ -68,6 +69,13 @@ class TwitterClient:
         if twitter_auth_url[-1] != '?':
             twitter_auth_url = twitter_auth_url + '?'
         return twitter_auth_url + urlencode({'oauth_token': oauth_token})
+
+    def invalidate_token(self):
+        """Invalidate the current OAuth access token."""
+        headers, body = self.oauth_client.request(INVALIDATE_TOKEN_URL, method="POST")
+        if headers.status != 200:
+            raise OAuthRequestError("Failed to invalidate OAuth access token", headers, body)
+        return True
 
     def get_full_list_url(self, twitter_list):
         """Get a full Twitter URL for twitter_list."""

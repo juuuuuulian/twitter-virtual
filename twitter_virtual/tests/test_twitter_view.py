@@ -2,7 +2,7 @@
 from twitter_virtual.tests.base_test_case import BaseTestCase
 from twitter_virtual.tests.twitter_mocks import twitter_list, \
     patch_twitter_add_list_users, patch_twitter_check_user_is_following, patch_twitter_get_following_users, \
-    patch_twitter_list_create, patch_twitter_list_delete, following_users
+    patch_twitter_list_create, patch_twitter_list_delete, patch_twitter_invalidate_token, following_users
 from twitter_virtual.twitter import TwitterError, RateLimitHit, SoftRateLimitHit
 from twitter_virtual.models import AppUse
 from twitter_virtual.recaptcha import RecaptchaTimeoutOrDuplicate
@@ -169,6 +169,7 @@ class TestCopyFeed(BaseTestCase):
         """Test case where private list creation fails due to us hitting a rate limit - expect an error response."""
         self._do_request(expected_status=500, expected_error_msg="Please try again in 30 minutes")
 
+    @patch_twitter_invalidate_token(True)
     @patch_twitter_list_delete(True)
     @patch_twitter_add_list_users(SoftRateLimitHit("Test Soft Rate Limit Hit"))
     @patch_twitter_list_create(twitter_list(fake_screen_name, fake_list_id, 1))
@@ -179,6 +180,7 @@ class TestCopyFeed(BaseTestCase):
         self._do_request(expected_status=500,
                          expected_error_msg="Please try again tomorrow - our application has hit a Twitter rate limit")
 
+    @patch_twitter_invalidate_token(True)
     @patch_twitter_list_delete(True)
     @patch_twitter_add_list_users(twitter_list(fake_screen_name, fake_list_id, 169))  # >100 less than what we fetched
     @patch_twitter_list_create(twitter_list(fake_screen_name, fake_list_id, 0))
@@ -189,6 +191,7 @@ class TestCopyFeed(BaseTestCase):
         self._do_request(expected_status=500,
                          expected_error_msg="Please try again tomorrow - our application has hit a Twitter rate limit")
 
+    @patch_twitter_invalidate_token(True)
     @patch_twitter_add_list_users(twitter_list(fake_screen_name, fake_list_id, 220))
     @patch_twitter_list_create(twitter_list(fake_screen_name, fake_list_id, 0))
     @patch_twitter_get_following_users(following_users(list(range(1, 221))))
