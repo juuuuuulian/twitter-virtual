@@ -1,0 +1,50 @@
+html, body {
+  height: 100%;
+}
+
+.main-content {
+  min-height: 100%;
+}
+
+.card {
+  min-width: 225px; 
+  max-width: 225px; 
+  max-height: 375px; 
+  margin-right: 10px; 
+}
+
+.card-img-top {
+  width: 100%; 
+  object-fit: cover;
+  height: 175px;
+}
+
+.card-body {
+  display: flex;
+  flex-flow: column; 
+  align-items: flex-start;
+  justify-content: space-between;
+}
+
+.sample-acct-btn {
+  width: 100%;
+}
+
+.sample-acct-picker {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  display: flex;
+  flex-flow: row nowrap;
+  margin-left: -15px;
+  margin-right: -15px;
+  padding: 10px;
+  background-color: lightgrey;
+}
+
+.target-screen-name-append {
+  width: 20%;
+}
+
+.target-screen-name-append > .btn {
+  width: 100%;
+}

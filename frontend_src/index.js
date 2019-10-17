@@ -85,30 +85,12 @@ function AppUseTimer(props) {
 
 function SampleAccountCard(props) {
     return (
-        <Card 
-            style={{ 
-                minWidth: "225px", 
-                maxWidth: "225px", 
-                maxHeight: "375px", 
-                marginRight: "10px" 
-        }}>
+        <Card>
             <Card.Img 
                 variant="top" 
                 src={props.profileImgUrl} 
-                style={{ 
-                    width: "100%", 
-                    objectFit: "cover", 
-                    height: "175px" 
-                }} 
             />
-            <Card.Body 
-                style={{ 
-                    display: "flex", 
-                    flexFlow: "column", 
-                    alignItems: "flex-start", 
-                    justifyContent: "space-between" 
-                }}
-            >
+            <Card.Body>
                 <div>
                     <Card.Title>{props.name}</Card.Title>
                 </div>
@@ -118,10 +100,9 @@ function SampleAccountCard(props) {
             </Card.Body>
             <Card.Footer>
                 <Button 
-                    style={{ width: "100%" }} 
+                    className="sample-acct-btn"
                     variant="primary" 
-                    onClick={() => props.clickHandler(props.username)}
-                >
+                    onClick={() => props.clickHandler(props.username)}>
                     Try Account
                 </Button>
             </Card.Footer>
@@ -131,16 +112,7 @@ function SampleAccountCard(props) {
 
 function SampleAccountsPicker(props) {
     // CardDeck
-    return <div style={{ 
-        overflowX: "auto", 
-        "-webkit-overflow-scrolling": "touch", 
-        display: "flex", 
-        flexFlow: "row nowrap", 
-        marginLeft: "-15px", 
-        marginRight: "-15px",
-        padding: "10px",
-        backgroundColor: "lightgrey"
-    }}>
+    return <div className="sample-acct-picker">
         {props.accounts.map((account) => 
             <SampleAccountCard 
                 name={account.name} 
@@ -167,6 +139,13 @@ function SubmitModal(props) {
                     <Col>
                         You're gonna virtualize <a target="_blank" href={("http://twitter.com/" + props.targetScreenName)}>{props.targetScreenName}</a>
                     </Col>
+                </Row>
+                <Row>
+                    <Col>Go here to de-authorize afterwards: 
+                    <a target="_blank" href="https://twitter.com/settings/applications">
+                        Twitter Application Settings
+                    </a>
+                </Col>
                 </Row>
                 <Row>
                     <Col>
@@ -231,7 +210,7 @@ function AppForm(props) {
                 isValid={screenNameIsValid(props.targetScreenName) && props.targetScreenName}
                 isInvalid={! screenNameIsValid(props.targetScreenName) && (props.targetScreenName || submitTried)}
             />
-            <InputGroup.Append>
+            <InputGroup.Append className="target-screen-name-append">
                 <Button variant="success" type="submit">GO</Button>
             </InputGroup.Append>
             <Form.Control.Feedback type="invalid">
@@ -244,54 +223,6 @@ function AppForm(props) {
             value={props.captchaResponseToken} 
         />
     </Form>
-}
-
-function CopySection() {
-    return <>
-        <Row>
-            <Col>
-                <div>
-                    "Twitter is a highly individual experience that works like a collective hallucination, not a community. It’s probably totally fine that a good chunk of the nation’s elites spend so much time on it. What could go wrong?"
-                </div>
-                <div>
-                    -- <a href="https://www.theatlantic.com/technology/archive/2019/04/twitter-is-not-america/587770/" target="_blank">Alexis C. Madrigal, The Atlantic</a>
-                </div>
-            </Col>
-        </Row>
-        <Row>
-            <Col>
-                <div>
-                    The Twitter timeline looks much the same to everybody. But have you seen another person's Twitter timeline before?
-                </div>
-            </Col>
-        </Row>
-        <Row>
-            <Col>
-                <div>
-                    What would the President see if they opened Twitter on their phone right now? Or Bernie Sanders? Or Kanye West? Or your friend?
-                </div>
-            </Col>
-        </Row>
-        <Row>
-            <Col>
-                <div>
-                    This free, experimental tool can show you. All that you'll need is a Twitter account, and the username of another person who you happen to follow. Or, you can choose a sample account from the list below.
-                </div>
-            </Col>
-        </Row>
-        <Row>
-            <Col>
-                <div>
-                    <div>
-                        - We do not store Twitter user credentials, nor any other Twitter data related to your account.
-                    </div>
-                    <div>
-                        - We will never post anything to your account. <a href="https://twitter.com/settings/applications" target="_blank">De-authorizing our application is easy</a>, and we recommend doing so afterwards.
-                    </div>
-                </div>
-            </Col>
-        </Row>
-    </>
 }
 
 function AppErrorMessage(props) {
@@ -355,59 +286,52 @@ function App(props) {
         if (showAppErrorMessage) setShowAppErrorMessage(false);
     };
 
-    return <>
-        <SubmitModal 
-            show={showSubmitModal} 
-            onHide={handleSubmitModalHide} 
-            onCompleted={handleSubmitModalCompleted}
-            onCaptchaVerified={handleSubmitModalCaptchaVerified}
-            finishEnabled={ captchaResponseToken != "" }
-            captchaSiteKey={props.captchaSiteKey}
-            targetScreenName={targetScreenName}
-        />
-        <Container>
-            <CopySection />
-            <Row>
-                <Col>
-                    <AppErrorMessage 
-                        errorMessage={props.errorMessage} 
-                        onClose={handleErrorMessageHide}
-                        show={showAppErrorMessage}
+    return (
+        <div>
+            <SubmitModal 
+                show={showSubmitModal} 
+                onHide={handleSubmitModalHide} 
+                onCompleted={handleSubmitModalCompleted}
+                onCaptchaVerified={handleSubmitModalCaptchaVerified}
+                finishEnabled={ captchaResponseToken != "" }
+                captchaSiteKey={props.captchaSiteKey}
+                targetScreenName={targetScreenName}
+            />
+            <AppErrorMessage 
+                errorMessage={props.errorMessage} 
+                onClose={handleErrorMessageHide}
+                show={showAppErrorMessage}
+            />
+            { props.secondsTilNextAppAvail != 0 && <AppUseTimer secondsAhead={props.secondsTilNextAppAvail} onTimerFinished={() => setTimerFinished(true)} /> }
+            { (props.secondsTilNextAppAvail == 0 || timerFinished) && 
+                <div>
+                    <AppForm 
+                        formRef={formEle}
+                        targetScreenName={targetScreenName}
+                        setTargetScreenName={handleFormSetTargetScreenName}
+                        onSubmit={handleFormSubmit}
+                        captchaResponseToken={captchaResponseToken}
                     />
-                </Col>
-            </Row>
-            <Row>
-                <Col>
-                    { props.secondsTilNextAppAvail != 0 && <AppUseTimer secondsAhead={props.secondsTilNextAppAvail} onTimerFinished={() => setTimerFinished(true)} /> }
-                    { (props.secondsTilNextAppAvail == 0 || timerFinished) && 
-                        <div>
-                            <AppForm 
-                                formRef={formEle}
-                                targetScreenName={targetScreenName}
-                                setTargetScreenName={handleFormSetTargetScreenName}
-                                onSubmit={handleFormSubmit}
-                                captchaResponseToken={captchaResponseToken}
-                            />
-                            <SampleAccountsPicker 
-                                accounts={props.sampleAccounts} 
-                                optionClickHandler={handleSampleAccountOptionClick} 
-                            />
-                        </div>
-                    }
-                </Col>
-            </Row>
-        </Container>
-    </>
+                    <SampleAccountsPicker 
+                        accounts={props.sampleAccounts} 
+                        optionClickHandler={handleSampleAccountOptionClick} 
+                    />
+                </div>
+            }
+        </div>
+    );
 }
 
 function initApp() {
     ReactDOM.render(
-        <App 
-            secondsTilNextAppAvail={getSecondsTilNextAppAvail()} 
-            sampleAccounts={getSampleAccounts()} 
-            errorMessage={getErrorMessage()}
-            captchaSiteKey={getRecaptchaSiteKey()}
-        />,
+        <div>
+            <App 
+                secondsTilNextAppAvail={getSecondsTilNextAppAvail()} 
+                sampleAccounts={getSampleAccounts()} 
+                errorMessage={getErrorMessage()}
+                captchaSiteKey={getRecaptchaSiteKey()}
+            />
+        </div>,
         document.getElementById('react-container')
     );
 }

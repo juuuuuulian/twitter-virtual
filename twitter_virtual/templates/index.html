@@ -4,12 +4,14 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <title>Twitter Virtualizer</title>
-    <link
+    <!-- <link
         rel="stylesheet"
         href="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
         integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T"
         crossorigin="anonymous"
-    />
+    /> -->
+    <link rel="stylesheet" href="/static/bootstrap.min.css" />
+    <link rel="stylesheet" href="/static/index.css" />
     <script src="https://www.google.com/recaptcha/api.js" async defer></script>
 </head>
 <body>
@@ -18,10 +20,61 @@
         window.APP_VARS = {{ app_vars|tojson }};
     </script>
     {% endif %}
-    {% if error_message %}
-    <div>Oops! It looks like there was an error: {{ error_message|e }}</div>
-    {% endif %}
-    <div id="react-container"></div>
-    <script type="text/javascript" charset="UTF-8" src="/static/index.js"></script>
+    <div class="container main-content">
+        <div class="row">
+            <div class="col">
+                <div class="upper-copy-section">
+                    <div class="row">
+                        <div class="col">
+                            <div>
+                                "Twitter is a highly individual experience that works like a collective hallucination, not a community. It’s probably totally fine that a good chunk of the nation’s elites spend so much time on it. What could go wrong?"
+                            </div>
+                            <div>
+                                -- <a href="https://www.theatlantic.com/technology/archive/2019/04/twitter-is-not-america/587770/" target="_blank">Alexis C. Madrigal, The Atlantic</a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col">
+                            <div>
+                                The Twitter timeline looks much the same to everybody. But have you seen another person's Twitter timeline before?
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col">
+                            <div>
+                                What would the President see if they opened Twitter on their phone right now? Or Bernie Sanders? Or Kanye West? Or your friend?
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col">
+                            <div>
+                                This free, experimental tool can show you. All that you'll need is a Twitter account, and the username of another person who you happen to follow. Or, you can choose a sample account from the list below.
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col">
+                            <div>
+                                <div>
+                                    - We do not store Twitter user credentials, nor any other Twitter data related to your account.
+                                </div>
+                                <div>
+                                    - We will never post anything to your account. <a href="https://twitter.com/settings/applications" target="_blank">De-authorizing our application is easy</a>, and we recommend doing so afterwards.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div><!-- end .upper-copy-section -->
+                <div id="react-container"></div>
+            </div>
+        </div>
+    </div><!-- end .main-content -->
+    <footer class="navbar">
+        What Should Go Here? GitHub? LinkedIn? Twitter? Mailto?
+    </footer>
+    <script type="text/javascript" charset="UTF-8" src="/static/index.js"></script><!-- include app script -->
 </body>
 </html>
