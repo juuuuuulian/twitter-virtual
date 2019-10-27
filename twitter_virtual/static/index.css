@@ -6,6 +6,18 @@ html, body {
   min-height: 100%;
 }
 
+/* --- Sample Acct Picker Styling --- */
+.sample-acct-picker {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  display: flex;
+  flex-flow: row nowrap;
+  margin-left: -15px;
+  margin-right: -15px;
+  padding: 10px;
+  background-color: lightgrey;
+}
+
 .card {
   min-width: 225px; 
   max-width: 225px; 
@@ -30,21 +42,112 @@ html, body {
   width: 100%;
 }
 
-.sample-acct-picker {
-  overflow-x: auto;
-  -webkit-overflow-scrolling: touch;
-  display: flex;
-  flex-flow: row nowrap;
-  margin-left: -15px;
-  margin-right: -15px;
-  padding: 10px;
-  background-color: lightgrey;
-}
-
+/* --- App Form Styling --- */
 .target-screen-name-append {
   width: 20%;
 }
 
 .target-screen-name-append > .btn {
   width: 100%;
+}
+
+/* --- Tweet Styling --- */
+.tweet-object {
+  padding-bottom: 15px;
+  padding-top: 15px;
+  /* border-bottom: 1px lightgrey solid; */
+  align-items: stretch;
+}
+
+.tweet-img-container {
+  width: 49px;
+  display: flex;
+  align-items: center;
+  flex-flow: column nowrap;
+}
+
+.tweet-img-container img {
+  flex: 0 0 auto;
+}
+
+.reply-stretch-line {
+  width: 3px;
+  background-color: rgb(204, 214, 221);
+  flex: 1 0 auto;
+  margin-bottom: -20px;
+}
+
+/*
+color: rgba(29, 161, 242, 1.00);
+transition-property: background-color, box-shadow;
+transition-duration: 0.2s;
+border-bottom-left-radius: 9999px;
+border-bottom-right-radius: 9999px;
+border-top-left-radius: 9999px;
+border-top-right-radius: 9999px;
+
+*/
+
+.tweet-icon-hover {
+  height: 2.5em;
+  width: 2.5em;
+  border-bottom-left-radius: 9999px;
+  border-bottom-right-radius: 9999px;
+  border-top-left-radius: 9999px;
+  border-top-right-radius: 9999px;
+  /*background-color: rgba(100, 0, 100, 0.5);*/
+  position: absolute;
+  top: -5px;
+  bottom: 0;
+  left: 7px;
+  right: 0;
+  transition-property: background-color, box-shadow;
+  transition-duration: 0.2s;
+}
+
+.reply-hover:hover, .share-hover:hover {
+  background-color: rgba(29, 161, 242, 0.1);
+}
+.rt-hover:hover {
+  background-color: rgba(23, 191, 99, 0.1);
+}
+.like-hover:hover {
+  background-color: rgba(224, 36, 94, 0.1);
+}
+
+/* allow the media-object/tweet/flex-item containing our react app to shrink */
+.tweet-object:last-child .media-body {
+  min-width: 0; 
+}
+
+.tweet-object:last-child .reply-stretch-line {
+  display: none;
+}
+
+.tweet-icon {
+  height: 1.5em;
+  fill: currentColor;
+  color: rgb(136, 153, 166);
+}
+
+.twitter-sort-icon {
+  color: rgba(29,161,242,1.00);
+  fill: currentColor;
+  width: 1.25em;
+}
+
+.tweet-meta {
+  color: rgb(110, 118, 125);
+  font-size: 15px;
+}
+
+.tweet-author-name {
+  color: rgb(20, 23, 26);
+  cursor: pointer;
+  font-weight: 700;
+}
+
+.tweet-author-username {
+  color: rgb(101, 119, 134);
+  font-weight: 400;
 }
