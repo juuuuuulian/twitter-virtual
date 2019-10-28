@@ -1,1 +1,1 @@
-web: gunicorn twitter_virtual:app
+web: gunicorn -b 0.0.0.0:$PORT twitter_virtual:app
