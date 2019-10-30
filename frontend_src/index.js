@@ -44,7 +44,7 @@ const TestSlideContent = (props) => {
             <h1>Here's Some Slide Content! # {props.slideNo}</h1>
             <Button variant="primary" onClick={props.onSlideFinish}>Finish Slide</Button>
         </div>
-    );  
+    );
 };
 
 const AppSlide = (props) => {
@@ -58,10 +58,17 @@ const AppSlide = (props) => {
     );
 };
 
+const spanifyString = (inputString, props) => {
+    // wrap every character of inputString in a <span>
+    return inputString.split('').map((inputChar) =>  <span {...props}>{inputChar}</span>)
+};
+
 const TestSlideshowApp = (props) => {
     return (
-        <Slideshow inAnimation="zoomIn" outAnimation="zoomOut" waitAnimation="animated-wiggle">
+        <Slideshow inAnimation="animated faster zoomIn" outAnimation="animated faster zoomOut" waitAnimation="animated-wiggle">
             <TestSlideContent slideNo="1" />
+            <TestSlideContent slideNo="2" />
+            <TestSlideContent slideNo="3" />            
             <Tweet 
                 authorName="The Atlantic"
                 authorUsername="@TheAtlantic"
@@ -69,7 +76,7 @@ const TestSlideshowApp = (props) => {
             >
                 <blockquote className="blockquote">
                     <p className="mb-0">
-                        “Twitter is a highly individual experience that works like a collective hallucination, not a community. It’s probably totally fine that a good chunk of the nation’s elites spend so much time on it. What could go wrong?”
+                        “Twitter is a highly individual experience that works like a collective <span className="hallucination">{ spanifyString("hallucination") }</span>, not a community. It’s probably totally fine that a good chunk of the nation’s elites spend so much time on it. What could go wrong?”
                     </p>
                     <footer className="blockquote-footer">
                         Alexis C. Madrigal <cite title="Twitter Is Not America"><a href="https://www.theatlantic.com/technology/archive/2019/04/twitter-is-not-america/587770/" target="_blank">“Twitter Is Not America”</a> The Atlantic</cite>
