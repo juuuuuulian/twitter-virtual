@@ -34,7 +34,7 @@ const Slide = (props) => {
 };
 
 const Slideshow = (props) => {
-  const [currentIndex, setCurrentIndex] = React.useState(0);
+  const [currentIndex, setCurrentIndex] = React.useState(props.initialSlideIndex || 0);
   const [animationState, setAnimationState] = React.useState("in");
   const inAnimation = props.inAnimation;
   const outAnimation = props.outAnimation;
@@ -61,18 +61,20 @@ const Slideshow = (props) => {
           {
               props.children.map((child, index) => {
                   if (currentIndex == index) {
-                      return <Slide
-                          slideIndex={index}
-                          inAnimation={inAnimation} 
-                          outAnimation={outAnimation} 
-                          waitAnimation={waitAnimation} 
-                          animationState={animationState} 
-                          onShowFinish={onShowFinish} 
-                          onHideFinish={onHideFinish} 
-                          onSlideFinish={onSlideFinish}
-                      >
-                          {child}
-                      </Slide>
+                      let slideOut = child.props.outAnimation || outAnimation;
+                      let slideIn = child.props.inAnimation || inAnimation;
+                      let slideWait = child.props.waitAnimation || waitAnimation;
+
+                      return React.cloneElement(child, { 
+                          outAnimation: slideOut,
+                          inAnimation: slideIn,
+                          waitAnimation: slideWait,
+                          slideIndex: index,
+                          animationState: animationState,
+                          onShowFinish: onShowFinish,
+                          onHideFinish: onHideFinish,
+                          onSlideFinish: onSlideFinish
+                      });
                   }
               })
           }

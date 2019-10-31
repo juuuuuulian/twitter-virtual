@@ -6,6 +6,7 @@ import { AppForm } from './AppForm.jsx';
 import { AppErrorMessage } from './AppErrorMessage.jsx';
 
 // twitter feed copy app: app availability timer, form, sample account picker, and submit modal
+
 const App = (props) => {
   const [timerFinished, setTimerFinished] = React.useState((props.secondsTilNextAppAvail == 0 ? true : false));
   const [targetScreenName, setTargetScreenName] = React.useState("");

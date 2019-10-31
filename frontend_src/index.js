@@ -1,9 +1,10 @@
 import React, { Component } from 'react';
 import ReactDOM from 'react-dom';
 import { Button, Container, Row, Col, Card, InputGroup, Form, Modal, Alert } from 'react-bootstrap';
-import { Slideshow } from './components/Slideshow.jsx';
+import { Slideshow, Slide } from './components/Slideshow.jsx';
 import { App } from './components/App.jsx';
 import { Tweet } from './components/Tweet.jsx';
+import { AtlanticTweetSlide, TweetCopySlide } from './components/AppSlides.jsx';
 
 function getLastAppUseValue() {
     let last_app_use = window.APP_VARS.last_app_use;
@@ -51,45 +52,31 @@ const AppSlide = (props) => {
     return (
         <App
             secondsTilNextAppAvail={props.secondsTilNextAppAvail} 
-            sampleAccounts={props.secondsTilNextAppAvail} 
+            sampleAccounts={props.sampleAccounts} 
             errorMessage={props.errorMessage}
             captchaSiteKey={props.captchaSiteKey}
         />
     );
 };
 
-const spanifyString = (inputString, props) => {
-    // wrap every character of inputString in a <span>
-    return inputString.split('').map((inputChar) =>  <span {...props}>{inputChar}</span>)
-};
-
 const TestSlideshowApp = (props) => {
+    let initialSlideIndex = props.errorMessage ? 3 : 0; // skip to the last slide if there's an error message
     return (
-        <Slideshow inAnimation="animated faster zoomIn" outAnimation="animated faster zoomOut" waitAnimation="animated-wiggle">
-            <TestSlideContent slideNo="1" />
-            <TestSlideContent slideNo="2" />
-            <TestSlideContent slideNo="3" />            
-            <Tweet 
-                authorName="The Atlantic"
-                authorUsername="@TheAtlantic"
-                authorIconUrl="/static/images/atlantic_icon.jpg"
-            >
-                <blockquote className="blockquote">
-                    <p className="mb-0">
-                        “Twitter is a highly individual experience that works like a collective <span className="hallucination">{ spanifyString("hallucination") }</span>, not a community. It’s probably totally fine that a good chunk of the nation’s elites spend so much time on it. What could go wrong?”
-                    </p>
-                    <footer className="blockquote-footer">
-                        Alexis C. Madrigal <cite title="Twitter Is Not America"><a href="https://www.theatlantic.com/technology/archive/2019/04/twitter-is-not-america/587770/" target="_blank">“Twitter Is Not America”</a> The Atlantic</cite>
-                    </footer>
-                </blockquote>
-            </Tweet>
-            
-            <AppSlide
-                secondsTilNextAppAvail={props.secondsTilNextAppAvail}
-                sampleAccounts={props.sampleAccounts}
-                errorMessage={props.errorMessage}
-                captchaSiteKey={props.errorMessage}
-            />
+        <Slideshow initialSlideIndex={initialSlideIndex} inAnimation="animated faster zoomIn" outAnimation="animated faster zoomOut" waitAnimation="animated-wiggle">
+            <Slide>
+                <TweetCopySlide />
+            </Slide>
+            <Slide>
+                <AtlanticTweetSlide />
+            </Slide>
+            <Slide>
+                <App
+                    secondsTilNextAppAvail={props.secondsTilNextAppAvail} 
+                    sampleAccounts={props.sampleAccounts} 
+                    errorMessage={props.errorMessage}
+                    captchaSiteKey={props.captchaSiteKey}
+                />
+            </Slide>
         </Slideshow>
     );
 };
