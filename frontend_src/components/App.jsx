@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { AppUseTimer } from './AppUseTimer.jsx';
-import { SampleAccountsPicker } from './SampleAccountsPicker.jsx';
+import { NewSampleAccountPicker } from './SampleAccountsPicker.jsx';
 import { SubmitModal } from './SubmitModal.jsx';
 import { AppForm } from './AppForm.jsx';
 import { AppErrorMessage } from './AppErrorMessage.jsx';
@@ -87,7 +87,7 @@ const App = (props) => {
                       onSubmit={handleFormSubmit}
                       captchaResponseToken={captchaResponseToken}
                   />
-                  <SampleAccountsPicker 
+                  <NewSampleAccountPicker 
                       accounts={props.sampleAccounts} 
                       optionClickHandler={handleSampleAccountOptionClick} 
                   />

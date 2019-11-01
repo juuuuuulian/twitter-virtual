@@ -17,7 +17,7 @@ const Slide = (props) => {
           onHideFinish(evt)
   };
 
-  let classes = ["slide"];
+  let classes = ["slide shadow"];
   if (animationState == "in") {
       classes.push(inAnimation);
   } else if (animationState == "out") {

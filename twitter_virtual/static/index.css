@@ -13,15 +13,18 @@ html, body {
 }
 /* new layout end */
 
+/*
+slide next button styling
+letter-spacing: 30px;
 
-/* --- Sample Acct Picker Styling --- */
+*/
+
+/* --- Sample Acct Picker Styling (deprecated) --- */
 .sample-acct-picker {
   overflow-x: auto;
   -webkit-overflow-scrolling: touch;
   display: flex;
   flex-flow: row nowrap;
-  margin-left: -15px;
-  margin-right: -15px;
   padding: 10px;
   background-color: lightgrey;
 }
@@ -155,6 +158,41 @@ html, body {
 .tweet-author-username {
   color: rgb(101, 119, 134);
   font-weight: 400;
+}
+
+.twitter-account-picker {
+  border: 1px solid lightgrey;
+  padding: 10px;
+  max-height: 500px;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  /* inner scroll box shadows - jacked from lea verou's blog */
+	background:
+		/* Shadow covers */
+		linear-gradient(white 30%, rgba(255,255,255,0)),
+		linear-gradient(rgba(255,255,255,0), white 70%) 0 100%,
+		
+		/* Shadows */
+		radial-gradient(50% 0, farthest-side, rgba(0,0,0,.2), rgba(0,0,0,0)),
+		radial-gradient(50% 100%,farthest-side, rgba(0,0,0,.2), rgba(0,0,0,0)) 0 100%;
+	background:
+		/* Shadow covers */
+		linear-gradient(white 30%, rgba(255,255,255,0)),
+		linear-gradient(rgba(255,255,255,0), white 70%) 0 100%,
+		
+		/* Shadows */
+		radial-gradient(farthest-side at 50% 0, rgba(0,0,0,.2), rgba(0,0,0,0)),
+		radial-gradient(farthest-side at 50% 100%, rgba(0,0,0,.2), rgba(0,0,0,0)) 0 100%;
+	background-repeat: no-repeat;
+	background-color: white;
+	background-size: 100% 40px, 100% 40px, 100% 14px, 100% 14px;
+	
+	/* Opera doesn't support this in the shorthand */
+	background-attachment: local, local, scroll, scroll;
+}
+
+.twitter-account-card {
+  max-width: 400px;
 }
 
 

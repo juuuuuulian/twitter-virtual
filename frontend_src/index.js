@@ -5,6 +5,7 @@ import { Slideshow, Slide } from './components/Slideshow.jsx';
 import { App } from './components/App.jsx';
 import { Tweet } from './components/Tweet.jsx';
 import { AtlanticTweetSlide, TweetCopySlide } from './components/AppSlides.jsx';
+import { NewSampleAccountPicker } from './components/SampleAccountsPicker.jsx';
 
 function getLastAppUseValue() {
     let last_app_use = window.APP_VARS.last_app_use;
@@ -62,20 +63,23 @@ const AppSlide = (props) => {
 const TestSlideshowApp = (props) => {
     let initialSlideIndex = props.errorMessage ? 3 : 0; // skip to the last slide if there's an error message
     return (
-        <Slideshow initialSlideIndex={initialSlideIndex} inAnimation="animated faster zoomIn" outAnimation="animated faster zoomOut" waitAnimation="animated-wiggle">
-            <Slide>
-                <TweetCopySlide />
-            </Slide>
-            <Slide>
-                <AtlanticTweetSlide />
-            </Slide>
-            <Slide>
+        <Slideshow initialSlideIndex={initialSlideIndex} inAnimation="animated faster zoomIn" outAnimation="animated faster zoomOut" waitAnimation="animated-wiggle" waitAnimation="none">
+            <Slide waitAnimation="none">
                 <App
                     secondsTilNextAppAvail={props.secondsTilNextAppAvail} 
                     sampleAccounts={props.sampleAccounts} 
                     errorMessage={props.errorMessage}
                     captchaSiteKey={props.captchaSiteKey}
                 />
+            </Slide>
+            <Slide>
+                <NewSampleAccountPicker accounts={props.sampleAccounts} />
+            </Slide>
+            <Slide>
+                <TweetCopySlide />
+            </Slide>
+            <Slide>
+                <AtlanticTweetSlide />
             </Slide>
         </Slideshow>
     );

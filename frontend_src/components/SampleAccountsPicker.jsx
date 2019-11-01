@@ -43,4 +43,49 @@ const SampleAccountsPicker = (props) => {
   </div>
 };
 
-export { SampleAccountsPicker }
+const NewSampleAccountCard = (props) => {
+    const clickHandler = () => props.clickHandler(props.username)
+
+    return (
+        <div className="d-flex twitter-account-card align-items-center mb-2">
+            <div className="mr-2">
+                <img src={props.profileImgUrl} className="rounded-circle" />
+            </div>
+            <div className="mr-3">
+                <div className="tweet-author-name">
+                    <a className="text-decoration-none text-reset" href={"http://twitter.com/" + props.username} target="_blank">
+                        {props.name}
+                    </a>
+                </div>
+                <div className="tweet-author-username">
+                    <a className="text-decoration-none text-reset" href={"http://twitter.com/" + props.username} target="_blank">
+                        @{props.username}
+                    </a>
+                </div>
+            </div>
+            <div className="ml-auto">
+                <Button variant="outline-primary" className="rounded-pill" onClick={clickHandler}>
+                    Try Account
+                </Button>
+            </div>
+        </div>
+    );
+};
+
+const NewSampleAccountPicker = (props) => {
+    return (
+        <div className="twitter-account-picker">
+            { props.accounts.map((account) => 
+                <NewSampleAccountCard
+                    name={account.name}
+                    username={account.username}
+                    followingCount={account.following}
+                    profileImgUrl={account.profile_img_url}
+                    clickHandler={props.optionClickHandler}
+                />
+            )}
+        </div>
+    )
+};
+
+export { SampleAccountsPicker, NewSampleAccountPicker }
