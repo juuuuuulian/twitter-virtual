@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { Button, Card } from 'react-bootstrap';
+import { TwitterUserImage } from './TwitterUserImage.jsx';
 
 const SampleAccountCard = (props) => {
   return (
@@ -49,7 +50,7 @@ const NewSampleAccountCard = (props) => {
     return (
         <div className="d-flex twitter-account-card align-items-center mb-2">
             <div className="mr-2">
-                <img src={props.profileImgUrl} className="rounded-circle" />
+                <TwitterUserImage src={props.profileImgUrl} fallbackImgSrc={"/static/images/tw_icon.png"} />
             </div>
             <div className="mr-3">
                 <div className="tweet-author-name">

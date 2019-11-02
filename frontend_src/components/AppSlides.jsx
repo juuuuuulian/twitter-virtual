@@ -33,7 +33,7 @@ const TweetCopySlide = (props) => {
     <Tweet
       authorName="Twitter Virtualizer"
       authorUsername="@TwitterVirtualizer"
-      authorIconUrl="/static/images/twitter_virtual_icon.png"
+      authorIconUrl="/static/images/twv_icon.png"
     >
       <h1>Here's A Tweet</h1>
       <Button variant="primary" onClick={props.onSlideFinish}>Finish Slide</Button>

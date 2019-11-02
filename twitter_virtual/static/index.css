@@ -284,3 +284,20 @@ letter-spacing: 30px;
   animation: gradient-shift 1s linear infinite;
   background-size: 200% auto;
 }
+
+/* recaptcha mobile scaling */
+@media screen and (max-width: 350px) {
+  #rc-imageselect {
+    transform: scale(0.77);
+    -webkit-transform: scale(0.77);
+    transform-origin: 0 0;
+    -webkit-transform-origin: 0 0;
+  } 
+
+  .g-recaptcha {
+    transform: scale(0.85);
+    -webkit-transform: scale(0.85);
+    transform-origin: 0 0;
+    -webkit-transform-origin: 0 0;
+  }
+}
