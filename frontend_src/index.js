@@ -3,9 +3,7 @@ import ReactDOM from 'react-dom';
 import { Button, Container, Row, Col, Card, InputGroup, Form, Modal, Alert } from 'react-bootstrap';
 import { Slideshow, Slide } from './components/Slideshow.jsx';
 import { App } from './components/App.jsx';
-import { Tweet } from './components/Tweet.jsx';
-import { AtlanticTweetSlide, TweetCopySlide } from './components/AppSlides.jsx';
-import { NewSampleAccountPicker } from './components/SampleAccountsPicker.jsx';
+import { AtlanticTweetSlide, TweetCopySlide, AppSlide } from './components/Slides.jsx';
 
 function getLastAppUseValue() {
     let last_app_use = window.APP_VARS.last_app_use;
@@ -40,47 +38,19 @@ function getRecaptchaSiteKey() {
     return window.APP_VARS.recaptcha_site_key;
 }
 
-const TestSlideContent = (props) => {
-    return (
-        <div>
-            <h1>Here's Some Slide Content! # {props.slideNo}</h1>
-            <Button variant="primary" onClick={props.onSlideFinish}>Finish Slide</Button>
-        </div>
-    );
-};
-
-const AppSlide = (props) => {
-    return (
-        <App
-            secondsTilNextAppAvail={props.secondsTilNextAppAvail} 
-            sampleAccounts={props.sampleAccounts} 
-            errorMessage={props.errorMessage}
-            captchaSiteKey={props.captchaSiteKey}
-        />
-    );
-};
-
 const TestSlideshowApp = (props) => {
-    let initialSlideIndex = props.errorMessage ? 3 : 0; // skip to the last slide if there's an error message
+    let initialSlideIndex = props.errorMessage ? 2 : 0; // skip to the last slide if there's an error message
     return (
-        <Slideshow initialSlideIndex={initialSlideIndex} inAnimation="animated faster zoomIn" outAnimation="animated faster zoomOut" waitAnimation="animated-wiggle" waitAnimation="none">
-            <Slide waitAnimation="none">
-                <App
-                    secondsTilNextAppAvail={props.secondsTilNextAppAvail} 
-                    sampleAccounts={props.sampleAccounts} 
-                    errorMessage={props.errorMessage}
-                    captchaSiteKey={props.captchaSiteKey}
-                />
-            </Slide>
-            <Slide>
-                <NewSampleAccountPicker accounts={props.sampleAccounts} />
-            </Slide>
-            <Slide>
-                <TweetCopySlide />
-            </Slide>
-            <Slide>
-                <AtlanticTweetSlide />
-            </Slide>
+        <Slideshow initialSlideIndex={initialSlideIndex} inAnimation="animated faster zoomIn" outAnimation="animated faster zoomOut" waitAnimation="animated-wiggle">
+            <AtlanticTweetSlide className="shadow" />
+            <TweetCopySlide className="shadow" />
+            <AppSlide 
+                className="shadow"
+                secondsTilNextAppAvail={props.secondsTilNextAppAvail} 
+                sampleAccounts={props.sampleAccounts} 
+                errorMessage={props.errorMessage}
+                captchaSiteKey={props.captchaSiteKey}
+            />
         </Slideshow>
     );
 };

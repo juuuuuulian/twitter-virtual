@@ -19,7 +19,7 @@ letter-spacing: 30px;
 
 */
 
-/* --- Sample Acct Picker Styling (deprecated) --- */
+/* --- Card Deck Acct Picker --- */
 .sample-acct-picker {
   overflow-x: auto;
   -webkit-overflow-scrolling: touch;
@@ -51,6 +51,45 @@ letter-spacing: 30px;
 
 .sample-acct-btn {
   width: 100%;
+}
+
+/* --- List Account Picker --- */
+.list-account-picker {
+  border: 1px solid lightgrey;
+  padding: 10px;
+  max-height: 500px;
+  max-width: 500px;
+  margin-left: auto;
+  margin-right: auto;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  /* inner scroll box shadows - jacked from lea verou's blog */
+	background:
+		/* Shadow covers */
+		linear-gradient(white 30%, rgba(255,255,255,0)),
+		linear-gradient(rgba(255,255,255,0), white 70%) 0 100%,
+		
+		/* Shadows */
+		radial-gradient(50% 0, farthest-side, rgba(0,0,0,.2), rgba(0,0,0,0)),
+		radial-gradient(50% 100%,farthest-side, rgba(0,0,0,.2), rgba(0,0,0,0)) 0 100%;
+	background:
+		/* Shadow covers */
+		linear-gradient(white 30%, rgba(255,255,255,0)),
+		linear-gradient(rgba(255,255,255,0), white 70%) 0 100%,
+		
+		/* Shadows */
+		radial-gradient(farthest-side at 50% 0, rgba(0,0,0,.2), rgba(0,0,0,0)),
+		radial-gradient(farthest-side at 50% 100%, rgba(0,0,0,.2), rgba(0,0,0,0)) 0 100%;
+	background-repeat: no-repeat;
+	background-color: white;
+	background-size: 100% 40px, 100% 40px, 100% 14px, 100% 14px;
+	
+	/* Opera doesn't support this in the shorthand */
+	background-attachment: local, local, scroll, scroll;
+}
+
+.account-list-item {
+  max-width: 400px;
 }
 
 /* --- App Form Styling --- */
@@ -119,8 +158,8 @@ letter-spacing: 30px;
   background-color: rgba(224, 36, 94, 0.1);
 }
 
-/* allow the media-object/tweet/flex-item containing our react app to shrink */
-/*.tweet:last-child .media-body {
+/* allow the media object/tweet/flex-item containing our react app to shrink */
+/*.tweet .media-body {
   min-width: 0;
 }*/
 
@@ -143,9 +182,11 @@ letter-spacing: 30px;
 .tweet-meta {
   color: rgb(110, 118, 125);
   font-size: 15px;
+  display: flex;
+  flex-flow: row wrap;
 }
 
-.tweet-meta > span {
+.tweet-meta > span > span {
   margin-right: 5px;
 }
 
@@ -153,6 +194,7 @@ letter-spacing: 30px;
   color: rgb(20, 23, 26);
   cursor: pointer;
   font-weight: 700;
+  margin-right: 5px;
 }
 
 .tweet-author-username {
@@ -160,43 +202,8 @@ letter-spacing: 30px;
   font-weight: 400;
 }
 
-.twitter-account-picker {
-  border: 1px solid lightgrey;
-  padding: 10px;
-  max-height: 500px;
-  overflow-y: auto;
-  -webkit-overflow-scrolling: touch;
-  /* inner scroll box shadows - jacked from lea verou's blog */
-	background:
-		/* Shadow covers */
-		linear-gradient(white 30%, rgba(255,255,255,0)),
-		linear-gradient(rgba(255,255,255,0), white 70%) 0 100%,
-		
-		/* Shadows */
-		radial-gradient(50% 0, farthest-side, rgba(0,0,0,.2), rgba(0,0,0,0)),
-		radial-gradient(50% 100%,farthest-side, rgba(0,0,0,.2), rgba(0,0,0,0)) 0 100%;
-	background:
-		/* Shadow covers */
-		linear-gradient(white 30%, rgba(255,255,255,0)),
-		linear-gradient(rgba(255,255,255,0), white 70%) 0 100%,
-		
-		/* Shadows */
-		radial-gradient(farthest-side at 50% 0, rgba(0,0,0,.2), rgba(0,0,0,0)),
-		radial-gradient(farthest-side at 50% 100%, rgba(0,0,0,.2), rgba(0,0,0,0)) 0 100%;
-	background-repeat: no-repeat;
-	background-color: white;
-	background-size: 100% 40px, 100% 40px, 100% 14px, 100% 14px;
-	
-	/* Opera doesn't support this in the shorthand */
-	background-attachment: local, local, scroll, scroll;
-}
 
-.twitter-account-card {
-  max-width: 400px;
-}
-
-
-/* animations */
+/* --- Animations --- */
 /* box wiggle */
 @-webkit-keyframes wiggle {  
   12% { -webkit-transform: skewX(1deg) scale(1.01); }
@@ -285,7 +292,7 @@ letter-spacing: 30px;
   background-size: 200% auto;
 }
 
-/* recaptcha mobile scaling */
+/* --- Recaptcha Responsive Scaling --- */
 @media screen and (max-width: 350px) {
   #rc-imageselect {
     transform: scale(0.77);
@@ -299,5 +306,14 @@ letter-spacing: 30px;
     -webkit-transform: scale(0.85);
     transform-origin: 0 0;
     -webkit-transform-origin: 0 0;
+  }
+}
+
+@media screen and (max-height: 500px) {
+  #rc-imageselect {
+    transform: scale(0.77);
+    -webkit-transform: scale(0.77);
+    transform-origin: 0 0;
+    -webkit-transform-origin: 0 0; 
   }
 }

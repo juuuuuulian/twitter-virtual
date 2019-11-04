@@ -8,6 +8,7 @@ const Slide = (props) => {
   const outAnimation = props.outAnimation;
   const inAnimation = props.inAnimation;
   const waitAnimation = props.waitAnimation;
+  const className = props.className;
 
   const animationEndHandler = (evt) => {
       let animationName = evt.animationName;
@@ -17,7 +18,7 @@ const Slide = (props) => {
           onHideFinish(evt)
   };
 
-  let classes = ["slide shadow"];
+  let classes = ["slide", className];
   if (animationState == "in") {
       classes.push(inAnimation);
   } else if (animationState == "out") {

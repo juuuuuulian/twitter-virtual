@@ -35,7 +35,7 @@ const Tweet = (props) => {
     <Media className="tweet">
         <div className="mr-3 tweet-img-container">
             <div className="mb-1">
-                <TwitterUserImage src={authorIconUrl} />
+                <TwitterUserImage className="rounded-circle" src={authorIconUrl} />
             </div>
             <div className="reply-stretch-line">
             </div>
@@ -45,11 +45,13 @@ const Tweet = (props) => {
                 <span className="tweet-author-name">
                     {authorName}
                 </span>
-                <span className="tweet-author-username">
-                    {authorUsername}
+                <span>
+                    <span className="tweet-author-username">
+                        {authorUsername}
+                    </span>
+                    <span className="spacer">·</span>
+                    <time>∞</time>
                 </span>
-                <span className="spacer">·</span>
-                <time>∞</time>
             </div>
             <div className="tweet-body">
                 {props.children}
