@@ -48,10 +48,10 @@ const TestSlideshowApp = (props) => {
             waitAnimation="animated-wiggle" 
             waitAnimation="none"
         >
-            <AtlanticTweetSlide />
-            <TweetCopySlide />
+            <AtlanticTweetSlide className="shadow" />
+            <TweetCopySlide className="shadow" />
             <AppSlide 
-                className="shadow rounded"
+                className="shadow"
                 secondsTilNextAppAvail={props.secondsTilNextAppAvail} 
                 sampleAccounts={props.sampleAccounts} 
                 errorMessage={props.errorMessage}

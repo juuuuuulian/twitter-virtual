@@ -12,6 +12,7 @@ html, body {
 .slide {
   padding: 15px;
   border: 1px solid grey;
+  border-radius: .5em;
 }
 
 /* --- Tweet Styling --- */
@@ -173,6 +174,8 @@ letter-spacing: 30px;
 
 .target-screen-name-append > .btn {
   width: 100%;
+  border-top-right-radius: .25rem !important;
+  border-bottom-right-radius: .25rem !important;
 }
 
 /* --- Animations --- */
