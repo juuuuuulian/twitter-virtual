@@ -45,7 +45,7 @@ const TestSlideshowApp = (props) => {
             initialSlideIndex={initialSlideIndex} 
             inAnimation="animated faster zoomIn" 
             outAnimation="animated faster zoomOut" 
-            waitAnimation="animated-wiggle" 
+            waitAnimation="animated-wiggle"
             waitAnimation="none"
         >
             <AtlanticTweetSlide className="shadow" />

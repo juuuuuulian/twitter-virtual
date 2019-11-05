@@ -1,3 +1,5 @@
+/* --- Index Page Styling --- */
+
 html, body {
   height: 100%;
 }
@@ -11,13 +13,12 @@ html, body {
 /* --- Slide Styling ---*/
 .slide {
   padding: 15px;
-  border: 1px solid grey;
+  border: 1px solid lightgrey;
   border-radius: .5em;
 }
 
 /* --- Tweet Styling --- */
 .tweet {
-  /* border-bottom: 1px lightgrey solid; */
   align-items: stretch;
 }
 
@@ -37,6 +38,10 @@ html, body {
   background-color: rgb(204, 214, 221);
   flex: 1 0 auto;
   margin-bottom: -20px;
+}
+
+.tweet-icon-container {
+  display: inline-block;
 }
 
 .tweet-icon-hover {
