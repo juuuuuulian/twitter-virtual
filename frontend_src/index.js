@@ -41,11 +41,17 @@ function getRecaptchaSiteKey() {
 const TestSlideshowApp = (props) => {
     let initialSlideIndex = props.errorMessage ? 2 : 0; // skip to the last slide if there's an error message
     return (
-        <Slideshow initialSlideIndex={initialSlideIndex} inAnimation="animated faster zoomIn" outAnimation="animated faster zoomOut" waitAnimation="animated-wiggle">
-            <AtlanticTweetSlide className="shadow" />
-            <TweetCopySlide className="shadow" />
+        <Slideshow 
+            initialSlideIndex={initialSlideIndex} 
+            inAnimation="animated faster zoomIn" 
+            outAnimation="animated faster zoomOut" 
+            waitAnimation="animated-wiggle" 
+            waitAnimation="none"
+        >
+            <AtlanticTweetSlide />
+            <TweetCopySlide />
             <AppSlide 
-                className="shadow"
+                className="shadow rounded"
                 secondsTilNextAppAvail={props.secondsTilNextAppAvail} 
                 sampleAccounts={props.sampleAccounts} 
                 errorMessage={props.errorMessage}

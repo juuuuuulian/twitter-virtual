@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { Button, Card } from 'react-bootstrap';
 import { TwitterUserImage } from './TwitterUserImage.jsx';
 
+// deprecated
 const AccountCard = (props) => {
   return (
       <Card>
@@ -26,6 +27,7 @@ const AccountCard = (props) => {
   );
 };
 
+// deprecated
 const CardDeckAccountPicker = (props) => {
   // based on CardDeck
   return <div className="sample-acct-picker">
@@ -41,11 +43,11 @@ const CardDeckAccountPicker = (props) => {
   </div>
 };
 
-const AccountListItem = (props) => {
+const SampleAccountListItem = (props) => {
     const clickHandler = () => props.clickHandler(props.username)
 
     return (
-        <div className="d-flex account-list-item align-items-center mb-2">
+        <a className="d-flex align-items-center list-group-item list-group-item-action" onClick={clickHandler}>
             <div className="mr-2">
                 <TwitterUserImage 
                     src={props.profileImgUrl} 
@@ -56,30 +58,26 @@ const AccountListItem = (props) => {
             </div>
             <div className="mr-3">
                 <div className="tweet-author-name">
-                    <a className="text-decoration-none text-reset" href={"http://twitter.com/" + props.username} target="_blank">
-                        {props.name}
-                    </a>
+                    {props.name}
                 </div>
                 <div className="tweet-author-username">
-                    <a className="text-decoration-none text-reset" href={"http://twitter.com/" + props.username} target="_blank">
-                        @{props.username}
-                    </a>
+                    @{props.username}
                 </div>
             </div>
-            <div className="ml-auto d-none d-md-block d-lg-block d-xl-block">
-                <Button variant="outline-primary" className="rounded-pill" onClick={clickHandler}>
-                    Try Account
+            <div className="ml-auto d-none d-sm-block d-md-block d-lg-block d-xl-block">
+                <Button variant="outline-primary" className="rounded-pill account-picker-btn" onClick={clickHandler}>
+                    Try
                 </Button>
             </div>
-        </div>
+        </a>
     );
 };
 
-const ListAccountPicker = (props) => {
+const ListGroupSampleAccountPicker = (props) => {
     return (
-        <div className="list-account-picker">
+        <div className="account-picker-list-group list-group list-group-flush">
             { props.accounts.map((account) => 
-                <AccountListItem
+                <SampleAccountListItem
                     name={account.name}
                     username={account.username}
                     followingCount={account.following}
@@ -88,7 +86,7 @@ const ListAccountPicker = (props) => {
                 />
             )}
         </div>
-    )
+    );
 };
 
-export { CardDeckAccountPicker, ListAccountPicker }
+export { ListGroupSampleAccountPicker }

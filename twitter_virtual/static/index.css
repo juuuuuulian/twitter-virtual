@@ -2,111 +2,17 @@ html, body {
   height: 100%;
 }
 
-.main-content {
-  min-height: 100%;
-}
-
-/* new layout begin */
 .main {
   min-height: 100%;
   min-width: 100%;
 }
-/* new layout end */
 
-/*
-slide next button styling
-letter-spacing: 30px;
-
-*/
-
-/* --- Card Deck Acct Picker --- */
-.sample-acct-picker {
-  overflow-x: auto;
-  -webkit-overflow-scrolling: touch;
-  display: flex;
-  flex-flow: row nowrap;
-  padding: 10px;
-  background-color: lightgrey;
-}
-
-.card {
-  min-width: 225px; 
-  max-width: 225px; 
-  max-height: 375px; 
-  margin-right: 10px; 
-}
-
-.card-img-top {
-  width: 100%; 
-  object-fit: cover;
-  height: 175px;
-}
-
-.card-body {
-  display: flex;
-  flex-flow: column; 
-  align-items: flex-start;
-  justify-content: space-between;
-}
-
-.sample-acct-btn {
-  width: 100%;
-}
-
-/* --- List Account Picker --- */
-.list-account-picker {
-  border: 1px solid lightgrey;
-  padding: 10px;
-  max-height: 500px;
-  max-width: 500px;
-  margin-left: auto;
-  margin-right: auto;
-  overflow-y: auto;
-  -webkit-overflow-scrolling: touch;
-  /* inner scroll box shadows - jacked from lea verou's blog */
-	background:
-		/* Shadow covers */
-		linear-gradient(white 30%, rgba(255,255,255,0)),
-		linear-gradient(rgba(255,255,255,0), white 70%) 0 100%,
-		
-		/* Shadows */
-		radial-gradient(50% 0, farthest-side, rgba(0,0,0,.2), rgba(0,0,0,0)),
-		radial-gradient(50% 100%,farthest-side, rgba(0,0,0,.2), rgba(0,0,0,0)) 0 100%;
-	background:
-		/* Shadow covers */
-		linear-gradient(white 30%, rgba(255,255,255,0)),
-		linear-gradient(rgba(255,255,255,0), white 70%) 0 100%,
-		
-		/* Shadows */
-		radial-gradient(farthest-side at 50% 0, rgba(0,0,0,.2), rgba(0,0,0,0)),
-		radial-gradient(farthest-side at 50% 100%, rgba(0,0,0,.2), rgba(0,0,0,0)) 0 100%;
-	background-repeat: no-repeat;
-	background-color: white;
-	background-size: 100% 40px, 100% 40px, 100% 14px, 100% 14px;
-	
-	/* Opera doesn't support this in the shorthand */
-	background-attachment: local, local, scroll, scroll;
-}
-
-.account-list-item {
-  max-width: 400px;
-}
-
-/* --- App Form Styling --- */
-.target-screen-name-append {
-  width: 20%;
-}
-
-.target-screen-name-append > .btn {
-  width: 100%;
-}
 
 /* --- Slide Styling ---*/
 .slide {
   padding: 15px;
   border: 1px solid grey;
 }
-
 
 /* --- Tweet Styling --- */
 .tweet {
@@ -151,17 +57,19 @@ letter-spacing: 30px;
 .reply-hover:hover, .share-hover:hover {
   background-color: rgba(29, 161, 242, 0.1);
 }
+
 .rt-hover:hover {
   background-color: rgba(23, 191, 99, 0.1);
 }
+
 .like-hover:hover {
   background-color: rgba(224, 36, 94, 0.1);
 }
 
-/* allow the media object/tweet/flex-item containing our react app to shrink */
-/*.tweet .media-body {
+.tweet .media-body {
+/* allow the media object/tweet body/flex item containing our react app to shrink */
   min-width: 0;
-}*/
+}
 
 .tweet:last-child .reply-stretch-line {
   display: none;
@@ -202,9 +110,72 @@ letter-spacing: 30px;
   font-weight: 400;
 }
 
+/*
+slide next button styling
+letter-spacing: 30px;
+*/
+
+/* --- List Group Account Picker -- */
+.account-picker-list-group {
+  border: 1px solid lightgrey;
+  max-height: 500px;
+  max-width: 500px;
+  margin-left: auto;
+  margin-right: auto;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  /* inner scroll box shadows - jacked from lea verou's blog */
+	background:
+		/* Shadow covers */
+		linear-gradient(white 30%, rgba(255,255,255,0)),
+		linear-gradient(rgba(255,255,255,0), white 70%) 0 100%,
+		
+		/* Shadows */
+		radial-gradient(50% 0, farthest-side, rgba(0,0,0,.2), rgba(0,0,0,0)),
+		radial-gradient(50% 100%,farthest-side, rgba(0,0,0,.2), rgba(0,0,0,0)) 0 100%;
+	background:
+		/* Shadow covers */
+		linear-gradient(white 30%, rgba(255,255,255,0)),
+		linear-gradient(rgba(255,255,255,0), white 70%) 0 100%,
+		
+		/* Shadows */
+		radial-gradient(farthest-side at 50% 0, rgba(0,0,0,.2), rgba(0,0,0,0)),
+		radial-gradient(farthest-side at 50% 100%, rgba(0,0,0,.2), rgba(0,0,0,0)) 0 100%;
+	background-repeat: no-repeat;
+	background-color: white;
+	background-size: 100% 40px, 100% 40px, 100% 14px, 100% 14px;
+	
+	/* Opera doesn't support this in the shorthand */
+	background-attachment: local, local, scroll, scroll;
+}
+
+.account-picker-list-group > .list-group-item {
+  background-color: unset; /* for the list shadow indicators */
+}
+
+.account-picker-list-group .list-group-item button {
+  min-width: 100px;
+}
+
+@media (max-width: 576px) {
+  /* on sm devices, switch account picker list item layout to centered column */
+  .account-picker-list-group > .list-group-item {
+    flex-flow: column;
+    justify-content: center;
+    text-align: center;
+  }
+}
+
+/* --- App Form Styling --- */
+.target-screen-name-append {
+  width: 20%;
+}
+
+.target-screen-name-append > .btn {
+  width: 100%;
+}
 
 /* --- Animations --- */
-/* box wiggle */
 @-webkit-keyframes wiggle {  
   12% { -webkit-transform: skewX(1deg) scale(1.01); }
   24% { -webkit-transform: skewX(3deg) scale(1.00)}
@@ -235,10 +206,6 @@ letter-spacing: 30px;
   -webkit-animation-duration: 1.1s;
   animation-duration: 1.1s;
   animation-iteration-count: infinite;
-  /*background-color: white;
-  border: 2px dashed black;*/
-  /*-webkit-animation-duration: 100s;
-  animation-duration: 100s;*/
   -webkit-animation-fill-mode: both;
   animation-fill-mode: both;
 }
@@ -259,6 +226,7 @@ letter-spacing: 30px;
 .hallucination span {
   font-size: 1.5rem;
 }
+
 .hallucination span:nth-child(odd) {
   background: linear-gradient(right, red, yellow);
   background: -webkit-linear-gradient(right, red, yellow);
@@ -270,6 +238,7 @@ letter-spacing: 30px;
   background-size: 200% auto;
   /*font-family: Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif;*/
 }
+
 .hallucination span:nth-child(even) {
   background: linear-gradient(left, green, orange);
   background: -webkit-linear-gradient(left, green, orange);
@@ -281,6 +250,7 @@ letter-spacing: 30px;
   background-size: 200% auto;
   /*font-family: Verdana, Geneva, Tahoma, sans-serif;*/
 }
+
 .hallucination span:nth-child(3n) {
   background: linear-gradient(right, pink, purple);
   background: -webkit-linear-gradient(right, pink, purple);
@@ -316,4 +286,39 @@ letter-spacing: 30px;
     transform-origin: 0 0;
     -webkit-transform-origin: 0 0; 
   }
+}
+
+
+/* --- Card Deck Acct Picker (deprecated) --- */
+.sample-acct-picker {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  display: flex;
+  flex-flow: row nowrap;
+  padding: 10px;
+  background-color: lightgrey;
+}
+
+.card {
+  min-width: 225px; 
+  max-width: 225px; 
+  max-height: 375px; 
+  margin-right: 10px; 
+}
+
+.card-img-top {
+  width: 100%; 
+  object-fit: cover;
+  height: 175px;
+}
+
+.card-body {
+  display: flex;
+  flex-flow: column; 
+  align-items: flex-start;
+  justify-content: space-between;
+}
+
+.sample-acct-btn {
+  width: 100%;
 }

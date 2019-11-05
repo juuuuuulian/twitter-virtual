@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { AppUseTimer } from './AppUseTimer.jsx';
-import { ListAccountPicker, CardDeckAccountPicker } from './SampleAccountsPicker.jsx';
+import { ListGroupSampleAccountPicker } from './SampleAccountPicker.jsx';
 import { SubmitModal } from './SubmitModal.jsx';
 import { AppForm } from './AppForm.jsx';
 import { AppErrorMessage } from './AppErrorMessage.jsx';
@@ -88,30 +88,15 @@ const App = (props) => {
                       captchaResponseToken={captchaResponseToken}
                   />
                   <div>
-                      <ListAccountPicker 
+                      <ListGroupSampleAccountPicker 
                         accounts={props.sampleAccounts} 
                         optionClickHandler={handleSampleAccountOptionClick} 
-                        />
+                      />
                   </div>
               </div>
           }
       </div>
   );
 };
-
-// ignore
-{/* <div className="d-none d-lg-block d-xl-block">
-<ListAccountPicker 
-  accounts={props.sampleAccounts} 
-  optionClickHandler={handleSampleAccountOptionClick} 
- />
-</div>
-<div className="d-lg-none">
- <CardDeckAccountPicker
-     accounts={props.sampleAccounts}
-     optionClickHandler={handleSampleAccountOptionClick}
-  />
-</div> */}
-
 
 export { App }

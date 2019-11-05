@@ -9,6 +9,7 @@ const Slide = (props) => {
   const inAnimation = props.inAnimation;
   const waitAnimation = props.waitAnimation;
   const className = props.className;
+  let children = React.Children.toArray(props.children);
 
   const animationEndHandler = (evt) => {
       let animationName = evt.animationName;
@@ -29,7 +30,7 @@ const Slide = (props) => {
 
   return (
       <div className={classes.join(' ')} onAnimationEnd={animationEndHandler}>
-          { React.cloneElement(props.children, { onSlideFinish: onSlideFinish }) }
+          { children.map((child) => React.cloneElement(child, { onSlideFinish: onSlideFinish })) }
       </div>
   );
 };
@@ -40,6 +41,7 @@ const Slideshow = (props) => {
   const inAnimation = props.inAnimation;
   const outAnimation = props.outAnimation;
   const waitAnimation = props.waitAnimation;
+  let children = React.Children.toArray(props.children);
 
   // hide animation finish callback
   const onHideFinish = () => {
@@ -60,7 +62,7 @@ const Slideshow = (props) => {
   return (
       <>
           {
-              props.children.map((child, index) => {
+              children.map((child, index) => {
                   if (currentIndex == index) {
                       let slideOut = child.props.outAnimation || outAnimation;
                       let slideIn = child.props.inAnimation || inAnimation;
