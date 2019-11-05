@@ -1,5 +1,11 @@
 /* --- Index Page Styling --- */
 
+/* --- Fonts --- */
+@font-face {
+  font-family: WarioWareInc;
+  src: url(/static/fonts/warioware_inc.ttf);
+}
+
 html, body {
   height: 100%;
 }
