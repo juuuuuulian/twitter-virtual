@@ -23,6 +23,8 @@ html, body {
   border-radius: .5em;
 }
 
+/* solid drop shadow: box-shadow: .5rem .5rem 0rem rgba(0,0,0,.15)!important */
+
 /* --- Tweet Styling --- */
 .tweet {
   align-items: stretch;
@@ -129,6 +131,7 @@ letter-spacing: 30px;
 
 /* --- List Group Account Picker -- */
 .account-picker-list-group {
+  cursor: pointer;
   border: 1px solid lightgrey;
   max-height: 500px;
   max-width: 500px;
@@ -161,17 +164,21 @@ letter-spacing: 30px;
 	background-attachment: local, local, scroll, scroll;
 }
 
-.account-picker-list-group > .list-group-item {
+.account-picker-list-item {
   background-color: unset; /* for the list shadow indicators */
 }
 
-.account-picker-list-group .list-group-item button {
+.account-picker-list-item button {
   min-width: 100px;
+}
+
+.account-picker-list-item:hover {
+  background-color: rgb(245, 245, 245);
 }
 
 @media (max-width: 576px) {
   /* on sm devices, switch account picker list item layout to centered column */
-  .account-picker-list-group > .list-group-item {
+  .account-picker-list-item {
     flex-flow: column;
     justify-content: center;
     text-align: center;
