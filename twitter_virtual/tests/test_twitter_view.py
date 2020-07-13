@@ -1,4 +1,4 @@
-"""Integration tests for the twitter view."""
+"""Integration tests for the twitter webapp view."""
 from twitter_virtual.tests.base_test_case import BaseTestCase
 from twitter_virtual.tests.twitter_mocks import twitter_list, \
     patch_twitter_add_list_users, patch_twitter_check_user_is_following, patch_twitter_get_following_users, \
@@ -25,7 +25,7 @@ fake_captcha_token = "FAKERECAPTCHATOKEN"
 class TestBegin(BaseTestCase):
     """Tests for /twitter/begin."""
     def _check_response_body(self, response, expected_text):
-        self.assertTrue(expected_text in response.text, f'Got "{expected_text}" in response body')
+        response.mustcontain(expected_text)
 
     def _do_request(self, target_screen_name=None, captcha_response_token="", expected_status=200, expected_error_msg=None):
         """Make a POST request to /twitter/begin with target_screen_name and captcha_response_token values, and
@@ -78,7 +78,7 @@ class TestCopyFeed(BaseTestCase):
             sess["target_screen_name"] = target_screen_name
 
     def _check_response_body(self, response, expected_text):
-        self.assertTrue(expected_text in response.text, f'Got "{expected_text}" in response body')
+        response.mustcontain(expected_text)
 
     def _do_request(self, set_token=True, set_target_screen_name=True, expected_status=200, expected_error_msg=None):
         """Set the OAuth token and the target screen name values in the session, perform the request, then finally check
@@ -136,11 +136,13 @@ class TestCopyFeed(BaseTestCase):
             AppUse.query.delete()
             self.db.session.commit()
 
+    @patch_twitter_invalidate_token(True)
     @patch_twitter_check_user_is_following(False)
     def test_user_not_following_target(self):
         """Test case where user is not following the target."""
         self._do_request(expected_status=500, expected_error_msg="Please enter a screen name that you are following")
 
+    @patch_twitter_invalidate_token(True)
     @patch_twitter_get_following_users(following_users([]))
     @patch_twitter_check_user_is_following(True)
     def test_target_following_nobody(self):
@@ -148,6 +150,7 @@ class TestCopyFeed(BaseTestCase):
         self._do_request(expected_status=500,
                          expected_error_msg="Please enter a screen name that is following other users")
 
+    @patch_twitter_invalidate_token(True)
     @patch_twitter_get_following_users(following_users(list(range(0, 5001)), more_available=True))
     @patch_twitter_check_user_is_following(True)
     def test_target_following_too_many(self):
@@ -155,6 +158,7 @@ class TestCopyFeed(BaseTestCase):
         self._do_request(expected_status=500,
                          expected_error_msg="Please enter a screen name that is following fewer than 5000 other users")
 
+    @patch_twitter_invalidate_token(True)
     @patch_twitter_list_create(TwitterError("Test Server Error"))
     @patch_twitter_get_following_users(following_users(list(range(1, 4))))
     @patch_twitter_check_user_is_following(True)
@@ -162,6 +166,7 @@ class TestCopyFeed(BaseTestCase):
         """Test case where private list creation fails due to a Twitter API server error response."""
         self._do_request(expected_status=500, expected_error_msg="Please try again later")
 
+    @patch_twitter_invalidate_token(True)
     @patch_twitter_list_create(RateLimitHit("Test Rate Limit Hit"))
     @patch_twitter_get_following_users(following_users([3, 4]))
     @patch_twitter_check_user_is_following(True)
