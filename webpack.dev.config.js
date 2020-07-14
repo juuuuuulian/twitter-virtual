@@ -1,4 +1,5 @@
 const path = require('path');
+const HtmlWebpackPlugin = require('html-webpack-plugin');
 
 module.exports = {
     module: {
@@ -7,7 +8,7 @@ module.exports = {
                 test: /\.(js|jsx)$/,
                 exclude: /node_modules/,
                 use: {
-                    loader: "babel-loader"  
+                    loader: "babel-loader"
                 }
             },
             {
@@ -37,7 +38,15 @@ module.exports = {
     },
     entry: './frontend_src/index.js',
     output: {
-        filename: 'index.js',
+        filename: 'index.bundle.js',
         path: path.resolve(__dirname, 'twitter_virtual', 'static')
+    },
+    plugins: [
+        new HtmlWebpackPlugin({
+            template: './twitter_virtual/templates/index.html'
+        })
+    ],
+    devServer: {
+        contentBase: './twitter_virtual/'
     }
 };

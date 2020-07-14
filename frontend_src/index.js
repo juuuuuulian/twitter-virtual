@@ -5,8 +5,16 @@ import { Slideshow, Slide } from './components/Slideshow.jsx';
 import { App } from './components/App.jsx';
 import { AtlanticTweetSlide, TweetCopySlide, FeedTweetCopySlide, AppSlide } from './components/Slides.jsx';
 
+function getAppVars() {
+    const appVars = window.APP_VARS;
+    if (appVars == null) {
+        console.warn('no window.APP_VARS available');
+        return {};
+    }
+}
+
 function getLastAppUseValue() {
-    let last_app_use = window.APP_VARS.last_app_use;
+    let last_app_use = getAppVars().last_app_use;
     if (last_app_use == null)
         return null;
     return new Date(last_app_use);
@@ -27,15 +35,15 @@ function getSecondsTilNextAppAvail() {
 }
 
 function getSampleAccounts() {
-    return window.APP_VARS.sample_accounts;
+    return getAppVars().sample_accounts;
 }
 
 function getErrorMessage() {
-    return window.APP_VARS.error_message;
+    return getAppVars().error_message;
 }
 
 function getRecaptchaSiteKey() {
-    return window.APP_VARS.recaptcha_site_key;
+    return getAppVars().recaptcha_site_key;
 }
 
 const TestSlideshowApp = (props) => {
