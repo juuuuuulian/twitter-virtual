@@ -1,8 +1,8 @@
-frontend:
-	npx webpack --config webpack.config.js
+frontend-dev:
+	npm run-script start
 
-frontend-watch:
-	npx webpack --config webpack.config.js --watch
+frontend-build:
+	npm run-script build
 
 dev-server:
 	FLASK_APP=twitter_virtual FLASK_ENV=development flask run --host=127.0.0.1

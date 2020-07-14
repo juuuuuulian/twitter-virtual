@@ -43,10 +43,12 @@ module.exports = {
     },
     plugins: [
         new HtmlWebpackPlugin({
-            template: './twitter_virtual/templates/index.html'
+            template: './frontend_src/index.html'
+            //template: './twitter_virtual/templates/index.html'
         })
     ],
     devServer: {
         contentBase: './twitter_virtual/'
-    }
+    },
+    mode: 'development'
 };

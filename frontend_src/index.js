@@ -11,10 +11,12 @@ function getAppVars() {
         console.warn('no window.APP_VARS available');
         return {};
     }
+    return appVars;
 }
 
 function getLastAppUseValue() {
-    let last_app_use = getAppVars().last_app_use;
+    const appVars = getAppVars();
+    let last_app_use = appVars.last_app_use;
     if (last_app_use == null)
         return null;
     return new Date(last_app_use);
