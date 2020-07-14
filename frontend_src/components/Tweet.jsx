@@ -81,11 +81,11 @@ const TweetDetail = (props) => {
                 <div>{props.children}</div>
             </div>
             <div className="ml-1 mt-2 mb-2 tweet-post-date">
-                <span class="tweet-time">
+                <span className="tweet-time">
                     12:00 PM
                 </span>
                 <span className="spacer">·</span>
-                <span class="tweet-date">
+                <span className="tweet-date">
                     Nov 7, 2019
                 </span>
             </div>
