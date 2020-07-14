@@ -1,5 +1,4 @@
 /* --- Index Page Styling --- */
-
 /* --- Fonts --- */
 @font-face {
   font-family: WarioWareInc;
@@ -10,22 +9,26 @@ html, body {
   height: 100%;
 }
 
+@media (min-width: 576px) {
+  body {
+    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  }
+}
+
 .main {
   min-height: 100%;
   min-width: 100%;
 }
 
-
 /* --- Slide Styling ---*/
 .slide {
-  padding: 15px;
+  /*padding: 20px 30px;*/
   border: 1px solid lightgrey;
   border-radius: .5em;
+  box-shadow: .5rem .5rem 0rem rgba(0,0,0,.15);
 }
 
-/* solid drop shadow: box-shadow: .5rem .5rem 0rem rgba(0,0,0,.15)!important */
-
-/* --- Tweet Styling --- */
+/* --- Tweet Feed View Styling --- */
 .tweet {
   align-items: stretch;
 }
@@ -124,10 +127,79 @@ html, body {
   font-weight: 400;
 }
 
-/*
-slide next button styling
-letter-spacing: 30px;
-*/
+/* --- Tweet Detailed View Styling --- */
+.tweet-detail {
+  padding: 20px 30px;
+}
+
+.tweet-detail .tweet-author-img {
+  width: 49px;
+}
+
+.tweet-detail .tweet-body {
+  /* allow the media object/tweet body/flex item containing our react app to shrink */
+  min-width: 0;
+  /* jumbo sizing */
+  font-size: 27px;
+  line-height: 32px;
+  letter-spacing: .01em;
+}
+
+.tweet-detail .tweet-author-name {
+  color: rgb(20, 23, 26);
+  cursor: pointer;
+  font-weight: 700;
+  font-size: 18px;
+}
+
+.tweet-detail .tweet-author-username, .tweet-detail .tweet-post-date {
+  color: rgb(101, 119, 134);
+  font-size: 16px;
+}
+
+.tweet-detail .tweet-post-date span {
+  margin-right: 5px;
+}
+
+.tweet-detail .tweet-interaction-icons > div {
+  position: relative;
+  flex-grow: 0;
+  flex-flow: row nowrap;
+}
+
+.tweet-detail .tweet-icon-hover {
+  position: absolute;
+  top: -6px;
+  left: -8px;
+}
+
+@media (max-width: 576px) {
+  .tweet-detail {
+    padding: 15px;
+    font-weight: 400;
+  }
+
+  .tweet-detail .tweet-author-name {
+    font-weight: 700;
+    font-size: 14px;
+  }
+
+  .tweet-detail .tweet-author-username {
+    color: rgb(101, 119, 134);
+    font-size: 14px;
+  }
+
+  .tweet-detail .tweet-body {
+    font-size: 21px;
+    line-height: 27px;
+  }
+
+  .tweet-detail .tweet-post-date {
+    font-size: 14px;
+    color: rgb(101, 119, 134);
+  }
+}
+
 
 /* --- List Group Account Picker -- */
 .account-picker-list-group {
