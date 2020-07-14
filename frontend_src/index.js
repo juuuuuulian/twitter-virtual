@@ -3,7 +3,7 @@ import ReactDOM from 'react-dom';
 import { Button, Container, Row, Col, Card, InputGroup, Form, Modal, Alert } from 'react-bootstrap';
 import { Slideshow, Slide } from './components/Slideshow.jsx';
 import { App } from './components/App.jsx';
-import { AtlanticTweetSlide, TweetCopySlide, AppSlide } from './components/Slides.jsx';
+import { AtlanticTweetSlide, TweetCopySlide, FeedTweetCopySlide, AppSlide } from './components/Slides.jsx';
 
 function getLastAppUseValue() {
     let last_app_use = window.APP_VARS.last_app_use;
@@ -48,10 +48,10 @@ const TestSlideshowApp = (props) => {
             waitAnimation="animated-wiggle"
             waitAnimation="none"
         >
-            <AtlanticTweetSlide className="shadow" />
-            <TweetCopySlide className="shadow" />
+            <TweetCopySlide />
+            <FeedTweetCopySlide />
+            {/*<AtlanticTweetSlide />*/}
             <AppSlide 
-                className="shadow"
                 secondsTilNextAppAvail={props.secondsTilNextAppAvail} 
                 sampleAccounts={props.sampleAccounts} 
                 errorMessage={props.errorMessage}

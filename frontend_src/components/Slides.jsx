@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { Slide } from './Slideshow.jsx';
-import { Tweet } from './Tweet.jsx';
+import { TweetDetail, FeedTweet } from './Tweet.jsx';
 import { App } from './App.jsx';
 import { Button } from 'react-bootstrap';
 
@@ -13,7 +13,7 @@ const spanifyString = (inputString, props) => {
 const AtlanticTweetSlide = (props) => {
   return (
     <Slide {...props}>
-      <Tweet 
+      <TweetDetail 
         authorName="The Atlantic"
         authorUsername="@TheAtlantic"
         authorIconUrl="/static/images/atlantic_icon.jpg"
@@ -30,7 +30,7 @@ const AtlanticTweetSlide = (props) => {
             </footer>
         </blockquote>
         <Button variant="primary" onClick={props.onSlideFinish}>Finish Slide</Button>
-      </Tweet>
+      </TweetDetail>
     </Slide>
   );
 };
@@ -38,22 +38,37 @@ const AtlanticTweetSlide = (props) => {
 const TweetCopySlide = (props) => {
   return (
     <Slide {...props}>
-      <Tweet
+      <TweetDetail
         authorName="Twitter Virtualizer"
         authorUsername="@TwitterVirtualizer"
         authorIconUrl="/static/images/twv_icon.png"
       >
         <h1>Here's A Tweet</h1>
         <Button variant="primary" onClick={props.onSlideFinish}>Finish Slide</Button>
-      </Tweet>
+      </TweetDetail>
     </Slide>
+  );
+};
+
+const FeedTweetCopySlide = (props) => {
+  return (
+    <Slide {...props}>
+      <FeedTweet
+        authorName="Twitter Virtualizer"
+        authorUsername="@TwitterVirtualizer"
+        authorIconUrl="/static/images/twv_icon.png"
+      >
+        <h1>Here's A Tweet</h1>
+        <Button variant="primary" onClick={props.onSlideFinish}>Finish Slide</Button>
+      </FeedTweet>
+  </Slide>
   );
 };
 
 const AppSlide = (props) => {
   return (
     <Slide {...props}>
-      <Tweet
+      <TweetDetail
         authorName="Twitter Virtualizer"
         authorUsername="@TwitterVirtualizer"
         authorIconUrl="/static/images/twv_icon.png"
@@ -64,10 +79,10 @@ const AppSlide = (props) => {
             errorMessage={props.errorMessage}
             captchaSiteKey={props.captchaSiteKey}
           />
-        </Tweet>
+        </TweetDetail>
     </Slide>
   );
 };
 
-export { AtlanticTweetSlide, TweetCopySlide, AppSlide }
+export { AtlanticTweetSlide, TweetCopySlide, FeedTweetCopySlide, AppSlide }
 

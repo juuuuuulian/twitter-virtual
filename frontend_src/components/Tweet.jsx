@@ -53,7 +53,77 @@ const ShareIcon = (props) => {
     );
 };
 
-const Tweet = (props) => {
+const TweetDetail = (props) => {
+    const authorName = props.authorName;
+    const authorUsername = props.authorUsername;
+    const authorIconUrl = props.authorIconUrl;
+    const iconClickAnimation = props.iconClickAnimation || "animated hinge";
+
+    return (
+        <div className="tweet-detail">
+            <div className="tweet-meta d-flex">
+                <div className="mr-1 tweet-author-img">
+                    <TwitterUserImage className="rounded-circle" src={authorIconUrl} />
+                </div>
+                <div className="ml-1 tweet-author">
+                    <div className="tweet-author-name">
+                        {authorName}
+                    </div>
+                    <div className="tweet-author-username">
+                        {authorUsername}
+                    </div>
+                </div>
+                <div className="ml-auto">
+                    Icon?
+                </div>
+            </div>
+            <div className="ml-1 mt-2 tweet-body">
+                <div>{props.children}</div>
+            </div>
+            <div className="ml-1 mt-2 mb-2 tweet-post-date">
+                <span class="tweet-time">
+                    12:00 PM
+                </span>
+                <span className="spacer">·</span>
+                <span class="tweet-date">
+                    Nov 7, 2019
+                </span>
+            </div>
+            {/*<Container className="mt-2 tweet-interaction-icons">
+                <Row>
+                    <Col>
+                        <ReplyIcon clickAnimation={iconClickAnimation} />
+                    </Col>
+                    <Col>
+                        <RetweetIcon clickAnimation={iconClickAnimation} />
+                    </Col>
+                    <Col>
+                        <LikeIcon clickAnimation={iconClickAnimation} />
+                    </Col>
+                    <Col>
+                        <ShareIcon clickAnimation={iconClickAnimation} />
+                    </Col>
+                </Row>
+            </Container>*/}
+            <div className="mt-2 tweet-interaction-icons d-flex justify-content-around">
+                <div>
+                    <ReplyIcon clickAnimation={iconClickAnimation} />
+                </div>
+                <div>
+                    <RetweetIcon clickAnimation={iconClickAnimation} />
+                </div>
+                <div>
+                    <LikeIcon clickAnimation={iconClickAnimation} />
+                </div>
+                <div>
+                    <ShareIcon clickAnimation={iconClickAnimation} />
+                </div>
+            </div>
+        </div>
+    );
+};
+
+const FeedTweet = (props) => {
   const authorName = props.authorName;
   const authorUsername = props.authorUsername;
   const authorIconUrl = props.authorIconUrl;
@@ -105,4 +175,4 @@ const Tweet = (props) => {
   );
 };
 
-export { Tweet }
+export { FeedTweet, TweetDetail }
