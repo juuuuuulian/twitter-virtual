@@ -211,7 +211,7 @@ html, body {
   margin-right: auto;
   overflow-y: auto;
   -webkit-overflow-scrolling: touch;
-  /* inner scroll box shadows - jacked from lea verou's blog */
+  /* inner scroll box shadows trick from lea verou */
 	background:
 		/* Shadow covers */
 		linear-gradient(white 30%, rgba(255,255,255,0)),
