@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { Button, Card } from 'react-bootstrap';
 import { TwitterUserImage } from './TwitterUserImage.jsx';
+import TwitterVirtualizerIcon from '../images/twv_icon.png';
 
 const SampleAccountListItem = (props) => {
     const clickHandler = () => props.clickHandler(props.username);
@@ -12,7 +13,7 @@ const SampleAccountListItem = (props) => {
                     src={props.profileImgUrl} 
                     className="rounded-circle" 
                     size="normal" 
-                    fallbackImgSrc={"/static/images/tw_icon.png"} 
+                    fallbackImgSrc={TwitterVirtualizerIcon}
                 />
             </div>
             <div className="mr-3">

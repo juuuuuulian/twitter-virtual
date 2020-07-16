@@ -11,8 +11,8 @@ module.exports = merge(baseConfig, {
     },
     plugins: [
         new HtmlWebpackPlugin({
-            template: './frontend_src/index.html',
-            filename: 'templates/index.html'
+            template: './frontend_src/index.html', // input shared template file
+            filename: 'templates/index.html' // output server template file
         })
     ],
     mode: 'production'

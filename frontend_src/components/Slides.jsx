@@ -3,7 +3,8 @@ import { Slide } from './Slideshow.jsx';
 import { TweetDetail, FeedTweet } from './Tweet.jsx';
 import { App } from './App.jsx';
 import { Button } from 'react-bootstrap';
-
+import AtlanticIcon from '../images/atlantic_icon.jpg';
+import TwitterVirtualizerIcon from '../images/twv_icon.png';
 
 const spanifyString = (inputString, props) => {
   // wrap every character of inputString in a <span>
@@ -16,7 +17,7 @@ const AtlanticTweetSlide = (props) => {
       <TweetDetail 
         authorName="The Atlantic"
         authorUsername="@TheAtlantic"
-        authorIconUrl="/static/images/atlantic_icon.jpg"
+        authorIconUrl={AtlanticIcon}
       >
         <blockquote className="blockquote">
             <p>
@@ -41,9 +42,9 @@ const TweetCopySlide = (props) => {
       <TweetDetail
         authorName="Twitter Virtualizer"
         authorUsername="@TwitterVirtualizer"
-        authorIconUrl="/static/images/twv_icon.png"
+        authorIconUrl={TwitterVirtualizerIcon}
       >
-        <h1>Here's A Tweet Detail</h1>
+        <h1>Here's A Tweet Detail Thing</h1>
         <Button variant="primary" onClick={props.onSlideFinish}>Finish Slide</Button>
       </TweetDetail>
     </Slide>
@@ -56,7 +57,7 @@ const FeedTweetCopySlide = (props) => {
       <FeedTweet
         authorName="Twitter Virtualizer"
         authorUsername="@TwitterVirtualizer"
-        authorIconUrl="/static/images/twv_icon.png"
+        authorIconUrl={TwitterVirtualizerIcon}
       >
         <h1>Here's A Feed Tweet Read This Thing</h1>
         <Button variant="primary" onClick={props.onSlideFinish}>Finish Slide</Button>
@@ -71,7 +72,7 @@ const AppSlide = (props) => {
       <TweetDetail
         authorName="Twitter Virtualizer"
         authorUsername="@TwitterVirtualizer"
-        authorIconUrl="/static/images/twv_icon.png"
+        authorIconUrl={TwitterVirtualizerIcon}
         >
           <App
             secondsTilNextAppAvail={props.secondsTilNextAppAvail} 

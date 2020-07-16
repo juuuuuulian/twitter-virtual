@@ -1,5 +1,8 @@
 // base webpack config, extended by webpack.dev.config and webpack.prod.config
+const MiniCssExtractPlugin = require('mini-css-extract-plugin');
+
 module.exports = {
+    entry: './frontend_src/index.js',
     module: {
         rules: [
             {
@@ -18,21 +21,27 @@ module.exports = {
             },
             {
                 test: /\.(woff|woff2|eot|ttf|otf)$/,
-                loader: 'file-loader',
-                options: {
-                    publicPath: 'static',
-                    name: 'fonts/[name].[ext]'
-                },
+                use: [
+                    {
+                        loader: 'file-loader',
+                        options: {
+                            outputPath: 'static/fonts/',
+                            name: '[name].[ext]'
+                        }
+                    }
+                ],
             },
             {
                 test: /\.(png|svg|jpg|gif)$/,
-                loader: 'file-loader',
-                options: {
-                    publicPath: 'static',
-                    name: 'images/[name].[ext]'
-                }
+                use: [
+                    {
+                        loader: 'file-loader',
+                        options: {
+                            outputPath: 'static/images/'
+                        }
+                    }
+                ]
             }
         ]
-    },
-    entry: './frontend_src/index.js'
+    }
 };

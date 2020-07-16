@@ -2,7 +2,7 @@
 /* --- Fonts --- */
 @font-face {
   font-family: WarioWareInc;
-  src: url(/static/fonts/warioware_inc.ttf);
+  src: url('../fonts/warioware_inc.ttf');
 }
 
 html, body {

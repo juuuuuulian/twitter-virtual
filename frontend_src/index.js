@@ -4,6 +4,10 @@ import { Button, Container, Row, Col, Card, InputGroup, Form, Modal, Alert } fro
 import { Slideshow, Slide } from './components/Slideshow.jsx';
 import { App } from './components/App.jsx';
 import { AtlanticTweetSlide, TweetCopySlide, FeedTweetCopySlide, AppSlide } from './components/Slides.jsx';
+import './css/bootstrap.min.css';
+import './css/animate.min.css';
+import './css/index.css';
+
 
 function getAppVars() {
     const appVars = window.APP_VARS;
