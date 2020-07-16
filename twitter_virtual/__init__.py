@@ -7,11 +7,14 @@ from dotenv import load_dotenv
 load_dotenv()
 from .models import AppUse
 from .views import oauth, twitter, site
+from flask_compress import Compress
 
+compress = Compress()
 
 def setup_app():
     """Set up Flask application - register views, load secret key, env config, etc."""
     app = Flask("twitter_virtual")
+
     app.secret_key = os.environ["FLASK_SECRET_KEY"]
     app.config["LIMIT_APP_USE"] = bool(int(os.environ.get("LIMIT_APP_USE", 0)))
     app.config["SQLALCHEMY_DATABASE_URI"] = os.environ["DATABASE_URL"]
@@ -22,9 +25,12 @@ def setup_app():
     app.config["RECAPTCHA_SECRET"] = os.environ["RECAPTCHA_SECRET"]
     app.config["RECAPTCHA_SITE_KEY"] = os.environ["RECAPTCHA_SITE_KEY"]
     app.config["TEMPLATES_AUTO_RELOAD"] = True
+
     app.register_blueprint(oauth.bp)
     app.register_blueprint(twitter.twitter_bp)
     app.register_blueprint(site.site_bp)
+
+    compress.init_app(app)
     return app
 
 
