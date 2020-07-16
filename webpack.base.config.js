@@ -13,9 +13,9 @@ module.exports = {
                 }
             },
             {
-                test: /\.css$/,
+                test: /.css$/,
                 use: [
-                    'style-loader',
+                    MiniCssExtractPlugin.loader,
                     'css-loader'
                 ]
             },
@@ -37,7 +37,8 @@ module.exports = {
                     {
                         loader: 'file-loader',
                         options: {
-                            outputPath: 'static/images/'
+                            outputPath: 'static/images/',
+                            name: '[name].[ext]'
                         }
                     }
                 ]

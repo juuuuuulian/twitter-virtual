@@ -3,6 +3,7 @@ const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const { merge } = require('webpack-merge');
 const baseConfig = require('./webpack.base.config.js')
+const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 
 module.exports = merge(baseConfig, {
     output: {
@@ -10,6 +11,9 @@ module.exports = merge(baseConfig, {
         path: path.resolve(__dirname, 'twitter_virtual')
     },
     plugins: [
+        new MiniCssExtractPlugin({
+            filename: 'static/css/index.bundle.css'
+        }),
         new HtmlWebpackPlugin({
             template: './frontend_src/index.html', // input shared template file
             filename: 'templates/index.html' // output server template file
