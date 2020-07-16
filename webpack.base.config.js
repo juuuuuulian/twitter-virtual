@@ -1,6 +1,4 @@
-const path = require('path');
-const HtmlWebpackPlugin = require('html-webpack-plugin');
-
+// base webpack config, extended by webpack.dev.config and webpack.prod.config
 module.exports = {
     module: {
         rules: [
@@ -36,18 +34,5 @@ module.exports = {
             }
         ]
     },
-    entry: './frontend_src/index.js',
-    output: {
-        filename: 'static/index.js',
-        path: path.resolve(__dirname, 'twitter_virtual')
-    },
-    plugins: [
-        new HtmlWebpackPlugin({
-            template: './frontend_src/index.html',
-            filename: 'templates/index.html'
-            //template: './twitter_virtual/templates/index.html',
-            //filename: 'templates/test_template.html'
-        })
-    ],
-    mode: 'production'
+    entry: './frontend_src/index.js'
 };

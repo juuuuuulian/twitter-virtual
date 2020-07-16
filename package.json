@@ -2,11 +2,12 @@
   "name": "twitter-virtual",
   "version": "1.0.0",
   "description": "",
+  "private": true,
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "webpack-dev-server --config webpack.dev.config.js --open",
-    "build": "webpack --config webpack.config.js"
+    "build": "webpack --config webpack.prod.config.js"
   },
   "keywords": [],
   "author": "",
@@ -33,6 +34,7 @@
   },
   "devDependencies": {
     "html-webpack-plugin": "^4.3.0",
-    "webpack-dev-server": "^3.11.0"
+    "webpack-dev-server": "^3.11.0",
+    "webpack-merge": "^5.0.9"
   }
 }
