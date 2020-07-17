@@ -1,9 +1,8 @@
+//import AppContainer from 'react-hot-loader';
 import React, { Component } from 'react';
 import ReactDOM from 'react-dom';
 import { Button, Container, Row, Col, Card, InputGroup, Form, Modal, Alert } from 'react-bootstrap';
-import { Slideshow, Slide } from './components/Slideshow.jsx';
-import { App } from './components/App.jsx';
-import { AtlanticTweetSlide, TweetCopySlide, FeedTweetCopySlide, AppSlide } from './components/Slides.jsx';
+import TestSlideshowApp from './components/TestSlideshowApp.jsx';
 import './css/bootstrap.min.css';
 import './css/animate.min.css';
 import './css/index.css';
@@ -51,30 +50,6 @@ function getErrorMessage() {
 function getRecaptchaSiteKey() {
     return getAppVars().recaptcha_site_key;
 }
-
-const TestSlideshowApp = (props) => {
-    let initialSlideIndex = props.errorMessage ? 2 : 0; // skip to the last slide if there's an error message
-    return (
-        <Slideshow 
-            initialSlideIndex={initialSlideIndex} 
-            inAnimation="animated faster zoomIn" 
-            outAnimation="animated faster zoomOut" 
-            waitAnimation="animated-wiggle"
-            waitAnimation="none"
-        >
-            <TweetCopySlide />
-            <FeedTweetCopySlide />
-            {/*<AtlanticTweetSlide />*/}
-            <AppSlide 
-                secondsTilNextAppAvail={props.secondsTilNextAppAvail} 
-                sampleAccounts={props.sampleAccounts} 
-                errorMessage={props.errorMessage}
-                captchaSiteKey={props.captchaSiteKey}
-            />
-        </Slideshow>
-    );
-};
-
 
 function initApp() {
     ReactDOM.render(

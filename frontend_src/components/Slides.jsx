@@ -44,7 +44,7 @@ const TweetCopySlide = (props) => {
         authorUsername="@TwitterVirtualizer"
         authorIconUrl={TwitterVirtualizerIcon}
       >
-        <h1>Here's A Tweet Detail Thing</h1>
+        <h1>Here's A Tweet Detail ThingyyaaaaaaaAAAAA</h1>
         <Button variant="primary" onClick={props.onSlideFinish}>Finish Slide</Button>
       </TweetDetail>
     </Slide>
@@ -59,7 +59,7 @@ const FeedTweetCopySlide = (props) => {
         authorUsername="@TwitterVirtualizer"
         authorIconUrl={TwitterVirtualizerIcon}
       >
-        <h1>Here's A Feed Tweet Read This Thing</h1>
+        <h1>Here's A Feed Tweet Read This Thing Hello?</h1>
         <Button variant="primary" onClick={props.onSlideFinish}>Finish Slide</Button>
       </FeedTweet>
   </Slide>

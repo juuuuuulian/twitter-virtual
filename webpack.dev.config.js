@@ -10,6 +10,11 @@ module.exports = merge(baseConfig, {
     output: {
         filename: 'index.js'
     },
+    resolve: {
+        alias: {
+            'react-dom': '@hot-loader/react-dom'
+        }
+    },
     plugins: [
         new MiniCssExtractPlugin({
             filename: 'static/css/index.css'
@@ -19,7 +24,8 @@ module.exports = merge(baseConfig, {
         })
     ],
     devServer: {
-        contentBase: './twitter_virtual/'
+        contentBase: './twitter_virtual/',
+        hot: true
     },
     mode: 'development'
 });
