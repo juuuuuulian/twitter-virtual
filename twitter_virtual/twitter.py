@@ -26,15 +26,25 @@ INVALIDATE_TOKEN_URL = "https://api.twitter.com/1.1/oauth/invalidate_token"
 
 class TwitterClient:
     """Class for interacting with the Twitter API on behalf of a Twitter user via OAuth."""
-    def __init__(self, consumer_key, consumer_secret):
+    def __init__(self, oauth_client=None, consumer_key=None, consumer_secret=None):
         """Initialize an oauth2 client."""
-        consumer = oauth2.Consumer(key=consumer_key, secret=consumer_secret)
-        self.oauth_client = oauth2.Client(consumer)
+        if oauth_client:
+            self.oauth_client = oauth_client
+        elif (consumer_key is not None) and (consumer_secret is not None):
+            consumer = oauth2.Consumer(key=consumer_key, secret=consumer_secret)
+            self.oauth_client = oauth2.Client(consumer)
+        else:
+            raise Exception("Please supply either an oauth_client argument or a consumer_key + consumer_secret pair")
 
     @classmethod
     def from_flask_app(cls, flask_app):
         return cls(consumer_key=flask_app.config["TWITTER_CONSUMER_KEY"],
                    consumer_secret=flask_app.config["TWITTER_CONSUMER_SECRET"])
+        #if oauth_client:
+        #    return cls(oauth_client=oauth_client)
+        #else:
+        #    return cls(consumer_key=flask_app.config["TWITTER_CONSUMER_KEY"],
+        #               consumer_secret=flask_app.config["TWITTER_CONSUMER_SECRET"])
 
     def get_request_token(self):
         """Get a Twitter OAuth request token for step 1 of OAuth flow."""

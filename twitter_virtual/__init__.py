@@ -31,6 +31,7 @@ def setup_app():
     app.register_blueprint(site.site_bp)
 
     compress.init_app(app)
+
     return app
 
 
