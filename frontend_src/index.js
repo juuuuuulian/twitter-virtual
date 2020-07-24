@@ -1,4 +1,3 @@
-//import AppContainer from 'react-hot-loader';
 import React, { Component } from 'react';
 import ReactDOM from 'react-dom';
 import { Button, Container, Row, Col, Card, InputGroup, Form, Modal, Alert } from 'react-bootstrap';

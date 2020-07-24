@@ -26,7 +26,8 @@ module.exports = {
                         loader: 'file-loader',
                         options: {
                             outputPath: 'static/fonts/',
-                            name: '[name].[ext]'
+                            name: '[name].[ext]',
+                            publicPath: '/static/fonts/'
                         }
                     }
                 ],
@@ -38,7 +39,8 @@ module.exports = {
                         loader: 'file-loader',
                         options: {
                             outputPath: 'static/images/',
-                            name: '[name].[ext]'
+                            name: '[name].[ext]',
+                            publicPath: '/static/images/'
                         }
                     }
                 ]

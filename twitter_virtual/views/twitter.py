@@ -14,7 +14,9 @@ twitter_bp = Blueprint('twitter', __name__, url_prefix="/twitter")
 
 class FeedCopyError(Exception):
     """Fatal exception for the following copy process - hit a Twitter API error, a rate limit, etc."""
+
     def __init__(self, message, orig_exception=None, new_list_id=None):
+        """Stash details from the Twitter API for debugging and cleanup."""
         super().__init__(message)
         self.orig_exception = orig_exception
         self.user_error_message = message
