@@ -1,8 +1,9 @@
 """Integration tests for the twitter webapp view."""
 from twitter_virtual.tests.base_test_case import BaseTestCase
-from twitter_virtual.tests.twitter_mocks import twitter_list, \
-    patch_twitter_add_list_users, patch_twitter_check_user_is_following, patch_twitter_get_following_users, \
-    patch_twitter_list_create, patch_twitter_list_delete, patch_twitter_invalidate_token, following_users
+from twitter_virtual.tests.twitter_mocks import patch_twitter_add_list_users, patch_twitter_check_user_is_following, \
+    patch_twitter_get_following_users, patch_twitter_list_create, patch_twitter_list_delete, \
+    patch_twitter_invalidate_token
+from twitter_virtual.tests.twitter_api_mocks import following_users, twitter_list
 from twitter_virtual.twitter import TwitterError, RateLimitHit, SoftRateLimitHit
 from twitter_virtual.models import AppUse
 from twitter_virtual.recaptcha import RecaptchaTimeoutOrDuplicate

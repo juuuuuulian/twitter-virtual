@@ -1,10 +1,11 @@
-"""Various Twitter API fixture mock methods and decorators for applying to test cases."""
+"""Various decorators to mock/patch TwitterClient methods for applying to test cases."""
 from twitter_virtual.twitter import TwitterClient
-import mock
+from unittest.mock import Mock, patch
 
 def fake_oauth_token(token, token_secret):
     """Return a mock OAuth token object."""
-    return mock.Mock(key=token, secret=token_secret)
+    return Mock(key=token, secret=token_secret)
+
 
 def patch_twitter_client_method(method, value):
     """Accept a TwitterClient method name, and either an Exception or a valid return value, and return a decorator
@@ -16,7 +17,7 @@ def patch_twitter_client_method(method, value):
                 params = {"side_effect": value}
             else:
                 params = {"return_value": value}
-            with mock.patch.object(TwitterClient, method, **params):
+            with patch.object(TwitterClient, method, **params):
                 func(self)
         return wrapper
     return create_decorator

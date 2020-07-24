@@ -85,15 +85,3 @@ def add_list_users_response_mock(list_name, list_id):
     """Mock a successful Twitter add list members API response."""
     return _api_response_mock(200, twitter_list_json(list_name, list_id, 1))
 
-
-def patch_oauth_request(response):
-    """Patch the oauth2.Client request method to return the response arg, and assert that .request was called."""
-    def create_decorator(func):
-        @mock.patch('oauth2.Client.request')
-        def wrapper(self, req_mock):
-            req_mock.return_value = response
-            func(self)
-            req_mock.assert_called()
-        return wrapper
-    return create_decorator
-

@@ -1,3 +1,4 @@
+"""Base test case for testing the flask app."""
 from flask_webtest import TestApp
 import unittest
 
@@ -8,11 +9,12 @@ class TwitterVirtualTestApp(TestApp):
 
 
 class BaseTestCase(unittest.TestCase):
-    """Base class for test cases of all types."""
+    """Base class for flask app tests."""
     def setUp(self):
         """Set up our test app."""
-        from twitter_virtual import app, setup_db, db
-        setup_db(app, testing=True)
+        from twitter_virtual.setup import setup_db, setup_app
+        app = setup_app()
+        db = setup_db(app, testing=True)
         self.app = app
         self.client = TwitterVirtualTestApp(app)
         self.db = db
