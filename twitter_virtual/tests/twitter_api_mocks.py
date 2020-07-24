@@ -1,5 +1,5 @@
 """Various Twitter API fixture mock methods and decorators for applying to test cases."""
-from twitter_virtual.twitter import TwitterClient, RateLimitHit
+from twitter_virtual.twitter import RateLimitHit
 import mock
 from urllib.parse import urlencode
 import json
@@ -84,4 +84,3 @@ def add_list_users_soft_rate_limit_response_mock(list_name, list_id):
 def add_list_users_response_mock(list_name, list_id):
     """Mock a successful Twitter add list members API response."""
     return _api_response_mock(200, twitter_list_json(list_name, list_id, 1))
-

@@ -1,14 +1,16 @@
 """View functions for Twitter API interaction."""
-from flask import Blueprint, session, redirect, request, current_app, render_template, make_response
+from flask import Blueprint, session, redirect, request, current_app, render_template
 from ..twitter import RateLimitHit, SoftRateLimitHit, TooManyFollowing, ZeroFollowing, TwitterError, \
     UserNotFollowingTarget, OAuthRequestError
 from ..utils import get_twitter_client, get_recaptcha_client, should_limit_app_use, record_app_use, app_used_today, \
     twitter_username_is_valid, render_app_error
-from ..recaptcha import RecaptchaError, RecaptchaTimeoutOrDuplicate
+from ..recaptcha import RecaptchaError
 
 twitter_bp = Blueprint('twitter', __name__, url_prefix="/twitter")
 
 # TODO: better error messages, better error handling in general
+# TODO: handle recaptcha.RecaptchaTimeoutOrDuplicate
+
 
 class FeedCopyError(Exception):
     """Fatal exception for the following copy process - hit a Twitter API error, a rate limit, etc."""
@@ -121,8 +123,8 @@ def handle_cleanup(twitter_client, feed_copy_exception):
     if new_list_id:
         try:
             twitter_client.delete_list(new_list_id)
-        except TwitterError as e:
-            current_app.logger.exception(f'Failed to clean up a list ({new_list_id})! {str(orig_exception)}')
+        except TwitterError as cleanup_exception:
+            current_app.logger.exception(f'Failed to clean up a list ({new_list_id})! orig: {str(orig_exception)} cleanup:{str(cleanup_exception)}')
             return False
 
     current_app.logger.info("Cleaned up a twitter list after an exception occurred")
@@ -178,15 +180,17 @@ def copy_feed():
     twitter_client = get_twitter_client()
     twitter_client.set_client_token(token, token_secret)
 
-    #return f"Token: {token} | Secret: {token_secret}"
+    # return f"Token: {token} | Secret: {token_secret}"
 
     try:
         twitter_list = copy_user_following_to_new_list(twitter_client, target_screen_name)
-    except FeedCopyError as e:
-        handle_cleanup(twitter_client, e)
-        return render_app_error(e.user_error_message)
-    except Exception as e:
+    except FeedCopyError as feed_copy_exception:
+        handle_cleanup(twitter_client, feed_copy_exception)
+        return render_app_error(feed_copy_exception.user_error_message)
+    except Exception as unknown_exception:
         # unknown exception
+        current_app.logger.exception(
+            f'Failed to copy a feed, unknown exception: {str(unknown_exception)}')
         return render_app_error("Oops! Unknown server error!")  # TODO: improve this
 
     record_app_use()
@@ -200,5 +204,3 @@ def copy_feed():
 def success():
     """Show the user a success page."""
     return render_template("success.html", new_list_url="https://twitter.com/test/lists/my-test-list")
-
-

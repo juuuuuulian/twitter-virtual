@@ -81,6 +81,3 @@ class TestOAuthCallback(BaseTestCase):
             sess['token_secret'] = fake_token_secret
         response = self.client.get("/oauth/callback", {"oauth_verifier": fake_verifier}, status=500)
         self.assertTrue("Invalid OAuth Response" in response.text, "Error message in response body")
-
-
-

@@ -7,6 +7,7 @@ bp = Blueprint('oauth', __name__, url_prefix='/oauth')
 
 # TODO: better error messages, better error handling in general
 
+
 @bp.route('/begin', methods=('GET', 'POST'))
 def begin():
     """Get a Twitter OAuth Request Token, then redirect the user to the Twitter OAuth authorization page for our

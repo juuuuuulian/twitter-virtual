@@ -2,6 +2,7 @@
 from twitter_virtual.twitter import TwitterClient
 from unittest.mock import Mock, patch
 
+
 def fake_oauth_token(token, token_secret):
     """Return a mock OAuth token object."""
     return Mock(key=token, secret=token_secret)
@@ -57,7 +58,7 @@ def patch_twitter_get_request_token(value):
     """Return a function decorator which patches the TwitterClient.get_request_token method."""
     return patch_twitter_client_method("get_request_token", value)
 
+
 def patch_twitter_authorize_oauth_token(value):
     """Return a function decorator which patches the TwitterClient.patch_twitter_authorize_oauth_token_method."""
     return patch_twitter_client_method("authorize_oauth_token", value)
-

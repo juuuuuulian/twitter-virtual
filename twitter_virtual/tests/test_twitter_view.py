@@ -31,10 +31,10 @@ class TestBegin(BaseTestCase):
     def _do_request(self, target_screen_name=None, captcha_response_token="", expected_status=200, expected_error_msg=None):
         """Make a POST request to /twitter/begin with target_screen_name and captcha_response_token values, and
         assert-check the HTTP response code against expected_status and the body for expected_error_msg."""
-        response = self.client.post("/twitter/begin",
-                                    {"target_screen_name": target_screen_name,
-                                    "captcha_response_token": captcha_response_token},
-                                    status=expected_status)
+        response = self.client.post("/twitter/begin", {
+            "target_screen_name": target_screen_name,
+            "captcha_response_token": captcha_response_token},
+            status=expected_status)
         if expected_error_msg:
             self._check_response_body(response, expected_error_msg)
         return response

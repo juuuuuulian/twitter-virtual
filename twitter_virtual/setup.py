@@ -4,12 +4,12 @@ from flask import Flask
 from .database import db, SQLAlchemy
 import os
 from dotenv import load_dotenv
-load_dotenv()
-from .models import AppUse
 from .views import oauth, twitter, site
 from flask_compress import Compress
 
+load_dotenv()
 compress = Compress()
+
 
 def setup_app() -> Flask:
     """Set up Flask application - register views, load secret key, env config, etc."""
@@ -19,7 +19,7 @@ def setup_app() -> Flask:
     app.config["LIMIT_APP_USE"] = bool(int(os.environ.get("LIMIT_APP_USE", 0)))
     app.config["SQLALCHEMY_DATABASE_URI"] = os.environ["DATABASE_URL"]
     app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
-    #app.config["SQLALCHEMY_ECHO"] = True
+    # app.config["SQLALCHEMY_ECHO"] = True
     app.config["TWITTER_CONSUMER_KEY"] = os.environ["TWITTER_CONSUMER_KEY"]
     app.config["TWITTER_CONSUMER_SECRET"] = os.environ["TWITTER_CONSUMER_SECRET"]
     app.config["TWITTER_CALLBACK_URL"] = os.environ["TWITTER_CALLBACK_URL"]
@@ -46,4 +46,3 @@ def setup_db(flask_app: Flask, testing: bool = False) -> SQLAlchemy:
     else:
         db.init_app(flask_app)
     return db
-

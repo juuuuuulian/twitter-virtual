@@ -279,4 +279,3 @@ class ZeroFollowing(TwitterError):
 class UserNotFollowingTarget(TwitterError):
     """Current user isn't following the target user."""
     pass
-
