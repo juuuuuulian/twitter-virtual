@@ -5,7 +5,7 @@ import { AtlanticTweetSlide, TweetCopySlide, FeedTweetCopySlide, AppSlide } from
 
 
 const TestSlideshowApp = (props) => {
-  let initialSlideIndex = props.errorMessage ? 2 : 0; // skip to the last slide if there's an error message
+  let initialSlideIndex = props.errorMessage ? 3 : 0; // skip to the last slide if there's an error message
   return (
       <Slideshow
           initialSlideIndex={initialSlideIndex}
@@ -16,7 +16,7 @@ const TestSlideshowApp = (props) => {
       >
           <TweetCopySlide />
           <FeedTweetCopySlide />
-          {/*<AtlanticTweetSlide />*/}
+          <AtlanticTweetSlide />
           <AppSlide
               secondsTilNextAppAvail={props.secondsTilNextAppAvail}
               sampleAccounts={props.sampleAccounts}

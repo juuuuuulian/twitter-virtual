@@ -6,12 +6,13 @@ import os
 from dotenv import load_dotenv
 from .views import oauth, twitter, site
 from flask_compress import Compress
+from flask_talisman import Talisman
 
 load_dotenv()
 compress = Compress()
 
 
-def setup_app() -> Flask:
+def setup_app(testing: bool = False) -> Flask:
     """Set up Flask application - register views, load secret key, env config, etc."""
     app = Flask("twitter_virtual")
 
@@ -28,7 +29,25 @@ def setup_app() -> Flask:
     app.register_blueprint(twitter.twitter_bp)
     app.register_blueprint(site.site_bp)
 
+    # enable compression
     compress.init_app(app)
+
+    if app.config["ENV"] == "production" and testing is False:
+        app.config["SESSION_COOKIE_SECURE"] = True
+        app.config["SESSION_COOKIE_HTTPONLY"] = True
+        app.config["SESSION_COOKIE_SAMESITE"] = 'Lax'
+
+        # talisman content security policy
+        csp = {
+            "img-src": "*",
+            "script-src": [
+                "'self'",
+                "*.google.com",
+                "*.gstatic.com"
+            ],
+            "frame-src": "*.google.com"
+        }
+        Talisman(app, content_security_policy=csp, content_security_policy_nonce_in=["script-src"])
 
     return app
 

@@ -6,8 +6,9 @@ const TwitterUserImage = (props) => {
   const fallbackImgSrc = props.fallbackImgSrc;
 
   const handleLoadFailure = (ev) => {
-    if (ev.target.src != fallbackImgSrc && fallbackImgSrc)
+    if (fallbackImgSrc && ev.target.src.indexOf(fallbackImgSrc) == -1) {
       ev.target.src = fallbackImgSrc;
+    }
   };
 
   // set src to desired image size

@@ -10,7 +10,7 @@
    <!-- server app vars needed for production -->
     <% if (webpackConfig.mode == "production") { %>
         {% if app_vars %}
-        <script type="text/javascript">
+        <script type="text/javascript" nonce="{{ csp_nonce() if csp_nonce }}">
             window.APP_VARS = {{ app_vars|tojson }};
         </script>
         {% endif %}
