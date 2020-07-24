@@ -216,7 +216,7 @@ html, body {
 		/* Shadow covers */
 		linear-gradient(white 30%, rgba(255,255,255,0)),
 		linear-gradient(rgba(255,255,255,0), white 70%) 0 100%,
-		
+
 		/* Shadows */
 		radial-gradient(50% 0, farthest-side, rgba(0,0,0,.2), rgba(0,0,0,0)),
 		radial-gradient(50% 100%,farthest-side, rgba(0,0,0,.2), rgba(0,0,0,0)) 0 100%;
@@ -224,14 +224,14 @@ html, body {
 		/* Shadow covers */
 		linear-gradient(white 30%, rgba(255,255,255,0)),
 		linear-gradient(rgba(255,255,255,0), white 70%) 0 100%,
-		
+
 		/* Shadows */
 		radial-gradient(farthest-side at 50% 0, rgba(0,0,0,.2), rgba(0,0,0,0)),
 		radial-gradient(farthest-side at 50% 100%, rgba(0,0,0,.2), rgba(0,0,0,0)) 0 100%;
 	background-repeat: no-repeat;
 	background-color: white;
 	background-size: 100% 40px, 100% 40px, 100% 14px, 100% 14px;
-	
+
 	/* Opera doesn't support this in the shorthand */
 	background-attachment: local, local, scroll, scroll;
 }
@@ -269,7 +269,7 @@ html, body {
 }
 
 /* --- Animations --- */
-@-webkit-keyframes wiggle {  
+@-webkit-keyframes wiggle {
   12% { -webkit-transform: skewX(1deg) scale(1.01); }
   24% { -webkit-transform: skewX(3deg) scale(1.00)}
   36% { -webkit-transform: skewX(1deg) scale(0.99); }
@@ -304,11 +304,11 @@ html, body {
 }
 
 /* hallucination text gradient shift */
-@-webkit-keyframes gradient-shift { 
+@-webkit-keyframes gradient-shift {
   to {
     background-position: 200% center;
   }
-} 
+}
 
 @keyframes gradient-shift {
   to {
@@ -362,7 +362,7 @@ html, body {
     -webkit-transform: scale(0.77);
     transform-origin: 0 0;
     -webkit-transform-origin: 0 0;
-  } 
+  }
 
   .g-recaptcha {
     transform: scale(0.85);
@@ -377,7 +377,7 @@ html, body {
     transform: scale(0.77);
     -webkit-transform: scale(0.77);
     transform-origin: 0 0;
-    -webkit-transform-origin: 0 0; 
+    -webkit-transform-origin: 0 0;
   }
 }
 
@@ -393,21 +393,21 @@ html, body {
 }
 
 .card {
-  min-width: 225px; 
-  max-width: 225px; 
-  max-height: 375px; 
-  margin-right: 10px; 
+  min-width: 225px;
+  max-width: 225px;
+  max-height: 375px;
+  margin-right: 10px;
 }
 
 .card-img-top {
-  width: 100%; 
+  width: 100%;
   object-fit: cover;
   height: 175px;
 }
 
 .card-body {
   display: flex;
-  flex-flow: column; 
+  flex-flow: column;
   align-items: flex-start;
   justify-content: space-between;
 }

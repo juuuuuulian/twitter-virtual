@@ -14,7 +14,7 @@ const spanifyString = (inputString, props) => {
 const AtlanticTweetSlide = (props) => {
   return (
     <Slide {...props}>
-      <TweetDetail 
+      <TweetDetail
         authorName="The Atlantic"
         authorUsername="@TheAtlantic"
         authorIconUrl={AtlanticIcon}
@@ -75,8 +75,8 @@ const AppSlide = (props) => {
         authorIconUrl={TwitterVirtualizerIcon}
         >
           <App
-            secondsTilNextAppAvail={props.secondsTilNextAppAvail} 
-            sampleAccounts={props.sampleAccounts} 
+            secondsTilNextAppAvail={props.secondsTilNextAppAvail}
+            sampleAccounts={props.sampleAccounts}
             errorMessage={props.errorMessage}
             captchaSiteKey={props.captchaSiteKey}
           />
@@ -86,4 +86,3 @@ const AppSlide = (props) => {
 };
 
 export { AtlanticTweetSlide, TweetCopySlide, FeedTweetCopySlide, AppSlide }
-

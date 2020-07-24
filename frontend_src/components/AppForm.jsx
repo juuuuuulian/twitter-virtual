@@ -25,20 +25,20 @@ const AppForm = (props) => {
       props.setTargetScreenName(val);
   };
 
-  return <Form 
-      method="POST" 
-      action="/twitter/begin" 
-      onSubmit={submitHandler} 
+  return <Form
+      method="POST"
+      action="/twitter/begin"
+      onSubmit={submitHandler}
       ref={props.formRef}>
       <InputGroup>
           <InputGroup.Prepend>
               <InputGroup.Text>@</InputGroup.Text>
           </InputGroup.Prepend>
-          <Form.Control 
-              type="text" 
-              name="target_screen_name" 
-              placeholder="AccountName" 
-              value={props.targetScreenName} 
+          <Form.Control
+              type="text"
+              name="target_screen_name"
+              placeholder="AccountName"
+              value={props.targetScreenName}
               onChange={inputChangeHandler}
               isValid={screenNameIsValid(props.targetScreenName) && props.targetScreenName}
               isInvalid={! screenNameIsValid(props.targetScreenName) && (props.targetScreenName || submitTried)}
@@ -53,7 +53,7 @@ const AppForm = (props) => {
       <Form.Control
           type="hidden"
           name="captcha_response_token"
-          value={props.captchaResponseToken} 
+          value={props.captchaResponseToken}
       />
   </Form>
 };

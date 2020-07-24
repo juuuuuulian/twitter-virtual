@@ -63,24 +63,24 @@ const App = (props) => {
 
   return (
       <div>
-          <SubmitModal 
-              show={showSubmitModal} 
-              onHide={handleSubmitModalHide} 
+          <SubmitModal
+              show={showSubmitModal}
+              onHide={handleSubmitModalHide}
               onCompleted={handleSubmitModalCompleted}
               onCaptchaVerified={handleSubmitModalCaptchaVerified}
               finishEnabled={ captchaResponseToken != "" }
               captchaSiteKey={props.captchaSiteKey}
               targetScreenName={targetScreenName}
           />
-          <AppErrorMessage 
-              errorMessage={props.errorMessage} 
+          <AppErrorMessage
+              errorMessage={props.errorMessage}
               onClose={handleErrorMessageHide}
               show={showAppErrorMessage}
           />
           { props.secondsTilNextAppAvail != 0 && <AppUseTimer secondsAhead={props.secondsTilNextAppAvail} onTimerFinished={() => setTimerFinished(true)} /> }
-          { (props.secondsTilNextAppAvail == 0 || timerFinished) && 
+          { (props.secondsTilNextAppAvail == 0 || timerFinished) &&
               <div>
-                  <AppForm 
+                  <AppForm
                       formRef={formEle}
                       targetScreenName={targetScreenName}
                       setTargetScreenName={handleFormSetTargetScreenName}
@@ -88,9 +88,9 @@ const App = (props) => {
                       captchaResponseToken={captchaResponseToken}
                   />
                   <div>
-                      <ListGroupSampleAccountPicker 
-                        accounts={props.sampleAccounts} 
-                        optionClickHandler={handleSampleAccountOptionClick} 
+                      <ListGroupSampleAccountPicker
+                        accounts={props.sampleAccounts}
+                        optionClickHandler={handleSampleAccountOptionClick}
                       />
                   </div>
               </div>

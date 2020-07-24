@@ -9,10 +9,10 @@ const SampleAccountListItem = (props) => {
     return (
         <a className="d-flex align-items-center list-group-item list-group-item-action account-picker-list-item" onClick={clickHandler}>
             <div className="mr-2">
-                <TwitterUserImage 
-                    src={props.profileImgUrl} 
-                    className="rounded-circle" 
-                    size="normal" 
+                <TwitterUserImage
+                    src={props.profileImgUrl}
+                    className="rounded-circle"
+                    size="normal"
                     fallbackImgSrc={TwitterVirtualizerIcon}
                 />
             </div>
@@ -36,7 +36,7 @@ const SampleAccountListItem = (props) => {
 const ListGroupSampleAccountPicker = (props) => {
     return (
         <div className="account-picker-list-group list-group list-group-flush">
-            { props.accounts.map((account) => 
+            { props.accounts.map((account) =>
                 <SampleAccountListItem
                     name={account.name}
                     username={account.username}
@@ -64,9 +64,9 @@ const AccountCard = (props) => {
             </div>
         </Card.Body>
         <Card.Footer>
-            <Button 
+            <Button
                 className="sample-acct-btn"
-                variant="primary" 
+                variant="primary"
                 onClick={() => props.clickHandler(props.username)}>
                 Try Account
             </Button>
@@ -79,13 +79,13 @@ const AccountCard = (props) => {
 const CardDeckAccountPicker = (props) => {
   // based on CardDeck
   return <div className="sample-acct-picker">
-      {props.accounts.map((account) => 
-          <AccountCard 
-              name={account.name} 
-              username={account.username} 
-              following={account.following} 
-              profileImgUrl={account.profile_img_url} 
-              clickHandler={props.optionClickHandler} 
+      {props.accounts.map((account) =>
+          <AccountCard
+              name={account.name}
+              username={account.username}
+              following={account.following}
+              profileImgUrl={account.profile_img_url}
+              clickHandler={props.optionClickHandler}
           />
       )}
   </div>

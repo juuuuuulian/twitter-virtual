@@ -68,7 +68,7 @@ const Slideshow = (props) => {
                       let slideIn = child.props.inAnimation || inAnimation;
                       let slideWait = child.props.waitAnimation || waitAnimation;
 
-                      return React.cloneElement(child, { 
+                      return React.cloneElement(child, {
                           outAnimation: slideOut,
                           inAnimation: slideIn,
                           waitAnimation: slideWait,

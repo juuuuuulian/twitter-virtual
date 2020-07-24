@@ -19,7 +19,7 @@ const SubmitModal = (props) => {
                   </Col>
               </Row>
               <Row>
-                  <Col>Go here to de-authorize afterwards: 
+                  <Col>Go here to de-authorize afterwards:
                   <a target="_blank" href="https://twitter.com/settings/applications">
                       Twitter Application Settings
                   </a>
@@ -27,7 +27,7 @@ const SubmitModal = (props) => {
               </Row>
               <Row>
                   <Col>
-                      <Recaptcha 
+                      <Recaptcha
                           sitekey={props.captchaSiteKey}
                           verifyCallback={props.onCaptchaVerified}
                       />

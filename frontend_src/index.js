@@ -53,9 +53,9 @@ function getRecaptchaSiteKey() {
 
 function initApp() {
     ReactDOM.render(
-        <TestSlideshowApp 
-            secondsTilNextAppAvail={getSecondsTilNextAppAvail()} 
-            sampleAccounts={getSampleAccounts()} 
+        <TestSlideshowApp
+            secondsTilNextAppAvail={getSecondsTilNextAppAvail()}
+            sampleAccounts={getSampleAccounts()}
             errorMessage={getErrorMessage()}
             captchaSiteKey={getRecaptchaSiteKey()}
         />,
