@@ -13,6 +13,7 @@ def begin():
     """Get a Twitter OAuth Request Token, then redirect the user to the Twitter OAuth authorization page for our
     Request Token."""
     twitter_client = get_twitter_client()
+
     try:
         token = twitter_client.get_request_token()
     except OAuthRequestError:
