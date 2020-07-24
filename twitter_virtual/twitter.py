@@ -3,7 +3,6 @@ import datetime
 import oauth2
 from urllib.parse import urlencode
 import json
-import os
 from typing import Any
 
 REQUEST_TOKEN_URL = "https://api.twitter.com/oauth/request_token"
@@ -22,6 +21,7 @@ INVALIDATE_TOKEN_URL = "https://api.twitter.com/1.1/oauth/invalidate_token"
 
 class TwitterClient:
     """Class for interacting with the Twitter API on behalf of a Twitter user via OAuth."""
+
     def __init__(self, oauth_client: Any = None, consumer_key: str = None, consumer_secret: str = None, callback_url: str = None) -> None:
         """Initialize an oauth2 client, or stash the one provided."""
         self.callback_url = callback_url
@@ -35,6 +35,7 @@ class TwitterClient:
 
     @classmethod
     def from_flask_app(cls, flask_app: Any):
+        """Construct a TwitterClient using config from a Flask app."""
         return cls(consumer_key=flask_app.config["TWITTER_CONSUMER_KEY"],
                    consumer_secret=flask_app.config["TWITTER_CONSUMER_SECRET"],
                    callback_url=flask_app.config["TWITTER_CALLBACK_URL"])
@@ -42,7 +43,7 @@ class TwitterClient:
     def get_request_token(self) -> oauth2.Token:
         """Get a Twitter OAuth request token for step 1 of OAuth flow."""
         client = self.oauth_client
-        callback_url = os.environ.get('TWITTER_CALLBACK_URL')
+        callback_url = self.callback_url
 
         request_body = urlencode({'oauth_callback': callback_url})
         headers, body = client.request(REQUEST_TOKEN_URL, method='POST', body=request_body)
@@ -102,7 +103,7 @@ class TwitterClient:
         return token
 
     def authorize_oauth_token(self, oauth_token: str, oauth_token_secret: str, oauth_verifier: str) -> oauth2.Token:
-        """"Get an OAuth token from Twitter using an authorized request token - final step of three-legged OAuth."""
+        """Get an OAuth token from Twitter using an authorized request token - final step of three-legged OAuth."""
         self.set_client_token(oauth_token, oauth_token_secret, oauth_verifier)
         headers, body = self.oauth_client.request(ACCESS_TOKEN_URL, method='POST')
 
@@ -229,7 +230,9 @@ class TwitterClient:
 
 class TwitterError(Exception):
     """Generic Twitter API response error."""
+
     def __init__(self, message: str = None, headers: any = None, body: any = None):
+        """Provide a default message and stash API response headers and body."""
         if message is None:
             message = str(type(self))
         super().__init__(message)
@@ -238,6 +241,7 @@ class TwitterError(Exception):
         self.body = body
 
     def __str__(self):
+        """Print details about the API response."""
         full_desc = self.message
         if self.headers or self.body:
             full_desc = full_desc + f'. Response details (headers - body): {str(self.headers)} - {str(self.body)}'
@@ -246,36 +250,44 @@ class TwitterError(Exception):
 
 class OAuthRequestError(TwitterError):
     """Generic Twitter OAuth error."""
+
     pass
 
 
 class InvalidOAuthResponseError(TwitterError):
     """Twitter either rejected our OAuth credentials, or the response was invalid."""
+
     pass
 
 
 class RateLimitHit(TwitterError):
     """Twitter rate limit exceeded response error."""
+
     status = 429  # http status
 
 
 class SoftRateLimitHit(TwitterError):
     """Twitter soft (hidden) rate limit exceeded - response is 200 but no actions were performed by Twitter.
+
     This means that the user can't perform the action again for at least the next 24 hours.
     """
+
     pass
 
 
 class TooManyFollowing(TwitterError):
     """Twitter list would have too many members."""
+
     pass
 
 
 class ZeroFollowing(TwitterError):
     """Twitter list would have zero members."""
+
     pass
 
 
 class UserNotFollowingTarget(TwitterError):
     """Current user isn't following the target user."""
+
     pass
