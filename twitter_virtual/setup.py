@@ -1,7 +1,7 @@
 """Flask application setup."""
 
 from flask import Flask
-from .database import db
+from .database import db, SQLAlchemy
 import os
 from dotenv import load_dotenv
 load_dotenv()
@@ -11,7 +11,7 @@ from flask_compress import Compress
 
 compress = Compress()
 
-def setup_app():
+def setup_app() -> Flask:
     """Set up Flask application - register views, load secret key, env config, etc."""
     app = Flask("twitter_virtual")
 
@@ -36,7 +36,7 @@ def setup_app():
     return app
 
 
-def setup_db(flask_app, testing=False):
+def setup_db(flask_app: Flask, testing: bool = False) -> SQLAlchemy:
     """Set up Flask-SQLAlchemy."""
     if testing:
         flask_app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///:memory:"
