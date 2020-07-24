@@ -11,7 +11,7 @@ from flask_compress import Compress
 
 compress = Compress()
 
-def setup_app(twitter_class=None):
+def setup_app():
     """Set up Flask application - register views, load secret key, env config, etc."""
     app = Flask("twitter_virtual")
 
