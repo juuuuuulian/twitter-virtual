@@ -1,14 +1,10 @@
 """Classes for interacting with the Twitter API."""
-import logging
 import datetime
 import oauth2
-from urllib.parse import urlencode, parse_qs
+from urllib.parse import urlencode
 import json
 import os
-from dotenv import load_dotenv
-load_dotenv()
-
-log = logging.getLogger(__name__)
+from typing import Any
 
 REQUEST_TOKEN_URL = "https://api.twitter.com/oauth/request_token"
 AUTHORIZE_URL = "https://api.twitter.com/oauth/authorize"
@@ -26,8 +22,9 @@ INVALIDATE_TOKEN_URL = "https://api.twitter.com/1.1/oauth/invalidate_token"
 
 class TwitterClient:
     """Class for interacting with the Twitter API on behalf of a Twitter user via OAuth."""
-    def __init__(self, oauth_client=None, consumer_key=None, consumer_secret=None):
-        """Initialize an oauth2 client."""
+    def __init__(self, oauth_client: Any = None, consumer_key: str = None, consumer_secret: str = None, callback_url: str = None) -> None:
+        """Initialize an oauth2 client, or stash the one provided."""
+        self.callback_url = callback_url
         if oauth_client:
             self.oauth_client = oauth_client
         elif (consumer_key is not None) and (consumer_secret is not None):
@@ -37,16 +34,12 @@ class TwitterClient:
             raise Exception("Please supply either an oauth_client argument or a consumer_key + consumer_secret pair")
 
     @classmethod
-    def from_flask_app(cls, flask_app):
+    def from_flask_app(cls, flask_app: Any):
         return cls(consumer_key=flask_app.config["TWITTER_CONSUMER_KEY"],
-                   consumer_secret=flask_app.config["TWITTER_CONSUMER_SECRET"])
-        #if oauth_client:
-        #    return cls(oauth_client=oauth_client)
-        #else:
-        #    return cls(consumer_key=flask_app.config["TWITTER_CONSUMER_KEY"],
-        #               consumer_secret=flask_app.config["TWITTER_CONSUMER_SECRET"])
+                   consumer_secret=flask_app.config["TWITTER_CONSUMER_SECRET"],
+                   callback_url=flask_app.config["TWITTER_CALLBACK_URL"])
 
-    def get_request_token(self):
+    def get_request_token(self) -> oauth2.Token:
         """Get a Twitter OAuth request token for step 1 of OAuth flow."""
         client = self.oauth_client
         callback_url = os.environ.get('TWITTER_CALLBACK_URL')
@@ -64,7 +57,7 @@ class TwitterClient:
 
         return token
 
-    def parse_oauth_response(self, headers, body):
+    def parse_oauth_response(self, headers: Any, body: bytes) -> oauth2.Token:
         """Parse a Twitter OAuth request token response or an authorize token response."""
         try:
             token = oauth2.Token.from_string(body.decode())
@@ -73,25 +66,34 @@ class TwitterClient:
 
         return token
 
-    def get_authorize_url_for_token(self, oauth_token):
+    def parse_api_response(self, headers: Any, body: bytes) -> Any:
+        """Parse a Twitter API response body and return it as a dict."""
+        body = body.decode()
+        try:
+            parsed_body = json.loads(body)
+        except json.JSONDecodeError as e:
+            raise TwitterError("Parsing API response failed: " + str(e), headers, body)
+        return parsed_body
+
+    def get_authorize_url_for_token(self, oauth_token: str) -> str:
         """Get a Twitter OAuth authorization URL for step 2 of OAuth."""
         twitter_auth_url = AUTHORIZE_URL
         if twitter_auth_url[-1] != '?':
             twitter_auth_url = twitter_auth_url + '?'
-        return twitter_auth_url + urlencode({'oauth_token': oauth_token})
+        return twitter_auth_url + urlencode({"oauth_token": oauth_token})
 
-    def invalidate_token(self):
+    def invalidate_token(self) -> bool:
         """Invalidate the current OAuth access token."""
         headers, body = self.oauth_client.request(INVALIDATE_TOKEN_URL, method="POST")
         if headers.status != 200:
             raise OAuthRequestError("Failed to invalidate OAuth access token", headers, body)
         return True
 
-    def get_full_list_url(self, twitter_list):
-        """Get a full Twitter URL for twitter_list."""
+    def get_full_list_url(self, twitter_list: dict) -> str:
+        """Get a full Twitter URL from a twitter list returned by the API."""
         return BASE_WEB_URL + twitter_list["uri"]
 
-    def set_client_token(self, oauth_token, oauth_token_secret, verifier=None):
+    def set_client_token(self, oauth_token: str, oauth_token_secret: str, verifier: Any = None) -> oauth2.Token:
         """Create an oauth2.Token and set it on our oauth_client."""
         token = oauth2.Token(oauth_token, oauth_token_secret)
         if verifier:
@@ -99,7 +101,7 @@ class TwitterClient:
         self.oauth_client.token = token
         return token
 
-    def authorize_oauth_token(self, oauth_token, oauth_token_secret, oauth_verifier):
+    def authorize_oauth_token(self, oauth_token: str, oauth_token_secret: str, oauth_verifier: str) -> oauth2.Token:
         """"Get an OAuth token from Twitter using an authorized request token - final step of three-legged OAuth."""
         self.set_client_token(oauth_token, oauth_token_secret, oauth_verifier)
         headers, body = self.oauth_client.request(ACCESS_TOKEN_URL, method='POST')
@@ -114,7 +116,7 @@ class TwitterClient:
 
         return token
 
-    def get_following_user_ids(self, screen_name, count=5000):
+    def get_following_user_ids(self, screen_name: str, count=5000) -> dict:
         """Get the stringified IDs of the full list of users who screen_name follows."""
         params = {"screen_name": screen_name, "stringify_ids": "true", "count": count}
         headers, body = self.oauth_client.request(LIST_FRIENDS_URL + '?' + urlencode(params), method='GET')
@@ -124,9 +126,9 @@ class TwitterClient:
                 raise RateLimitHit("Too many requests for following users in a 15-minute period!", headers, body)
             raise TwitterError("Fetch following users failed", headers, body)
 
-        return json.loads(body.decode())
+        return self.parse_api_response(headers, body)
 
-    def current_user_is_following_user(self, screen_name):
+    def current_user_is_following_user(self, screen_name: str) -> bool:
         """Check if the current user is following screen_name."""
         params = {"screen_name": screen_name}
         headers, body = self.oauth_client.request(LOOKUP_FRIENDSHIPS_URL + '?' + urlencode(params))
@@ -136,12 +138,12 @@ class TwitterClient:
                 raise RateLimitHit("Too many friendships lookup requests in a 15-minute window!", headers, body)
             raise TwitterError("Friendships lookup failed", headers, body)
 
-        users = json.loads(body.decode())
+        users = self.parse_api_response(headers, body)
         if len(users) != 0 and ('following' in users[0]["connections"]):
             return True
         return False
 
-    def get_user_profile_img_url(self, screen_name):
+    def get_user_profile_img_url(self, screen_name: str) -> bool:
         """Get the Twitter profile image URL for <screen_name> (original size)."""
         params = {"screen_name": screen_name}
         headers, body = self.oauth_client.request(SHOW_USER_URL + '?' + urlencode(params))
@@ -151,14 +153,14 @@ class TwitterClient:
                 raise RateLimitHit("Too many user info lookup requests in a 15-minute window!", headers, body)
             raise TwitterError("User info lookup failed", headers, body)
 
-        user_info = json.loads(body.decode())
+        user_info = self.parse_api_response(headers, body)
         profile_img_url = user_info.get("profile_image_url")
 
         if profile_img_url:
             return profile_img_url.replace("_normal.", ".")
         return None
 
-    def create_private_list(self, screen_name):
+    def create_private_list(self, screen_name: str) -> dict:
         """Create a private, empty Twitter list named '<screen_name>'."""
         list_settings = {
             "mode": "private",
@@ -172,10 +174,9 @@ class TwitterClient:
                 raise RateLimitHit("Too many lists created in a 15-minute window!")
             raise TwitterError("Private list creation failed", headers, body)
 
-        new_list = json.loads(body.decode())
-        return new_list
+        return self.parse_api_response(headers, body)
 
-    def delete_list(self, list_id):
+    def delete_list(self, list_id: str) -> bool:
         """Delete a Twitter list."""
         headers, body = self.oauth_client.request(DELETE_LIST_URL + '?list_id=' + str(list_id), method='POST')
 
@@ -186,7 +187,7 @@ class TwitterClient:
 
         return True
 
-    def get_rate_limit_status(self, resource_type, endpoint_uri):
+    def get_rate_limit_status(self, resource_type: str, endpoint_uri: str) -> int:
         """Get the remaining number of allowed API requests for a Twitter resource type and one of its endpoints.
 
         https://developer.twitter.com/en/docs/developer-utilities/rate-limit-status/api-reference/get-application-rate_limit_status
@@ -200,12 +201,12 @@ class TwitterClient:
                 raise RateLimitHit("Too many requests for rate limit status in 15-minute window!", headers, body)
             raise TwitterError("Failed to get rate limit status", headers, body)
 
-        status_desc_res = json.loads(body.decode())
+        status_desc_res = self.parse_api_response(headers, body)
         endpoint_status_desc = status_desc_res['resources'].get(resource_type, {}).get(endpoint_uri, {})
 
         return endpoint_status_desc['remaining']
 
-    def add_users_to_list(self, list_id, user_ids):
+    def add_users_to_list(self, list_id: str, user_ids: list) -> dict:
         """Add a list of Twitter accounts (user_ids) to a Twitter List (list_id)."""
         create_params = {
             "list_id": list_id,
@@ -219,7 +220,7 @@ class TwitterClient:
             raise TwitterError("Failed to add users to a list", headers, body)
 
         # check for soft rate limit hit
-        updated_list = json.loads(body.decode())
+        updated_list = self.parse_api_response(headers, body)
         if int(updated_list['member_count']) == 0:
             raise SoftRateLimitHit("Too many list actions performed for today!", headers, body)
 
@@ -228,7 +229,7 @@ class TwitterClient:
 
 class TwitterError(Exception):
     """Generic Twitter API response error."""
-    def __init__(self, message=None, headers=None, body=None):
+    def __init__(self, message: str = None, headers: any = None, body: any = None):
         if message is None:
             message = str(type(self))
         super().__init__(message)

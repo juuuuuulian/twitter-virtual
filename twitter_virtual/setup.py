@@ -22,6 +22,7 @@ def setup_app(twitter_class=None):
     #app.config["SQLALCHEMY_ECHO"] = True
     app.config["TWITTER_CONSUMER_KEY"] = os.environ["TWITTER_CONSUMER_KEY"]
     app.config["TWITTER_CONSUMER_SECRET"] = os.environ["TWITTER_CONSUMER_SECRET"]
+    app.config["TWITTER_CALLBACK_URL"] = os.environ["TWITTER_CALLBACK_URL"]
     app.config["RECAPTCHA_SECRET"] = os.environ["RECAPTCHA_SECRET"]
     app.config["RECAPTCHA_SITE_KEY"] = os.environ["RECAPTCHA_SITE_KEY"]
     app.config["TEMPLATES_AUTO_RELOAD"] = True
