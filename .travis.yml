@@ -1,7 +1,7 @@
 language: python
 python:
     - "3.8"
+install:
+    - pip install tox
 script:
-    - pytest
-env:
-    - FLASK_SECRET_KEY=travis_testing LIMIT_APP_USE=0 DATABASE_URL=none TWITTER_CONSUMER_KEY=fake_consumer_key TWITTER_CONSUMER_SECRET=fake_consumer_secret TWITTER_CALLBACK_URL=fake_callback_url RECAPTCHA_SECRET=fake_recaptcha_secret RECAPTCHA_SITE_KEY=fake_recaptcha_site_key
+    - tox
