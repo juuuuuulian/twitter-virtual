@@ -1,35 +1,34 @@
 import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 
 const TwitterUserImage = (props) => {
-  let src = props.src;
-  const size = props.size;
-  const fallbackImgSrc = props.fallbackImgSrc;
+  let { src } = props;
+  const { size, fallbackImgSrc } = props;
 
   const handleLoadFailure = (ev) => {
-    if (fallbackImgSrc && ev.target.src.indexOf(fallbackImgSrc) == -1) {
-      ev.target.src = fallbackImgSrc;
+    const { target } = ev;
+    if (fallbackImgSrc && target.src.indexOf(fallbackImgSrc) === -1) {
+      target.src = fallbackImgSrc;
     }
   };
 
-  // set src to desired image size
+  // set src to desired image size (normal, bigger, mini)
   // https://developer.twitter.com/en/docs/accounts-and-users/user-profile-images-and-banners
   // we expect a props.src with no size specified
   if (size) {
-    let imageFileName = src.split('/').pop();
-    let newImageFileName = imageFileName;
-
-    if (size == 'normal') {
-      newImageFileName = imageFileName.replace('.', '_normal.');
-    } else if (size == 'bigger') {
-      newImageFileName = imageFileName.replace('.', '_bigger.');
-    } else if (size == 'mini') {
-      newImageFileName = imageFileName.replace('.', '_mini.');
-    }
+    const imageFileName = src.split('/').pop();
+    const newImageFileName = imageFileName.replace('.', `_${size}.`); // 'normal' -> '_normal.'
 
     src = src.replace(imageFileName, newImageFileName);
   }
 
-  return <img src={src} onError={handleLoadFailure} className={props.className} />
+  return <img {...props} src={src} onError={handleLoadFailure} alt="" />;
 };
 
-export { TwitterUserImage }
+TwitterUserImage.propTypes = {
+  src: PropTypes.string,
+  size: PropTypes.string,
+  fallbackImgSrc: PropTypes.string,
+};
+
+export default TwitterUserImage;

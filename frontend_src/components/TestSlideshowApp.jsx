@@ -1,30 +1,43 @@
+// eslint-disable-next-line import/extensions
 import { hot } from 'react-hot-loader/root';
 import React, { Component } from 'react';
-import { Slideshow, Slide } from './Slideshow.jsx';
-import { AtlanticTweetSlide, TweetCopySlide, FeedTweetCopySlide, AppSlide } from './Slides.jsx';
-
+import PropTypes from 'prop-types';
+import { Slideshow } from './Slideshow.jsx';
+import {
+  AtlanticTweetSlide, TweetCopySlide, FeedTweetCopySlide, AppSlide,
+} from './Slides.jsx';
 
 const TestSlideshowApp = (props) => {
-  let initialSlideIndex = props.errorMessage ? 3 : 0; // skip to the last slide if there's an error message
+  const {
+    errorMessage, secondsTilNextAppAvail, sampleAccounts, captchaSiteKey,
+  } = props;
+  // skip to the last slide if there's an error message
+  const initialSlideIndex = errorMessage ? 3 : 0;
   return (
-      <Slideshow
-          initialSlideIndex={initialSlideIndex}
-          inAnimation="animated faster zoomIn"
-          outAnimation="animated faster zoomOut"
-          waitAnimation="animated-wiggle"
-          waitAnimation="nonea"
-      >
-          <TweetCopySlide />
-          <FeedTweetCopySlide />
-          <AtlanticTweetSlide />
-          <AppSlide
-              secondsTilNextAppAvail={props.secondsTilNextAppAvail}
-              sampleAccounts={props.sampleAccounts}
-              errorMessage={props.errorMessage}
-              captchaSiteKey={props.captchaSiteKey}
-          />
-      </Slideshow>
+    <Slideshow
+      initialSlideIndex={initialSlideIndex}
+      inAnimation="animated faster zoomIn"
+      outAnimation="animated faster zoomOut"
+      waitAnimation="animated-wigglea"
+    >
+      <TweetCopySlide />
+      <FeedTweetCopySlide />
+      <AtlanticTweetSlide />
+      <AppSlide
+        secondsTilNextAppAvail={secondsTilNextAppAvail}
+        sampleAccounts={sampleAccounts}
+        errorMessage={errorMessage}
+        captchaSiteKey={captchaSiteKey}
+      />
+    </Slideshow>
   );
+};
+
+TestSlideshowApp.propTypes = {
+  errorMessage: PropTypes.string,
+  secondsTilNextAppAvail: PropTypes.number,
+  sampleAccounts: PropTypes.array,
+  captchaSiteKey: PropTypes.string,
 };
 
 export default hot(TestSlideshowApp);

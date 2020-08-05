@@ -1,88 +1,104 @@
 import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 
 const Slide = (props) => {
-  const onHideFinish = props.onHideFinish;
-  const onShowFinish = props.onShowFinish;
-  const onSlideFinish = props.onSlideFinish;
-  const animationState = props.animationState;
-  const outAnimation = props.outAnimation;
-  const inAnimation = props.inAnimation;
-  const waitAnimation = props.waitAnimation;
-  const className = props.className;
-  let children = React.Children.toArray(props.children);
+  const {
+    onHideFinish, onShowFinish, onSlideFinish, animationState, outAnimation, inAnimation,
+    waitAnimation, className, children,
+  } = props;
+  const childrenArray = React.Children.toArray(children);
 
   const animationEndHandler = (evt) => {
-      let animationName = evt.animationName;
-      if (inAnimation.indexOf(animationName) != -1)
-          onShowFinish(evt)
-      if (outAnimation.indexOf(animationName) != -1)
-          onHideFinish(evt)
+    const { animationName } = evt;
+    if (inAnimation.indexOf(animationName) !== -1) onShowFinish(evt);
+    if (outAnimation.indexOf(animationName) !== -1) onHideFinish(evt);
   };
 
-  let classes = ["slide", className];
-  if (animationState == "in") {
-      classes.push(inAnimation);
-  } else if (animationState == "out") {
-      classes.push(outAnimation);
+  const classes = ['slide', className];
+  if (animationState === 'in') {
+    classes.push(inAnimation);
+  } else if (animationState === 'out') {
+    classes.push(outAnimation);
   } else {
-      classes.push(waitAnimation);
+    classes.push(waitAnimation);
   }
 
   return (
-      <div className={classes.join(' ')} onAnimationEnd={animationEndHandler}>
-          { children.map((child) => React.cloneElement(child, { onSlideFinish: onSlideFinish })) }
-      </div>
+    <div className={classes.join(' ')} onAnimationEnd={animationEndHandler}>
+      { childrenArray.map((child) => React.cloneElement(child, { onSlideFinish })) }
+    </div>
   );
 };
 
+Slide.propTypes = {
+  onHideFinish: PropTypes.func,
+  onShowFinish: PropTypes.func,
+  onSlideFinish: PropTypes.func,
+  animationState: PropTypes.string,
+  outAnimation: PropTypes.string,
+  inAnimation: PropTypes.string,
+  waitAnimation: PropTypes.string,
+  className: PropTypes.string,
+  children: PropTypes.array,
+};
+
 const Slideshow = (props) => {
-  const [currentIndex, setCurrentIndex] = React.useState(props.initialSlideIndex || 0);
-  const [animationState, setAnimationState] = React.useState("in");
-  const inAnimation = props.inAnimation;
-  const outAnimation = props.outAnimation;
-  const waitAnimation = props.waitAnimation;
-  let children = React.Children.toArray(props.children);
+  const {
+    inAnimation, outAnimation, waitAnimation, initialSlideIndex, children,
+  } = props;
+  const [currentIndex, setCurrentIndex] = React.useState(initialSlideIndex || 0);
+  const [animationState, setAnimationState] = React.useState('in');
+  const childrenArray = React.Children.toArray(children);
 
   // hide animation finish callback
   const onHideFinish = () => {
-      setCurrentIndex(currentIndex + 1);
-      setAnimationState("in");
+    setCurrentIndex(currentIndex + 1);
+    setAnimationState('in');
   };
 
   // show animation finish callback
   const onShowFinish = () => {
-      setAnimationState("wait");
+    setAnimationState('wait');
   };
 
   // slide finished callback
   const onSlideFinish = () => {
-      setAnimationState("out");
+    setAnimationState('out');
   };
 
   return (
-      <>
-          {
-              children.map((child, index) => {
-                  if (currentIndex == index) {
-                      let slideOut = child.props.outAnimation || outAnimation;
-                      let slideIn = child.props.inAnimation || inAnimation;
-                      let slideWait = child.props.waitAnimation || waitAnimation;
+    <>
+      {
+              childrenArray.map((child, index) => {
+                if (currentIndex === index) {
+                  const slideOut = child.props.outAnimation || outAnimation;
+                  const slideIn = child.props.inAnimation || inAnimation;
+                  const slideWait = child.props.waitAnimation || waitAnimation;
 
-                      return React.cloneElement(child, {
-                          outAnimation: slideOut,
-                          inAnimation: slideIn,
-                          waitAnimation: slideWait,
-                          slideIndex: index,
-                          animationState: animationState,
-                          onShowFinish: onShowFinish,
-                          onHideFinish: onHideFinish,
-                          onSlideFinish: onSlideFinish
-                      });
-                  }
+                  return React.cloneElement(child, {
+                    outAnimation: slideOut,
+                    inAnimation: slideIn,
+                    waitAnimation: slideWait,
+                    slideIndex: index,
+                    animationState,
+                    onShowFinish,
+                    onHideFinish,
+                    onSlideFinish,
+                  });
+                }
+                return null;
               })
           }
-      </>
+    </>
   );
 };
 
-export { Slide, Slideshow }
+Slideshow.propTypes = {
+  outAnimation: PropTypes.string,
+  inAnimation: PropTypes.string,
+  waitAnimation: PropTypes.string,
+  children: PropTypes.array,
+  initialSlideIndex: PropTypes.number,
+};
+
+export { Slide, Slideshow };
