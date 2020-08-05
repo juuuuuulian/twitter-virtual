@@ -2,15 +2,13 @@
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 
 module.exports = {
-    entry: './frontend_src/index.js',
+    entry: './frontend_src/index.jsx',
     module: {
         rules: [
             {
                 test: /\.(js|jsx)$/,
                 exclude: /node_modules/,
-                use: {
-                    loader: "babel-loader"
-                }
+                use: ["babel-loader", "eslint-loader"]
             },
             {
                 test: /.css$/,

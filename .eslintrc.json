@@ -1,0 +1,39 @@
+{
+    "env": {
+        "browser": true,
+        "es2020": true
+    },
+    "extends": [
+        "plugin:react/recommended",
+        "airbnb"
+    ],
+    "parserOptions": {
+        "ecmaFeatures": {
+            "jsx": true
+        },
+        "ecmaVersion": 11,
+        "sourceType": "module"
+    },
+    "plugins": [
+        "react"
+    ],
+    "rules": {
+        "import/extensions": [
+            2,
+            "always"            
+        ],
+        "no-unused-vars": [
+            "error",
+            { "varsIgnorePattern": "Component" }
+        ],
+        "react/require-default-props": [
+            0
+        ],
+        "react/forbid-prop-types": [
+            0
+        ],
+        "react/jsx-props-no-spreading": [
+            0
+        ]
+    }
+}

@@ -7,7 +7,6 @@ import AppForm from './AppForm.jsx';
 import AppErrorMessage from './AppErrorMessage.jsx';
 
 // twitter feed copy app: app availability timer, form, sample account picker, and submit modal
-
 const App = (props) => {
   const {
     secondsTilNextAppAvail, errorMessage, captchaSiteKey, sampleAccounts,

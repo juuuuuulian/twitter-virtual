@@ -97,7 +97,7 @@ Slideshow.propTypes = {
   outAnimation: PropTypes.string,
   inAnimation: PropTypes.string,
   waitAnimation: PropTypes.string,
-  children: PropTypes.array,
+  children: PropTypes.any,
   initialSlideIndex: PropTypes.number,
 };
 
