@@ -16,26 +16,23 @@ const AppUseTimer = (props) => {
   }
 
   React.useEffect(() => {
-    function startAppUseTimer(secsFromNow) {
-      let timerSeconds = secsFromNow;
-      const timer = setInterval(() => {
-        timerSeconds -= 1;
-        setSecondsLeft(timerSeconds);
+    let timerSeconds = secondsLeft;
+    if (timerSeconds === 0) return undefined;
 
-        if (timerSeconds === 0) {
-          clearInterval(timer);
-          onTimerFinished();
-        }
-      }, 1000);
-      return timer;
-    }
+    const timer = setInterval(() => {
+      timerSeconds -= 1;
+      setSecondsLeft(timerSeconds);
 
-    const appUseTimer = startAppUseTimer(secondsLeft);
+      if (timerSeconds === 0) {
+        clearInterval(timer);
+        onTimerFinished();
+      }
+    }, 1000);
 
     return () => {
-      clearInterval(appUseTimer);
+      clearInterval(timer);
     };
-  }, []); // [] = skip new effect create on component update
+  }, [secondsLeft, onTimerFinished]);
 
   if (secondsLeft === 0) {
     return null; // render nothing

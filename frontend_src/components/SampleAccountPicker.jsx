@@ -58,6 +58,7 @@ const ListGroupSampleAccountPicker = (props) => {
           followingCount={account.following}
           profileImgUrl={account.profile_img_url}
           clickHandler={optionClickHandler}
+          key={account.username}
         />
       ))}
     </div>
@@ -123,6 +124,7 @@ const CardDeckAccountPicker = (props) => {
           following={account.following}
           profileImgUrl={account.profile_img_url}
           clickHandler={optionClickHandler}
+          key={account.username}
         />
       ))}
     </div>

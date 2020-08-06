@@ -135,7 +135,7 @@ TweetDetail.propTypes = {
   authorName: PropTypes.string,
   authorUsername: PropTypes.string,
   authorIconUrl: PropTypes.string,
-  children: PropTypes.array,
+  children: PropTypes.any,
   iconClickAnimation: PropTypes.string,
 };
 

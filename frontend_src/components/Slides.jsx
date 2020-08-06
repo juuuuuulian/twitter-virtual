@@ -8,8 +8,8 @@ import AtlanticIcon from '../images/atlantic_icon.jpg';
 import TwitterVirtualizerIcon from '../images/twv_icon.png';
 
 // wrap every character of inputString in a <span>
-const spanifyString = (inputString, props) => (
-  inputString.split('').map((inputChar) => <span {...props}>{inputChar}</span>)
+const spanifyString = (inputString) => (
+  inputString.split('').map((inputChar) => <span>{inputChar}</span>)
 );
 
 const AtlanticTweetSlide = (props) => {

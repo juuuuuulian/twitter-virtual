@@ -39,7 +39,7 @@ Slide.propTypes = {
   inAnimation: PropTypes.string,
   waitAnimation: PropTypes.string,
   className: PropTypes.string,
-  children: PropTypes.array,
+  children: PropTypes.any,
 };
 
 const Slideshow = (props) => {
@@ -66,31 +66,17 @@ const Slideshow = (props) => {
     setAnimationState('out');
   };
 
-  return (
-    <>
-      {
-              childrenArray.map((child, index) => {
-                if (currentIndex === index) {
-                  const slideOut = child.props.outAnimation || outAnimation;
-                  const slideIn = child.props.inAnimation || inAnimation;
-                  const slideWait = child.props.waitAnimation || waitAnimation;
-
-                  return React.cloneElement(child, {
-                    outAnimation: slideOut,
-                    inAnimation: slideIn,
-                    waitAnimation: slideWait,
-                    slideIndex: index,
-                    animationState,
-                    onShowFinish,
-                    onHideFinish,
-                    onSlideFinish,
-                  });
-                }
-                return null;
-              })
-          }
-    </>
-  );
+  const currentSlide = childrenArray[currentIndex];
+  return React.cloneElement(currentSlide, {
+    outAnimation: currentSlide.props.outAnimation || outAnimation,
+    inAnimation: currentSlide.props.inAnimation || inAnimation,
+    waitAnimation: currentSlide.props.waitAnimation || waitAnimation,
+    slideIndex: currentIndex,
+    animationState,
+    onShowFinish,
+    onHideFinish,
+    onSlideFinish,
+  });
 };
 
 Slideshow.propTypes = {
