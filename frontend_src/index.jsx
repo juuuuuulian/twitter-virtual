@@ -8,8 +8,9 @@ import TestSlideshowApp from './components/TestSlideshowApp.jsx';
 import './css/bootstrap.min.css';
 import './css/animate.min.css';
 import './css/index.css';
+import sampleAccounts from './json/sample_accounts.json';
 
-function getAppVars() {
+const getAppVars = () => {
   const appVars = window.APP_VARS;
   if (appVars == null) {
     // eslint-disable-next-line no-console
@@ -17,16 +18,16 @@ function getAppVars() {
     return {};
   }
   return appVars;
-}
+};
 
-function getLastAppUseValue() {
+const getLastAppUseValue = () => {
   const appVars = getAppVars();
   const { last_app_use: lastAppUse } = appVars;
   if (lastAppUse == null) return null;
   return new Date(lastAppUse);
-}
+};
 
-function getSecondsTilNextAppAvail() {
+const getSecondsTilNextAppAvail = () => {
   const lastAppUse = getLastAppUseValue();
   if (lastAppUse == null) return 0;
   const msInADay = 60 * 60 * 24 * 1000;
@@ -36,32 +37,25 @@ function getSecondsTilNextAppAvail() {
   if (now.getTime() > nextAvailableAppUse.getTime()) return 0;
 
   return Math.floor((nextAvailableAppUse.getTime() - now.getTime()) / 1000);
-}
+};
 
-function getSampleAccounts() {
-  return getAppVars().sample_accounts;
-}
+const getErrorMessage = () => (getAppVars().error_message);
 
-function getErrorMessage() {
-  return getAppVars().error_message;
-}
+const initApp = () => {
+  const secondsTilNextAppAvail = getSecondsTilNextAppAvail();
+  // eslint-disable-next-line no-undef
+  const recaptchaSiteKey = RECAPTCHA_SITE_KEY;
+  const errorMessage = getErrorMessage();
 
-function getRecaptchaSiteKey() {
-  return getAppVars().recaptcha_site_key;
-}
-
-function initApp() {
   ReactDOM.render(
     <TestSlideshowApp
-      secondsTilNextAppAvail={getSecondsTilNextAppAvail()}
-      sampleAccounts={getSampleAccounts()}
-      errorMessage={getErrorMessage()}
-      captchaSiteKey={getRecaptchaSiteKey()}
+      secondsTilNextAppAvail={secondsTilNextAppAvail}
+      sampleAccounts={sampleAccounts}
+      errorMessage={errorMessage}
+      captchaSiteKey={recaptchaSiteKey}
     />,
     document.getElementById('react-container'),
   );
-}
+};
 
-window.addEventListener('DOMContentLoaded', () => {
-  initApp();
-});
+window.addEventListener('DOMContentLoaded', initApp);

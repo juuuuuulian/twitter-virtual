@@ -22,7 +22,6 @@ def setup_app(testing: bool = False) -> Flask:
     app.config["TWITTER_CONSUMER_SECRET"] = os.environ["TWITTER_CONSUMER_SECRET"]
     app.config["TWITTER_CALLBACK_URL"] = os.environ["TWITTER_CALLBACK_URL"]
     app.config["RECAPTCHA_SECRET"] = os.environ["RECAPTCHA_SECRET"]
-    app.config["RECAPTCHA_SITE_KEY"] = os.environ["RECAPTCHA_SITE_KEY"]
     # app.config["TEMPLATES_AUTO_RELOAD"] = True
 
     app.register_blueprint(oauth.bp)

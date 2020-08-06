@@ -4,6 +4,9 @@ const HtmlWebpackPlugin = require('html-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const { merge } = require('webpack-merge');
 const baseConfig = require('./webpack.base.config.js')
+const webpack = require('webpack');
+
+require('dotenv').config()
 
 module.exports = merge(baseConfig, {
     devtool: 'source-map',
@@ -16,6 +19,9 @@ module.exports = merge(baseConfig, {
         }
     },
     plugins: [
+        new webpack.DefinePlugin({
+            RECAPTCHA_SITE_KEY: JSON.stringify(process.env.RECAPTCHA_SITE_KEY)
+        }),
         new MiniCssExtractPlugin({
             filename: 'static/css/index.css'
         }),

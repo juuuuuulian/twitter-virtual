@@ -6,6 +6,9 @@ const baseConfig = require('./webpack.base.config.js')
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const TerserWebpackPlugin = require('terser-webpack-plugin');
 const OptimizeCSSAssetsPlugin = require('optimize-css-assets-webpack-plugin');
+const webpack = require('webpack');
+
+require('dotenv').config()
 
 module.exports = merge(baseConfig, {
     output: {
@@ -16,6 +19,9 @@ module.exports = merge(baseConfig, {
         minimizer: [new TerserWebpackPlugin({}), new OptimizeCSSAssetsPlugin({})]
     },
     plugins: [
+        new webpack.DefinePlugin({
+            RECAPTCHA_SITE_KEY: JSON.stringify(process.env.RECAPTCHA_SITE_KEY)
+        }),
         new MiniCssExtractPlugin({
             filename: 'static/css/index.bundle.css'
         }),
