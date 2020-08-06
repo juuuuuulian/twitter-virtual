@@ -2,8 +2,10 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 
 const TwitterUserImage = (props) => {
-  let { src } = props;
-  const { size, fallbackImgSrc } = props;
+  const {
+    size, fallbackImgSrc, src, ...other
+  } = props;
+  let primarySrc = src;
 
   const handleLoadFailure = (ev) => {
     const { target } = ev;
@@ -16,13 +18,13 @@ const TwitterUserImage = (props) => {
   // https://developer.twitter.com/en/docs/accounts-and-users/user-profile-images-and-banners
   // we expect a props.src with no size specified
   if (size) {
-    const imageFileName = src.split('/').pop();
+    const imageFileName = primarySrc.split('/').pop();
     const newImageFileName = imageFileName.replace('.', `_${size}.`); // 'normal' -> '_normal.'
 
-    src = src.replace(imageFileName, newImageFileName);
+    primarySrc = src.replace(imageFileName, newImageFileName);
   }
 
-  return <img {...props} src={src} onError={handleLoadFailure} alt="" />;
+  return <img {...other} src={primarySrc} onError={handleLoadFailure} alt="" />;
 };
 
 TwitterUserImage.propTypes = {
