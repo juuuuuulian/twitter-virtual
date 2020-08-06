@@ -8,6 +8,7 @@ from sqlalchemy.sql.sqltypes import Integer, Text, DateTime
 
 class AppUse(db.Model):
     """A record of our app being used successfully - a feed copy."""
+
     id = Column(Integer, primary_key=True)
     remote = Column(Text, nullable=False)  # would be INET if sqlite (needed for testing) supported it
     date = db.Column(DateTime(timezone=True), nullable=False, server_default=func.now())

@@ -10,8 +10,7 @@ bp = Blueprint('oauth', __name__, url_prefix='/oauth')
 
 @bp.route('/begin', methods=('GET', 'POST'))
 def begin():
-    """Get a Twitter OAuth Request Token, then redirect the user to the Twitter OAuth authorization page for our
-    Request Token."""
+    """Get a Twitter OAuth Request Token, then redirect the user to the Twitter authorization page for our token."""
     twitter_client = get_twitter_client()
 
     try:
@@ -30,8 +29,11 @@ def begin():
 
 @bp.route('/callback', methods=('GET', 'POST'))
 def callback():
-    """Handle redirects from the Twitter OAuth authorization page: accept OAuth request token values, exchange them for
-    a valid OAuth user token, and finally redirect the user to the feed copy endpoint."""
+    """Handle redirects from the Twitter OAuth authorization page.
+
+    Accept OAuth request token values, exchange them for a valid OAuth user token, and finally redirect the user to
+    the feed copy endpoint.
+    """
     twitter_client = get_twitter_client()
     oauth_verifier = request.args.get('oauth_verifier')
     token = session.get('token')
