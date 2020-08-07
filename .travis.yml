@@ -12,7 +12,7 @@ matrix:
         - language: node_js
           node_js: 14
           install:
-            - npm install eslint eslint-config-airbnb eslint-plugin-jsx-a11y eslint-plugin-import eslint-plugin-react eslint-plugin-react-hooks
+            - npm install
           script:
             - npm run lint
           branches:
