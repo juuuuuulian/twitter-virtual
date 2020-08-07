@@ -1,10 +1,20 @@
-language: python
-python:
-    - "3.8"
-install:
-    - pip install tox
-script:
-    - tox
-branches:
-  only:
-  - master
+matrix:
+    include:
+        - language: python
+          python: 3.8
+          install:
+            - pip install tox
+          script:
+            - tox
+          branches:
+            only:
+                - master
+        - language: node_js
+          node_js: 14
+          install:
+            - npm install eslint eslint-config-airbnb eslint-plugin-jsx-a11y eslint-plugin-import eslint-plugin-react eslint-plugin-react-hooks
+          script:
+            - npm run lint
+          branches:
+            only:
+                - master
