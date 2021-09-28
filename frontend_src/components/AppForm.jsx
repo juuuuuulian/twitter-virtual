@@ -49,9 +49,7 @@ const AppForm = (props) => {
           isValid={screenNameIsValid(targetScreenName) && targetScreenName}
           isInvalid={!screenNameIsValid(targetScreenName) && (targetScreenName || submitTried)}
         />
-        <InputGroup.Append className="target-screen-name-append">
-          <Button variant="success" type="submit">GO</Button>
-        </InputGroup.Append>
+        <Button variant="success" type="submit">Virtualize</Button>
         <Form.Control.Feedback type="invalid">
           Please enter a valid Twitter screen name (letters, numbers, and underscores,&nbsp;
           fifteen characters or less).

@@ -4,7 +4,8 @@ import {
   // eslint-disable-next-line no-unused-vars
   Button, Container, Row, Col, Card, InputGroup, Form, Modal, Alert,
 } from 'react-bootstrap';
-import TestSlideshowApp from './components/TestSlideshowApp.jsx';
+// import TestSlideshowApp from './components/TestSlideshowApp.jsx';
+import TestNewApp from './components/TestNewApp.jsx';
 import './css/bootstrap.min.css';
 import './css/animate.min.css';
 import './css/index.css';
@@ -48,7 +49,7 @@ const initApp = () => {
   const errorMessage = getErrorMessage();
 
   ReactDOM.render(
-    <TestSlideshowApp
+    <TestNewApp
       secondsTilNextAppAvail={secondsTilNextAppAvail}
       sampleAccounts={sampleAccounts}
       errorMessage={errorMessage}

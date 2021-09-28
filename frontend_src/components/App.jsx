@@ -1,3 +1,5 @@
+/* eslint-disable no-unused-vars */
+/* eslint-disable max-len */
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import AppUseTimer from './AppUseTimer.jsx';
@@ -5,6 +7,9 @@ import ListGroupSampleAccountPicker from './SampleAccountPicker.jsx';
 import SubmitModal from './SubmitModal.jsx';
 import AppForm from './AppForm.jsx';
 import AppErrorMessage from './AppErrorMessage.jsx';
+import { FeedTweet } from './Tweet.jsx';
+import AtlanticIcon from '../images/atlantic_icon.jpg';
+import TwitterVirtualizerIcon from '../images/twv_icon.png';
 
 // twitter feed copy app: app availability timer, form, sample account picker, and submit modal
 const App = (props) => {
@@ -75,12 +80,15 @@ const App = (props) => {
         captchaSiteKey={captchaSiteKey}
         targetScreenName={targetScreenName}
       />
-      <AppErrorMessage
-        errorMessage={errorMessage}
-        onClose={handleErrorMessageHide}
-        show={showAppErrorMessage}
-      />
-      {
+      <div>
+        <div>Jailbreak Your Timeline</div>
+        <div>Virtualize a Friend&apos;s Timeline and Fight the Algorithm&apos;s Control</div>
+        <AppErrorMessage
+          errorMessage={errorMessage}
+          onClose={handleErrorMessageHide}
+          show={showAppErrorMessage}
+        />
+        {
         secondsTilNextAppAvail !== 0
         && (
         <AppUseTimer
@@ -89,7 +97,7 @@ const App = (props) => {
         />
         )
       }
-      { (secondsTilNextAppAvail === 0 || timerFinished)
+        { (secondsTilNextAppAvail === 0 || timerFinished)
               && (
               <div>
                 <AppForm
@@ -107,6 +115,7 @@ const App = (props) => {
                 </div>
               </div>
               )}
+      </div>
     </div>
   );
 };
