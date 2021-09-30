@@ -30,7 +30,7 @@ module.exports = merge(baseConfig, {
         })
     ],
     devServer: {
-        contentBase: './twitter_virtual/',
+        static: ['./twitter_virtual/'],
         hot: true
     },
     mode: 'development'
