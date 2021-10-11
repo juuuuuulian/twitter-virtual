@@ -43,7 +43,7 @@ const AppForm = (props) => {
         <Form.Control
           type="text"
           name="target_screen_name"
-          placeholder="AccountName"
+          placeholder="Username"
           value={targetScreenName}
           onChange={inputChangeHandler}
           isValid={screenNameIsValid(targetScreenName) && targetScreenName}

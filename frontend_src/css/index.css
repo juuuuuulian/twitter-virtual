@@ -6,7 +6,8 @@
 }
 
 html, body {
-  height: 100%;
+  min-height: 100%;
+  min-width: 100%;
 }
 
 @media (min-width: 576px) {
@@ -18,6 +19,114 @@ html, body {
 .main {
   min-height: 100%;
   min-width: 100%;
+}
+
+/* --- New Index Styling  --- */
+body {
+  background-image: url('../images/twitter-flock3.png'), 
+  url('../images/new-clouds2.png'), 
+  url('../images/test-footer.png'),
+  linear-gradient(180deg, #0098ffbf, #0098ff85, #0098ff45);
+  background-size: contain, 100%, 100%, 100%;
+  background-position: left 100px, center -10vw, center bottom, left top;
+  background-repeat: repeat-x;
+}
+
+/* --- Responsive Background --- */
+@media (max-width: 1100px) {
+  body {
+    background-image: url('../images/twitter-flock3.png'), 
+    url('../images/twitter-flock3.png'), /* multiply the flock */
+    url('../images/new-clouds2.png'), 
+    url('../images/test-footer.png'),
+    linear-gradient(180deg, #0098ffbf, #0098ff85, #0098ff45);
+    background-position: left 100px, left 500px, center -6vw, center bottom, left top;
+  }
+}
+
+@media (max-width: 768px) {
+  body {
+    background-position: left 200px, 25px 525px, center 0vw, center bottom, left top;
+  }
+}
+
+@media (max-width: 550px) {
+  body {
+    background-position: -50px 300px, -55px 700px, center 0vw, center bottom, left top;
+    background-size: 200%, 150%, 150vw, 300%, 100%;  
+  }
+}
+
+@media (max-width: 400px) {
+  body {
+    background-position: -50px 350px, -55px 700px, center 0vw, center bottom, left top;
+    background-size: 200%, 200%, 200vw, 300%, 100%;
+  }
+}
+
+@media (max-width: 350px) {
+  body {
+    background-position: -50px 425px, -55px 700px, center -2vw, center bottom, left top;
+  }
+}
+
+#react-container {
+  min-height: 100%;
+  min-width: 100%;
+  display: grid;
+  grid-template-rows: auto 1fr;
+  justify-items: center;
+  align-items: start;
+}
+
+.index-cont {
+  padding: 150px 50px 50px 50px;
+  display: grid;
+  justify-content: center;
+  justify-items: center;
+  grid-gap: 20px;
+}
+
+@media (max-width: 425px) {
+  .index-cont {
+    padding: 150px 15px 50px 15px;
+  }
+}
+
+.header-copy {
+  text-align: center;
+  text-shadow: 0px 0px 12px white, -1px -1px 2px white, 1px 1px 10px white;
+}
+
+.invalid-feedback {
+  text-shadow: 1px 1px 1px white;
+}
+
+.indead-head h1 {
+  padding-bottom: 20px;
+}
+
+.index-footer {
+  margin: 75px 0 200px 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-evenly;
+  width: 100%;
+  max-width: 1300px;
+  opacity: .6;
+  font-weight: 300;
+}
+
+.index-footer img {
+  max-width: 50px;
+}
+
+.index-footer a {
+  text-decoration: underline;
+}
+
+.app-form-cont {
+  min-width: 80%;
 }
 
 /* --- Slide Styling ---*/
@@ -205,6 +314,7 @@ html, body {
 .account-picker-list-group {
   cursor: pointer;
   border: 1px solid lightgrey;
+  border-radius: .25rem;
   max-height: 500px;
   max-width: 500px;
   margin-left: auto;

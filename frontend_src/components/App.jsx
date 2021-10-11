@@ -7,9 +7,7 @@ import ListGroupSampleAccountPicker from './SampleAccountPicker.jsx';
 import SubmitModal from './SubmitModal.jsx';
 import AppForm from './AppForm.jsx';
 import AppErrorMessage from './AppErrorMessage.jsx';
-import { FeedTweet } from './Tweet.jsx';
-import AtlanticIcon from '../images/atlantic_icon.jpg';
-import TwitterVirtualizerIcon from '../images/twv_icon.png';
+import GitHubIcon from '../images/GitHub-Mark-Light-120px-plus.png';
 
 // twitter feed copy app: app availability timer, form, sample account picker, and submit modal
 const App = (props) => {
@@ -70,7 +68,7 @@ const App = (props) => {
   };
 
   return (
-    <div>
+    <>
       <SubmitModal
         show={showSubmitModal}
         onHide={handleSubmitModalHide}
@@ -80,43 +78,65 @@ const App = (props) => {
         captchaSiteKey={captchaSiteKey}
         targetScreenName={targetScreenName}
       />
-      <div>
-        <div>Jailbreak Your Timeline</div>
-        <div>Virtualize a Friend&apos;s Timeline and Fight the Algorithm&apos;s Control</div>
-        <AppErrorMessage
-          errorMessage={errorMessage}
-          onClose={handleErrorMessageHide}
-          show={showAppErrorMessage}
-        />
+      <div className="index-cont">
+        <div className="index-head header-copy">
+          <h1 className="display-4">Discover the Twitter You&apos;ve Been Missing Out On</h1>
+          <h6>Like VR goggles for your Twitter feed! Create a Virtual Feed of users who a friend follows and discover Twitter from a new point of view</h6>
+          <div>
+            This experimental tool is
+            {' '}
+            <a href="https://github.com/juuuuuulian/twitter-virtual" target="_blank" rel="noreferrer">open-source</a>
+            , free to use, and doesn&apos;t store any personal information
+          </div>
+        </div>
+        <div>
+          <AppErrorMessage
+            errorMessage={errorMessage}
+            onClose={handleErrorMessageHide}
+            show={showAppErrorMessage}
+          />
+        </div>
         {
         secondsTilNextAppAvail !== 0
         && (
-        <AppUseTimer
-          secondsAhead={secondsTilNextAppAvail}
-          onTimerFinished={() => setTimerFinished(true)}
-        />
+        <div>
+          <AppUseTimer
+            secondsAhead={secondsTilNextAppAvail}
+            onTimerFinished={() => setTimerFinished(true)}
+          />
+        </div>
         )
       }
         { (secondsTilNextAppAvail === 0 || timerFinished)
               && (
-              <div>
-                <AppForm
-                  formRef={formEle}
-                  targetScreenName={targetScreenName}
-                  setTargetScreenName={handleFormSetTargetScreenName}
-                  onSubmit={handleFormSubmit}
-                  captchaResponseToken={captchaResponseToken}
-                />
+              <>
+                <div className="app-form-cont">
+                  <AppForm
+                    formRef={formEle}
+                    targetScreenName={targetScreenName}
+                    setTargetScreenName={handleFormSetTargetScreenName}
+                    onSubmit={handleFormSubmit}
+                    captchaResponseToken={captchaResponseToken}
+                  />
+                </div>
+                <div className="header-copy">Or, choose one of the following accounts: </div>
                 <div>
                   <ListGroupSampleAccountPicker
                     accounts={sampleAccounts}
                     optionClickHandler={handleSampleAccountOptionClick}
                   />
                 </div>
-              </div>
+              </>
               )}
       </div>
-    </div>
+      <div className="index-footer">
+        <a className="text-muted footer-copy" href="https://www.theatlantic.com/technology/archive/2019/04/twitter-is-not-america/587770/" target="_blank" rel="noreferrer">Inspiration</a>
+        <a href="https://github.com/juuuuuulian/twitter-virtual" target="_blank" rel="noreferrer">
+          <img alt="GitHub Repository" src={GitHubIcon} className="img-fluid" />
+        </a>
+        <span className="text-muted footer-copy">&copy; 2019</span>
+      </div>
+    </>
   );
 };
 

@@ -19,29 +19,17 @@ module.exports = {
             },
             {
                 test: /\.(woff|woff2|eot|ttf|otf)$/,
-                use: [
-                    {
-                        loader: 'file-loader',
-                        options: {
-                            outputPath: 'static/fonts/',
-                            name: '[name].[ext]',
-                            publicPath: '/static/fonts/'
-                        }
-                    }
-                ],
+                type: 'asset/resource',
+                generator: {
+                    filename: 'static/fonts/[hash][ext][query]'
+                }
             },
             {
                 test: /\.(png|svg|jpg|gif)$/,
-                use: [
-                    {
-                        loader: 'file-loader',
-                        options: {
-                            outputPath: 'static/images/',
-                            name: '[name].[ext]',
-                            publicPath: '/static/images/'
-                        }
-                    }
-                ]
+                type: 'asset/resource',
+                generator: {
+                    filename: 'static/images/[hash][ext][query]'
+                }
             }
         ]
     }
