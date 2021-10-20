@@ -11,12 +11,17 @@ import re
 twitter_username_re = re.compile("^[a-zA-Z0-9_]{1,15}$")
 
 
-def render_app_index(status=200, extra_app_vars=None):
-    """Render the app index template with an app_vars dict to be made accessible to the javascript frontend."""
+def render_app_template(template_name, status=200, extra_app_vars=None):
+    """Render an app template with an app_vars dict to be made accessible to the javascript frontend."""
     app_vars = get_frontend_app_vars()
     if extra_app_vars:
         app_vars.update(extra_app_vars)
-    return make_response(render_template("index.html", app_vars=app_vars), status)
+    return make_response(render_template(template_name, app_vars=app_vars), status)
+
+
+def render_app_index(status=200, extra_app_vars=None):
+    """Render the app index template with an app_vars dict to be made accessible to the javascript frontend."""
+    return render_app_template("index.html", status, extra_app_vars)
 
 
 def render_app_error(error_message):

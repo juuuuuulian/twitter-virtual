@@ -1,11 +1,1 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Success!</title>
-</head>
-<body>
-    <div>Go here to see your new list: <a href="{{ new_list_url }}" target="_blank">Click Here</a></div>
-    <div>Go here to deauthorize our application: <a href="https://twitter.com/settings/applications/16184696" target="_blank">Click Here</a></div>
-</body>
-</html>
+<!doctype html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1,shrink-to-fit=no"><title>Twitter Virtualizer</title><script src="https://www.google.com/recaptcha/api.js" async defer="defer"></script><script defer="defer" src="../static/success.js"></script><link href="../static/css/success.bundle.css" rel="stylesheet"></head><body>{% if app_vars %}<script nonce="{{ csp_nonce() if csp_nonce }}">window.APP_VARS = {{ app_vars|tojson }};</script>{% endif %}<div id="react-container"></div></body></html>

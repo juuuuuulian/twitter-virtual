@@ -11,7 +11,7 @@ require('dotenv').config()
 module.exports = merge(baseConfig, {
     devtool: 'source-map',
     output: {
-        filename: 'index.js'
+        filename: '[name].js'
     },
     resolve: {
         alias: {
@@ -23,10 +23,17 @@ module.exports = merge(baseConfig, {
             RECAPTCHA_SITE_KEY: JSON.stringify(process.env.RECAPTCHA_SITE_KEY)
         }),
         new MiniCssExtractPlugin({
-            filename: 'static/css/index.css'
+            filename: 'static/css/[name].css'
         }),
         new HtmlWebpackPlugin({
-            template: './frontend_src/index.html'
+            template: './frontend_src/index.html',
+            chunks: ["index"],
+            filename: 'index.html'
+        }),
+        new HtmlWebpackPlugin({
+            template: './frontend_src/index.html',
+            chunks: ["success"],
+            filename: 'success.html'
         })
     ],
     devServer: {

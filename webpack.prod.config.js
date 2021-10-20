@@ -12,7 +12,7 @@ require('dotenv').config()
 
 module.exports = merge(baseConfig, {
     output: {
-        filename: 'static/index.js',
+        filename: 'static/[name].js',
         path: path.resolve(__dirname, 'twitter_virtual')
     },
     optimization: {
@@ -23,11 +23,17 @@ module.exports = merge(baseConfig, {
             RECAPTCHA_SITE_KEY: JSON.stringify(process.env.RECAPTCHA_SITE_KEY)
         }),
         new MiniCssExtractPlugin({
-            filename: 'static/css/index.bundle.css'
+            filename: 'static/css/[name].bundle.css'
+        }),
+        new HtmlWebpackPlugin({
+            template: './frontend_src/index.html',
+            filename: 'templates/success.html',
+            chunks: ['success']
         }),
         new HtmlWebpackPlugin({
             template: './frontend_src/index.html', // input shared template file
-            filename: 'templates/index.html' // output server template file
+            filename: 'templates/index.html', // output server template file
+            chunks: ['index']
         })
     ],
     mode: 'production'

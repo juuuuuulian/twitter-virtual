@@ -1,9 +1,9 @@
 """View functions for Twitter API interaction."""
-from flask import Blueprint, session, redirect, request, current_app, render_template
+from flask import Blueprint, session, redirect, request, current_app
 from ..twitter import RateLimitHit, SoftRateLimitHit, TooManyFollowing, ZeroFollowing, TwitterError, \
     UserNotFollowingTarget, OAuthRequestError
 from ..utils import get_twitter_client, get_recaptcha_client, should_limit_app_use, record_app_use, app_used_today, \
-    twitter_username_is_valid, render_app_error
+    twitter_username_is_valid, render_app_error, render_app_template
 from ..recaptcha import RecaptchaError
 
 twitter_bp = Blueprint('twitter', __name__, url_prefix="/twitter")
@@ -198,11 +198,10 @@ def copy_feed():
     record_app_use()
     invalidate_oauth_token(twitter_client)
 
-    return render_template("success.html", new_list_url=twitter_client.get_full_list_url(twitter_list))
-    # return redirect("/twitter/success")
+    return render_app_template("success.html", 200, extra_app_vars={"new_list_url": twitter_client.get_full_list_url(twitter_list)})
 
 
 @twitter_bp.route("/success")
 def success():
     """Show the user a success page."""
-    return render_template("success.html", new_list_url="https://twitter.com/test/lists/my-test-list")
+    return render_app_template("success.html", 200, extra_app_vars={"new_list_url": "https://twitter.com/test/lists/my-test-list"})

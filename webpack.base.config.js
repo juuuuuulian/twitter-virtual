@@ -2,7 +2,10 @@
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 
 module.exports = {
-    entry: './frontend_src/index.jsx',
+    entry: {
+        index: './frontend_src/index.jsx',
+        success: './frontend_src/success.jsx'
+    },
     module: {
         rules: [
             {
