@@ -25,12 +25,12 @@ fake_captcha_token = "FAKERECAPTCHATOKEN"
 
 class TestBegin(BaseTestCase):
     """Tests for /twitter/begin."""
+
     def _check_response_body(self, response, expected_text):
         response.mustcontain(expected_text)
 
     def _do_request(self, target_screen_name=None, captcha_response_token="", expected_status=200, expected_error_msg=None):
-        """Make a POST request to /twitter/begin with target_screen_name and captcha_response_token values, and
-        assert-check the HTTP response code against expected_status and the body for expected_error_msg."""
+        """Make a POST request to /twitter/begin with target_screen_name and captcha_response_token values, and assert-check the HTTP response code against expected_status and the body for expected_error_msg."""
         response = self.client.post("/twitter/begin", {
             "target_screen_name": target_screen_name,
             "captcha_response_token": captcha_response_token},
@@ -65,7 +65,9 @@ class TestBegin(BaseTestCase):
 
 class TestCopyFeed(BaseTestCase):
     """Integration tests for /twitter/copy_feed."""
+
     def setUp(self):
+        """Disable app use limit."""
         super().setUp()
         self.app.config["LIMIT_APP_USE"] = False
 
@@ -82,8 +84,7 @@ class TestCopyFeed(BaseTestCase):
         response.mustcontain(expected_text)
 
     def _do_request(self, set_token=True, set_target_screen_name=True, expected_status=200, expected_error_msg=None):
-        """Set the OAuth token and the target screen name values in the session, perform the request, then finally check
-        the response body for an error message."""
+        """Set the OAuth token and the target screen name values in the session, perform the request, then finally check the response body for an error message."""
         # set twitter oauth token in session
         if set_token:
             self._set_token(fake_token, fake_token_secret)
@@ -207,7 +208,7 @@ class TestCopyFeed(BaseTestCase):
         with self.app.app_context():
             self.assertEqual(AppUse.query.count(), 0, "No app uses in database")
         response = self._do_request(expected_status=200)
-        self._check_response_body(response, "Success")
+        self._check_response_body(response, "success")
         # self.assertTrue(("/twitter/success" in response.headers["Location"]), "Redirected to /twitter/success")
         with self.app.app_context():
             self.assertEqual(AppUse.query.count(), 1, "App use recorded")
