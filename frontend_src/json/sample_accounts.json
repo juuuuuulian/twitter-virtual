@@ -1,140 +1,134 @@
 [
-  {
-     "name":"OJ Simpson",
-     "username":"TheRealOJ32",
-     "following":24,
-     "profile_img_url":"http://pbs.twimg.com/profile_images/1141569279294226432/J1N7MQIV.jpg"
-  },
-  {
-     "name":"Cornel West",
-     "username":"CornelWest",
-     "following":179,
-     "profile_img_url":"http://pbs.twimg.com/profile_images/1076631097/c_west__smaller_.JPG"
-  },
-  {
-     "name":"Norm Macdonald",
-     "username":"normmacdonald",
-     "following":732,
-     "profile_img_url":"http://pbs.twimg.com/profile_images/1281990037/Unknown.jpeg"
-  },
-  {
-     "name":"Charlie Warzel",
-     "username":"cwarzel",
-     "following":1505,
-     "profile_img_url":"http://pbs.twimg.com/profile_images/531522450190651393/HuRaqDlp.png"
-  },
-  {
-     "name":"Jose Canseco",
-     "username":"JoseCanseco",
-     "following":64,
-     "profile_img_url":"http://pbs.twimg.com/profile_images/1095554807354380289/QcEuJFsQ.jpg"
-  },
-  {
-     "name":"Paul Krugman",
-     "username":"paulkrugman",
-     "following":47,
-     "profile_img_url":"http://pbs.twimg.com/profile_images/2044852218/NYT_Twitter_Krugman.png"
-  },
-  {
-     "name":"Alexandria Ocasio-Cortez",
-     "username":"AOC",
-     "following":1675,
-     "profile_img_url":"http://pbs.twimg.com/profile_images/923274881197895680/AbHcStkl.jpg"
-  },
-  {
-     "name":"DouthatNYT",
-     "username":"DouthatNYT",
-     "following":291,
-     "profile_img_url":"http://pbs.twimg.com/profile_images/2044053093/douthatsmall.jpg"
-  },
-  {
-     "name":"Robert Reich",
-     "username":"RBReich",
-     "following":276,
-     "profile_img_url":"http://pbs.twimg.com/profile_images/796103696106958848/D2c364z2.jpg"
-  },
-  {
-     "name":"Nate Silver",
-     "username":"NateSilver538",
-     "following":1190,
-     "profile_img_url":"http://pbs.twimg.com/profile_images/668814368008708096/5HABV7bJ.png"
-  },
-  {
-     "name":"ICE T",
-     "username":"FINALLEVEL",
-     "following":1468,
-     "profile_img_url":"http://pbs.twimg.com/profile_images/909984858818170881/jagXDTlf.jpg"
-  },
-  {
-     "name":"Donald Trump",
-     "username":"realDonaldTrump",
-     "following":47,
-     "profile_img_url":"http://pbs.twimg.com/profile_images/874276197357596672/kUuht00m.jpg"
-  },
-  {
-     "name":"Kanye West",
-     "username":"kanyewest",
-     "following":265,
-     "profile_img_url":"http://pbs.twimg.com/profile_images/1048222727838945281/FBdbacyQ.jpg"
-  },
-  {
-     "name":"Wu-Tang Financial",
-     "username":"Wu_Tang_Finance",
-     "following":2053,
-     "profile_img_url":"http://pbs.twimg.com/profile_images/464244189589684224/99xg62z1.jpeg"
-  },
-  {
-     "name":"Jack",
-     "username":"jack",
-     "following":4033,
-     "profile_img_url":"http://pbs.twimg.com/profile_images/1115644092329758721/AFjOr-K8.jpg"
-  },
-  {
-     "name":"Bret Easton Ellis",
-     "username":"BretEastonEllis",
-     "following":483,
-     "profile_img_url":"http://pbs.twimg.com/profile_images/378800000330397348/560951902579f82798804bbc4099754a.jpeg"
-  },
-  {
-     "name":"George Monbiot",
-     "username":"GeorgeMonbiot",
-     "following":1265,
-     "profile_img_url":"http://pbs.twimg.com/profile_images/3594607450/ff6fbd42964f9a0def79d8acbfa034bd.jpeg"
-  },
-  {
-     "name":"Mike Gravel",
-     "username":"MikeGravel",
-     "following":888,
-     "profile_img_url":"http://pbs.twimg.com/profile_images/1177610713738678272/B90oMFvj.jpg"
-  },
-  {
-     "name":"Tim Heidecker",
-     "username":"timheidecker",
-     "following":377,
-     "profile_img_url":"http://pbs.twimg.com/profile_images/1169296797451177984/3Dut0HPq.jpg"
-  },
-  {
-     "name":"Bernie Sanders",
-     "username":"BernieSanders",
-     "following":1392,
-     "profile_img_url":"http://pbs.twimg.com/profile_images/1097820307388334080/9ddg5F6v.png"
-  },
-  {
-     "name":"Michael Moore",
-     "username":"MMFlint",
-     "following":522,
-     "profile_img_url":"http://pbs.twimg.com/profile_images/1166671137943818241/WxER48KI.jpg"
-  },
-  {
-     "name":"Rob Delaney",
-     "username":"robdelaney",
-     "following":3136,
-     "profile_img_url":"http://pbs.twimg.com/profile_images/1062264728804823045/mjWindTf.jpg"
-  },
-  {
-     "name":"Oprah Winfrey",
-     "username":"Oprah",
-     "following":307,
-     "profile_img_url":"http://pbs.twimg.com/profile_images/1123359369570148353/Mh-Rf4Sk.jpg"
-  }
+    {
+        "name": "Oprah Winfrey",
+        "username": "Oprah",
+        "following": 325,
+        "profile_img_url": "http://pbs.twimg.com/profile_images/1123359369570148353/Mh-Rf4Sk.jpg"
+    },
+    {
+        "name": "Tom Hanks",
+        "username": "tomhanks",
+        "following": 25,
+        "profile_img_url": "http://pbs.twimg.com/profile_images/1193951507026075648/Ot3GmqGK.jpg"
+    },
+    {
+        "name": "Rihanna",
+        "username": "rihanna",
+        "following": 1001,
+        "profile_img_url": "http://pbs.twimg.com/profile_images/1133109643734130688/BwioAwkz.jpg"
+    },
+    {
+        "name": "Elon Musk",
+        "username": "elonmusk",
+        "following": 105,
+        "profile_img_url": "http://pbs.twimg.com/profile_images/1442634650703237120/mXIcYtIs.jpg"
+    },
+    {
+        "name": "ye",
+        "username": "kanyewest",
+        "following": 211,
+        "profile_img_url": "http://pbs.twimg.com/profile_images/1276461929934942210/cqNhNk6v.jpg"
+    },
+    {
+        "name": "Serena Williams",
+        "username": "serenawilliams",
+        "following": 367,
+        "profile_img_url": "http://pbs.twimg.com/profile_images/831238969576677376/B90v9FF6.jpg"
+    },
+    {
+        "name": "Patrick Mahomes II",
+        "username": "PatrickMahomes",
+        "following": 488,
+        "profile_img_url": "http://pbs.twimg.com/profile_images/1429238876007186437/Id4GhAeC.jpg"
+    },
+    {
+        "name": "Emma Watson",
+        "username": "EmmaWatson",
+        "following": 395,
+        "profile_img_url": "http://pbs.twimg.com/profile_images/1449352213260902402/-YoHW5N5.jpg"
+    },
+    {
+        "name": "Brene Brown",
+        "username": "BreneBrown",
+        "following": 3753,
+        "profile_img_url": "http://pbs.twimg.com/profile_images/1212148385978953729/4rIadTSL.jpg"
+    },
+    {
+        "name": "Sarah Silverman",
+        "username": "SarahKSilverman",
+        "following": 1759,
+        "profile_img_url": "http://pbs.twimg.com/profile_images/1328554817384448000/iuGQpg1-.jpg"
+    },
+    {
+        "name": "Mark Hamill",
+        "username": "HamillHimself",
+        "following": 871,
+        "profile_img_url": "http://pbs.twimg.com/profile_images/1441660358033215492/7TfUqDtG.jpg"
+    },
+    {
+        "name": "Jason Sudeikis",
+        "username": "jasonsudeikis",
+        "following": 137,
+        "profile_img_url": "http://pbs.twimg.com/profile_images/1697493251/image.jpg"
+    },
+    {
+        "name": "jack",
+        "username": "jack",
+        "following": 4462,
+        "profile_img_url": "http://pbs.twimg.com/profile_images/1115644092329758721/AFjOr-K8.jpg"
+    },
+    {
+        "name": "Be A King",
+        "username": "BerniceKing",
+        "following": 678,
+        "profile_img_url": "http://pbs.twimg.com/profile_images/1395221008563511297/bN5yxXUV.jpg"
+    },
+    {
+        "name": "jlo",
+        "username": "JLo",
+        "following": 1815,
+        "profile_img_url": "http://pbs.twimg.com/profile_images/1409937836162252804/rOvGV_Zm.jpg"
+    },
+    {
+        "name": "Tim Heidecker",
+        "username": "timheidecker",
+        "following": 456,
+        "profile_img_url": "http://pbs.twimg.com/profile_images/1440724197156671501/pnRHMQb7.jpg"
+    },
+    {
+        "name": "Oprah Winfrey",
+        "username": "Oprah",
+        "following": 325,
+        "profile_img_url": "http://pbs.twimg.com/profile_images/1123359369570148353/Mh-Rf4Sk.jpg"
+    },
+    {
+        "name": "Bill Gates",
+        "username": "BillGates",
+        "following": 334,
+        "profile_img_url": "http://pbs.twimg.com/profile_images/1414439092373254147/JdS8yLGI.jpg"
+    },
+    {
+        "name": "Venus Williams",
+        "username": "Venuseswilliams",
+        "following": 246,
+        "profile_img_url": "http://pbs.twimg.com/profile_images/282274329/039_39-1.jpg"
+    },
+    {
+        "name": "Cornel West",
+        "username": "CornelWest",
+        "following": 199,
+        "profile_img_url": "http://pbs.twimg.com/profile_images/1076631097/c_west__smaller_.JPG"
+    },
+    {
+        "name": "ICE T",
+        "username": "FINALLEVEL",
+        "following": 1719,
+        "profile_img_url": "http://pbs.twimg.com/profile_images/909984858818170881/jagXDTlf.jpg"
+    },
+    {
+        "name": "J.K. Rowling",
+        "username": "jk_rowling",
+        "following": 884,
+        "profile_img_url": "http://pbs.twimg.com/profile_images/1447824688890228738/PiiyBJ8H.jpg"
+    }
 ]

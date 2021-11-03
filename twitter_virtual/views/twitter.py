@@ -182,7 +182,7 @@ def copy_feed():
     twitter_client = get_twitter_client()
     twitter_client.set_client_token(token, token_secret)
 
-    return f"Token: {token} | Secret: {token_secret}"
+    # return f"Token: {token} | Secret: {token_secret}"
 
     try:
         twitter_list = copy_user_following_to_new_list(twitter_client, target_screen_name)
