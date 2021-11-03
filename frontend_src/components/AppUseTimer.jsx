@@ -41,10 +41,13 @@ const AppUseTimer = (props) => {
   return (
     <div>
       <Alert variant="warning">
-        <Alert.Heading>It looks as though you&apos;ve already used our app today.</Alert.Heading>
+        <Alert.Heading>
+          Uh oh! It looks like you&apos;ve already used our app once today
+        </Alert.Heading>
         <p>
-          To comply with Twitter&apos;s terms of service, we have to limit how often our app&nbsp;
-          is used. (Sorry.)
+          To comply with the Twitter terms of service, we have to limit how often our app
+          {' '}
+          is used. Sorry!
           <br />
           You can use our app again in&nbsp;
           <b>{formatTimer(secondsLeft)}</b>

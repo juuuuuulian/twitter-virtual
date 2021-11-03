@@ -83,7 +83,7 @@ const App = (props) => {
       <div className="index-cont">
         <div className="index-head header-copy">
           <h1 className="display-4">Discover the Twitter You&apos;ve Been Missing Out On</h1>
-          <h6>Like VR goggles for your Twitter feed! Create a Virtual Feed of users who a friend follows and discover Twitter from a new point of view</h6>
+          <h6>Like VR goggles for your Twitter feed! Enter a friend&apos;s username to create a Virtual Feed of users who they follow, and discover Twitter from a new point of view</h6>
           <div>
             This experimental tool is
             {' '}

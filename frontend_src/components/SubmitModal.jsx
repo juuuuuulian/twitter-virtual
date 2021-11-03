@@ -32,9 +32,10 @@ const SubmitModal = (props) => {
                 </li>
                 <li>
                   The selected Twitter account&nbsp;
-                  <b>must not be following more than 2000 other Twitter
+                  <b>must not be following more than 5000 other Twitter
                     users
-                  </b>&nbsp;
+                  </b>
+                  {' '}
                   (a hard limit imposed on Lists by Twitter).&nbsp;
                   <a target="_blank" rel="noreferrer" href={(`http://twitter.com/${targetScreenName}`)}>Click here to view their profile</a>
                 </li>
