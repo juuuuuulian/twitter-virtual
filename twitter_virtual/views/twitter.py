@@ -199,9 +199,3 @@ def copy_feed():
     invalidate_oauth_token(twitter_client)
 
     return render_app_template("success.html", 200, extra_app_vars={"new_list_url": twitter_client.get_full_list_url(twitter_list)})
-
-
-@twitter_bp.route("/success")
-def success():
-    """Show the user a success page."""
-    return render_app_template("success.html", 200, extra_app_vars={"new_list_url": "https://twitter.com/test/lists/my-test-list"})
