@@ -5,8 +5,7 @@ import PropTypes from 'prop-types';
 import Footer from './Footer.jsx';
 
 const SuccessApp = (props) => {
-  let { newListUrl } = props;
-  newListUrl = 'google.com';
+  const { newListUrl } = props;
 
   return (
     <>
@@ -47,6 +46,10 @@ const SuccessApp = (props) => {
 
 SuccessApp.propTypes = {
   newListUrl: PropTypes.string,
+};
+
+SuccessApp.defaultProps = {
+  newListUrl: 'twitter.com',
 };
 
 export default hot(SuccessApp);

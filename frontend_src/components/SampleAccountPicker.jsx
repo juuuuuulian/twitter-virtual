@@ -50,7 +50,7 @@ SampleAccountListItem.propTypes = {
 const ListGroupSampleAccountPicker = (props) => {
   const { accounts, optionClickHandler } = props;
   return (
-    <div className="account-picker-list-group list-group list-group-flush">
+    <div className="shadow account-picker-list-group list-group list-group-flush">
       { accounts.map((account) => (
         <SampleAccountListItem
           name={account.name}
